@@ -57,3 +57,11 @@ Adapter（REST 控制器）
 - MyBatis 映射 XML 文件放在 dal 模块的 `resources/mapper/**/*Mapper.xml` 路径下。
 - domain 层保持干净，不引入基础设施/框架依赖，只使用 `rapidf-domain` 注解。
 - 仓储在 domain 层定义接口，在 `infrastructure/acl` 中实现。
+
+## 文档
+```bash
+# 需求文档
+document/brd
+# 设计文档
+document/design
+```
