@@ -2,9 +2,10 @@
 
 ## 技术栈
 
+
 - 基础依赖：**Java 17**、**Spring Boot 4.1.0**、**Spring AI 2.0.0**
-- 数据库依赖：**MyBatis** 2.1.3 + **MySQL** 8.0.27 + **Druid** 1.2.15（连接池）
-- 自研框架：**rapidf** 1.4.0 — 自研 DDD/CQRS/REST 框架，来自 `com.lazycece.rapidf`
+- 数据库依赖：**MyBatis** 4.1 + **MySQL** 8.0.27 + **Druid** 1.2.15（连接池）
+- 自研框架：**rapidf** 3.0.2 — 自研 DDD/CQRS/REST 框架，来自 `com.lazycece.rapidf`
 
 ## 构建与运行
 
