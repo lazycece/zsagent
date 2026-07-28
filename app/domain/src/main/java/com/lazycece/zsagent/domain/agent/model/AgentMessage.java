@@ -1,0 +1,43 @@
+package com.lazycece.zsagent.domain.agent.model;
+
+import com.lazycece.rapidf.domain.anotation.DomainEntity;
+import com.lazycece.rapidf.domain.model.Entity;
+import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
+import com.lazycece.zsagent.domain.agent.enums.MessageRole;
+import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * 消息实体
+ *
+ * @author lazycece
+ */
+@Getter
+@Setter
+@DomainEntity
+public class AgentMessage extends Entity<String> {
+
+    /** 消息唯一标识 (UUID) */
+    private String messageId;
+    /** 所属对话ID */
+    private String conversationId;
+    /** 消息角色 */
+    private MessageRole role;
+    /** 消息内容 */
+    private String content;
+    /** 来源引用（仅 ASSISTANT 角色有值） */
+    private List<SourceReference> sources = new ArrayList<>();
+    /** 反馈状态（null/ USEFUL / NOT_USEFUL） */
+    private FeedbackType feedback;
+    /** 无用反馈原因 */
+    private String feedbackReason;
+
+    @Override
+    public String getId() {
+        return this.messageId;
+    }
+}
