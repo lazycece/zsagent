@@ -2,10 +2,16 @@ package com.lazycece.zsagent.domain.agent.model;
 
 import com.lazycece.rapidf.domain.anotation.DomainAggregate;
 import com.lazycece.rapidf.domain.model.Aggregate;
+import com.lazycece.rapidf.utils.UUIDUtils;
 import com.lazycece.zsagent.domain.agent.enums.ConversationStatus;
+import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
+import com.lazycece.zsagent.domain.agent.enums.MessageRole;
+import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,5 +39,90 @@ public class AgentConversation extends Aggregate<String> {
     @Override
     public String getId() {
         return this.conversationId;
+    }
+
+    // ======================== 工厂方法 ========================
+
+    /**
+     * 创建新对话聚合根。
+     */
+    public static AgentConversation create(String userId, String conversationId) {
+        AgentConversation conversation = new AgentConversation();
+        conversation.setConversationId(conversationId);
+        conversation.setUserId(userId);
+        conversation.setStatus(ConversationStatus.ACTIVE);
+        conversation.setCreator(userId);
+        conversation.setUpdater(userId);
+        conversation.setCreateTime(LocalDateTime.now());
+        conversation.setUpdateTime(LocalDateTime.now());
+        conversation.setDeleted(false);
+        return conversation;
+    }
+
+    // ======================== 行为方法 ========================
+
+    /**
+     * 发起提问，创建一条 USER 角色消息并追加到消息列表。
+     * 若为首条消息，同时设置对话标题（截取前30字）。
+     *
+     * @param content 问题内容
+     * @return 创建的消息
+     */
+    public AgentMessage askQuestion(String content) {
+        if (StringUtils.isBlank(this.title)) {
+            this.title = content.length() > 30 ? content.substring(0, 30) : content;
+        }
+        AgentMessage message = buildMessage(MessageRole.USER, content, null);
+        this.messages.add(message);
+        return message;
+    }
+
+    /**
+     * 记录助手回答，创建一条 ASSISTANT 角色消息并追加到消息列表。
+     *
+     * @param content 回答内容
+     * @param sources 来源引用列表
+     * @return 创建的消息
+     */
+    public AgentMessage answer(String content, List<SourceReference> sources) {
+        AgentMessage message = buildMessage(MessageRole.ASSISTANT, content, sources);
+        this.messages.add(message);
+        return message;
+    }
+
+    /**
+     * 对指定消息提交反馈。
+     *
+     * @param messageId 被评价的消息ID
+     * @param type      反馈类型
+     * @param reason    反馈原因（仅 NOT_USEFUL 时可能填写）
+     * @throws IllegalArgumentException 消息不存在时抛出
+     */
+    public void submitFeedback(String messageId, FeedbackType type, String reason) {
+        AgentMessage target = this.messages.stream()
+                .filter(m -> m.getMessageId().equals(messageId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("消息不存在: " + messageId));
+        target.submitFeedback(type, reason);
+    }
+
+    /**
+     * 归档对话。
+     */
+    public void archive() {
+        this.status = ConversationStatus.ARCHIVED;
+    }
+
+    // ======================== 内部方法 ========================
+
+    private AgentMessage buildMessage(MessageRole role, String content, List<SourceReference> sources) {
+        AgentMessage message = new AgentMessage();
+        message.setMessageId(UUIDUtils.uuid());
+        message.setConversationId(this.conversationId);
+        message.setRole(role);
+        message.setContent(content);
+        message.setSources(sources != null ? sources : new ArrayList<>());
+        message.setCreateTime(LocalDateTime.now());
+        return message;
     }
 }

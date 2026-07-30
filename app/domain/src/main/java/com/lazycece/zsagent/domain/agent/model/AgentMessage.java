@@ -40,4 +40,17 @@ public class AgentMessage extends Entity<String> {
     public String getId() {
         return this.messageId;
     }
+
+    // ======================== 行为方法 ========================
+
+    /**
+     * 提交反馈。
+     *
+     * @param type   反馈类型
+     * @param reason 反馈原因（仅 NOT_USEFUL 时可能填写）
+     */
+    public void submitFeedback(FeedbackType type, String reason) {
+        this.feedback = type;
+        this.feedbackReason = reason;
+    }
 }
