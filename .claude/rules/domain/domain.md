@@ -21,9 +21,12 @@ paths:
 
 ## service
 
-- 领域服务需要定义接口+实现类模式，实现类标记`@DomainService`注解
+- 领域服务需要定义接口+实现类模式，实现类用`@DomainService`注解注入
 - 属于充血模型的范围，就不要放在领域服务内实现
 
+## factory
+
+- `factory`用 `@DomainFactory`标记
 
 
 
