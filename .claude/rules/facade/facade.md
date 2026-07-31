@@ -12,6 +12,7 @@ paths:
 
 ## api
 
+- 请求体必须继承`BaseRequest`，已定义在`rapidf-restful`中直接使用即可
 - 请求体定义在`request`包中，返回体定义在`result`包中
 - 返回体包装用`RespData<T>`，已定义在`rapidf-restful`中直接使用即可
 
