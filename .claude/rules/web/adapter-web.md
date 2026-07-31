@@ -28,22 +28,6 @@ paths:
 
 web控制器参考案例如下：
 ```java
-package com.lazycece.zsagent.adapter.web.order;
-
-import com.lazycece.rapidf.restful.response.RespData;
-import com.lazycece.zsagent.facade.order.api.OrderCommandFacade;
-import com.lazycece.zsagent.facade.order.request.OrderCreateRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-/**
- * @author lazycece
- * @date 2023/2/11
- */
 @RestController
 @RequestMapping("/api/v1/order")
 public class OrderCommandController {
