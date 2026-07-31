@@ -19,7 +19,6 @@ paths:
 - GET 请求参数用 `@RequestParam` 或 `@PathVariable`
 - POST 请求体用 `@RequestBody`，并用 `@Validated`校验
 - POST 请求体request直接复用工程架构中facade模块的定义
-- 分页参数统一 `page`（从 1 开始）、`size`（默认 20）
 
 ## 响应
 
