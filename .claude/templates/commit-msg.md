@@ -1,11 +1,13 @@
 # Commit Message Template (Conventional Commits)
 
 ## 格式
+```
 <type>(<scope>): <subject>
 
 <body>
 
 <footer>
+```
 
 ## Type
 - feat: 新功能
