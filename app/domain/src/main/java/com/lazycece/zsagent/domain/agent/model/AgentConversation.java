@@ -8,7 +8,6 @@ import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
 import com.lazycece.zsagent.domain.agent.enums.MessageRole;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -21,7 +20,6 @@ import java.util.List;
  * @author lazycece
  */
 @Getter
-@Setter
 @DomainAggregate
 public class AgentConversation extends Aggregate<String> {
 
@@ -48,9 +46,9 @@ public class AgentConversation extends Aggregate<String> {
      */
     public static AgentConversation create(String userId, String conversationId) {
         AgentConversation conversation = new AgentConversation();
-        conversation.setConversationId(conversationId);
-        conversation.setUserId(userId);
-        conversation.setStatus(ConversationStatus.ACTIVE);
+        conversation.conversationId = conversationId;
+        conversation.userId = userId;
+        conversation.status = ConversationStatus.ACTIVE;
         conversation.setCreator(userId);
         conversation.setUpdater(userId);
         conversation.setCreateTime(LocalDateTime.now());
@@ -116,12 +114,8 @@ public class AgentConversation extends Aggregate<String> {
     // ======================== 内部方法 ========================
 
     private AgentMessage buildMessage(MessageRole role, String content, List<SourceReference> sources) {
-        AgentMessage message = new AgentMessage();
-        message.setMessageId(UUIDUtils.uuid());
-        message.setConversationId(this.conversationId);
-        message.setRole(role);
-        message.setContent(content);
-        message.setSources(sources != null ? sources : new ArrayList<>());
+        AgentMessage message = AgentMessage.create(
+                UUIDUtils.uuid(), this.conversationId, role, content, sources);
         message.setCreateTime(LocalDateTime.now());
         return message;
     }

@@ -9,7 +9,6 @@ import com.lazycece.zsagent.domain.agent.service.ConversationDomainService;
 import com.lazycece.zsagent.domain.agent.valueobject.AssistantMessageRecord;
 import com.lazycece.zsagent.domain.agent.valueobject.FeedbackRecord;
 import com.lazycece.zsagent.domain.agent.valueobject.UserMessageRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 
@@ -23,8 +22,11 @@ import java.time.LocalDateTime;
 @DomainService
 public class ConversationDomainServiceImpl implements ConversationDomainService {
 
-    @Autowired
-    private AgentConversationRepository conversationRepository;
+    private final AgentConversationRepository conversationRepository;
+
+    public ConversationDomainServiceImpl(AgentConversationRepository conversationRepository) {
+        this.conversationRepository = conversationRepository;
+    }
 
     /**
      * 记录用户提问消息。
@@ -33,9 +35,9 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
     @Override
     public void recordUserMessage(UserMessageRecord record) {
         Assert.notNull(record, RespStatus.PARAM_ERROR, "record 不能为 null");
-        String userId = record.getUserId();
-        String conversationId = record.getConversationId();
-        String content = record.getContent();
+        String userId = record.userId();
+        String conversationId = record.conversationId();
+        String content = record.content();
         Assert.notNull(userId, RespStatus.PARAM_ERROR, "userId 不能为 null");
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(content, RespStatus.PARAM_ERROR, "content 不能为 null");
@@ -60,9 +62,9 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
     @Override
     public void recordAssistantMessage(AssistantMessageRecord record) {
         Assert.notNull(record, RespStatus.PARAM_ERROR, "record 不能为 null");
-        String userId = record.getUserId();
-        String conversationId = record.getConversationId();
-        String content = record.getContent();
+        String userId = record.userId();
+        String conversationId = record.conversationId();
+        String content = record.content();
         Assert.notNull(userId, RespStatus.PARAM_ERROR, "userId 不能为 null");
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(content, RespStatus.PARAM_ERROR, "content 不能为 null");
@@ -72,7 +74,7 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
 
         conversation.setUpdater(userId);
         conversation.setUpdateTime(LocalDateTime.now());
-        conversation.answer(content, record.getSources());
+        conversation.answer(content, record.sources());
         conversationRepository.update(conversation);
     }
 
@@ -82,20 +84,20 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
     @Override
     public void recordFeedback(FeedbackRecord record) {
         Assert.notNull(record, RespStatus.PARAM_ERROR, "record 不能为 null");
-        String userId = record.getUserId();
-        String conversationId = record.getConversationId();
-        String messageId = record.getMessageId();
+        String userId = record.userId();
+        String conversationId = record.conversationId();
+        String messageId = record.messageId();
         Assert.notNull(userId, RespStatus.PARAM_ERROR, "userId 不能为 null");
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(messageId, RespStatus.PARAM_ERROR, "messageId 不能为 null");
-        Assert.notNull(record.getType(), RespStatus.PARAM_ERROR, "feedbackType 不能为 null");
+        Assert.notNull(record.type(), RespStatus.PARAM_ERROR, "feedbackType 不能为 null");
 
         AgentConversation conversation = conversationRepository.findByConversationId(userId, conversationId);
         Assert.notNull(conversation, RespStatus.PARAM_ERROR, "对话不存在");
 
         conversation.setUpdater(userId);
         conversation.setUpdateTime(LocalDateTime.now());
-        conversation.submitFeedback(messageId, record.getType(), record.getReason());
+        conversation.submitFeedback(messageId, record.type(), record.reason());
         conversationRepository.update(conversation);
     }
 }

@@ -6,7 +6,6 @@ import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
 import com.lazycece.zsagent.domain.agent.enums.MessageRole;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,6 @@ import java.util.List;
  * @author lazycece
  */
 @Getter
-@Setter
 @DomainEntity
 public class AgentMessage extends Entity<String> {
 
@@ -39,6 +37,20 @@ public class AgentMessage extends Entity<String> {
     @Override
     public String getId() {
         return this.messageId;
+    }
+
+    /**
+     * 创建消息实体。
+     */
+    static AgentMessage create(String messageId, String conversationId, MessageRole role,
+                               String content, List<SourceReference> sources) {
+        AgentMessage message = new AgentMessage();
+        message.messageId = messageId;
+        message.conversationId = conversationId;
+        message.role = role;
+        message.content = content;
+        message.sources = sources != null ? sources : new ArrayList<>();
+        return message;
     }
 
     // ======================== 行为方法 ========================
