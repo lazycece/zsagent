@@ -32,6 +32,12 @@ public interface OrderCommandFacade {
 - 参数校验用`@NotBlank`、`@NotEmpty`等等相关的 validation 注解
 - 分页参数统一 `page`（从 1 开始）、`size`（默认 20）
 
+## result
+
+- 请求体命名模式`{领域}{行为}Result`，如`OrderCreateResult`
+- 均实现`Serializable`接口
+- 参数涉及对象情况，如果可复用则定义在`dto`包中，否则用内部类方式
+
 ## DTO
 
 - 统一以`DTO`为后缀
