@@ -33,6 +33,7 @@ paths:
 
 
 ## 异常体系
+异常处理必须使用如下异常体系：
 ```
 AbstractBaseException (abstract)
 ├── AuthException          → 100 (AUTH_FAIL)
