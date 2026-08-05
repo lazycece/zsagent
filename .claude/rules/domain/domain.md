@@ -11,7 +11,7 @@ paths:
 
 - 聚合标记`@DomainAggregate`注解并继承`Aggregate<T>`基类，均引用自`rapidf-domain`组件
 - 实体标记`@DomainEntity`注解并继承`Entity<T>`基类，均引用自`rapidf-domain`组件
-- 聚合和实体不需要单独定义`creator`,`updater`,`createTime`,`updateTime`,`deleted`属性，基类中已有定义
+- 聚合和实体不需要单独定义`creator`,`updater`,`createTime`,`updateTime`,`deleted`属性，基类中已有定义，但需要填充值
 - 聚合和实体在领域定位上均需要以充血模型来实现
 
 ## valueobject
