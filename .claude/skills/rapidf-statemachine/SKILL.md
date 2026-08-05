@@ -1,5 +1,5 @@
 ---
-name: statemachine
+name: rapidf-statemachine
 description: >-
   当需要设计、实现或修改本项目的有限状态机（FSM）时使用。
   涵盖状态定义、事件、转换、守卫条件、动作和持久化。
