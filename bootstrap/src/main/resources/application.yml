@@ -1,0 +1,32 @@
+spring:
+  ai:
+    openai:
+      api-key: ${DEEPSEEK_API_KEY}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-v4-pro
+          temperature: 0.3
+          max-tokens: 4096
+#   dashscope:  # 需 com.alibaba.cloud.ai:spring-ai-alibaba-starter 依赖，暂未引入
+#     api-key: ${DASHSCOPE_API_KEY}
+#     embedding:
+#       options:
+#         model: text-embedding-v4
+#         dimensions: 1024
+    vectorstore:
+      elasticsearch:
+        index-name: zsagent_knowledge
+        dimensions: 1024
+        similarity: cosine
+
+  elasticsearch:
+    uris: ${ES_URIS:http://localhost:9200}
+    username: ${ES_USERNAME:}
+    password: ${ES_PASSWORD:}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
