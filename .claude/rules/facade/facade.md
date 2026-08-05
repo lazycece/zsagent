@@ -12,7 +12,7 @@ paths:
 
 ## api
 
-- 入参必须封装成`XxxRequest`请求体，不能单独罗列用字段为入参
+- 入参必须封装成`XxxRequest`请求体，不能用裸参数
 - 出参必须封装`XxxResult`对象，即便没有出参参数
 - 请求体必须继承`BaseRequest`，已定义在`rapidf-restful`中直接使用即可
 - 请求体定义在`request`包中，返回体定义在`result`包中
