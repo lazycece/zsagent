@@ -6,6 +6,7 @@ import com.lazycece.rapidf.utils.UUIDUtils;
 import com.lazycece.zsagent.domain.agent.enums.ConversationStatus;
 import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
 import com.lazycece.zsagent.domain.agent.enums.MessageRole;
+import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -100,7 +101,7 @@ public class AgentConversation extends Aggregate<String> {
         AgentMessage target = this.messages.stream()
                 .filter(m -> m.getMessageId().equals(messageId))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("消息不存在: " + messageId));
+                .orElseThrow(() -> ExceptionFactory.businessException("消息不存在: " + messageId));
         target.submitFeedback(type, reason);
     }
 
