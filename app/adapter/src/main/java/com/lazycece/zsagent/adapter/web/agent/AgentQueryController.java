@@ -37,7 +37,7 @@ public class AgentQueryController {
     /**
      * 查询对话列表。
      */
-    @GetMapping("/conversations")
+    @GetMapping("/list-conversations")
     public RespData<ConversationListResult> listConversations(@Validated ConversationListQueryRequest request) {
         return agentQueryFacade.listConversations(request);
     }
