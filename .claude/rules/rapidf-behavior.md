@@ -17,6 +17,7 @@ paths:
 - 实现`BaseEnum<T>`接口，已定义在`rapidf-domain`中，标记`@Getter`、`@AllArgsConstructor`不单独实现构造器方法
 - 分页对象用`Pagination`,内部已定义`page`,`size`,`count`
 - 分页结果数据用`PageData<T>`保障，已定义在`rapidf-restful`中
+- converter方法需要对入参对象做 `if null` 软处理
 
 ## 状态码
 现有状态码定义在`RespStatus`中，如下所示：
