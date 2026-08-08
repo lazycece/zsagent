@@ -36,10 +36,15 @@
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-elasticsearch-store</artifactId>
         </dependency>
-        <!-- Redis ChatMemory -->
+        <!-- Spring AI: Redis ChatMemory Starter（自动配置 RedisChatMemoryRepository + ChatMemory） -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-chat-memory-repository-redis</artifactId>
+        </dependency>
+        <!-- Spring AI: ChatClient + Advisor（含 MessageChatMemoryAdvisor） -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-client-chat</artifactId>
         </dependency>
     </dependencies>
 </project>
