@@ -3,7 +3,7 @@ package com.lazycece.zsagent.application.agent;
 import com.lazycece.rapidf.domain.anotation.ApplicationService;
 import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.zsagent.application.agent.assembler.AgentAssembler;
-import com.lazycece.zsagent.application.agent.rag.CustomQueryAugmenter;
+import com.lazycece.zsagent.application.agent.rag.post.DocumentCachePostProcessor;
 import com.lazycece.zsagent.domain.agent.service.ConversationDomainService;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import com.lazycece.zsagent.facade.agent.api.AgentCommandFacade;
@@ -36,19 +36,19 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
     private final RetrievalAugmentationAdvisor ragAdvisor;
     private final MessageChatMemoryAdvisor memoryAdvisor;
     private final ConversationDomainService conversationDomainService;
-    private final CustomQueryAugmenter queryAugmenter;
+    private final DocumentCachePostProcessor documentCachePostProcessor;
 
     public AgentCommandFacadeImpl(
             ChatClient.Builder chatClientBuilder,
             RetrievalAugmentationAdvisor ragAdvisor,
             MessageChatMemoryAdvisor memoryAdvisor,
             ConversationDomainService conversationDomainService,
-            CustomQueryAugmenter queryAugmenter) {
+            DocumentCachePostProcessor documentCachePostProcessor) {
         this.chatClientBuilder = chatClientBuilder;
         this.ragAdvisor = ragAdvisor;
         this.memoryAdvisor = memoryAdvisor;
         this.conversationDomainService = conversationDomainService;
-        this.queryAugmenter = queryAugmenter;
+        this.documentCachePostProcessor = documentCachePostProcessor;
     }
 
     @Override
@@ -73,12 +73,12 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
                 .doOnNext(fullAnswer::append)
                 .doOnComplete(() -> {
                     // 阶段 C: 流结束后记录完整的助手消息（含来源引用）
-                    List<Document> docs = queryAugmenter.getLastRetrievedDocuments(conversationId);
-                    List<SourceReference> sources = queryAugmenter.extractSources(docs);
+                    List<Document> docs = documentCachePostProcessor.getLastRetrievedDocuments(conversationId);
+                    List<SourceReference> sources = documentCachePostProcessor.extractSources(docs);
                     conversationDomainService.recordAssistantMessage(
                             AgentAssembler.toAssistantMessageRecord(
                                     userId, conversationId, fullAnswer.toString(), sources));
-                    queryAugmenter.clearDocuments(conversationId);
+                    documentCachePostProcessor.clearDocuments(conversationId);
                     log.info("问答完成: userId={}, conversationId={}, 答案长度={}, 来源数={}",
                             userId, conversationId, fullAnswer.length(), sources.size());
                 })
