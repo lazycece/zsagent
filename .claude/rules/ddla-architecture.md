@@ -92,6 +92,7 @@ adapter  →  facade  →  application  →  domain  ←  infrastructure
 | | | |converter|XxxConverter|定义基础设施层对象到领域对象（实体、聚合、值对象）的转换器|
 | | | |producer|--|定义消息发送实现|
 | | | |cache|--|定义缓存服务实现|
+| | | |config|--|定义基础设施相关配置|
 |dal|数据库访问层|${package}.infra.dal|dto|XxxDTO|定义数据库访问层的dto|
 | | | |mapper.auto|XxxMapper|定义工具自动生成的mapper|
 | | | |mapper.udf|XxxUdfMapper|定义用户自定义的mapper|
