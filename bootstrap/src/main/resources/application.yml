@@ -14,6 +14,14 @@ spring:
 #       options:
 #         model: text-embedding-v4
 #         dimensions: 1024
+    chat:
+      memory:
+        redis:
+          host: ${REDIS_HOST:localhost}
+          port: ${REDIS_PORT:6379}
+          key-prefix: "zsagent:chat:memory:"
+          time-to-live: 30m
+          initialize-schema: true
     vectorstore:
       elasticsearch:
         index-name: zsagent_knowledge
