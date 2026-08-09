@@ -125,8 +125,7 @@ JsonUtils.parseArray("json str", objectClass);
 JsonUtils.parseMap("json str", objectClass);
 ```
 ### 枚举
-- 根据枚举值映射枚举类用`EnumUtils.getEnum(enumClass,value)`，需要`value`对应方法为`getCode`;
-- 否则用`EnumUtils.getEnum(enumClass,enumValueMethod,value)`
+- 根据枚举值映射枚举类用`EnumUtils.getEnum(enumClass,value)`，需要`value`对应方法为`getCode`;否则用`EnumUtils.getEnum(enumClass,enumValueMethod,value)`
 
 ### uuid
 - 基础的UUID获取直接用`UUIDUtils.uuid()`
