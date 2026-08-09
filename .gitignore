@@ -30,3 +30,5 @@ target
 # claude
 .claude/CLAUDE.local.md
 .claude/settings.local.json
+
+conf/environment/application-dev.properties
