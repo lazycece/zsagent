@@ -2,7 +2,9 @@ package com.lazycece.zsagent.infra.acl.repository;
 
 import com.lazycece.rapidf.domain.anotation.DomainRepository;
 import com.lazycece.rapidf.domain.model.Pagination;
+import com.lazycece.rapidf.utils.DefaultUtils;
 import com.lazycece.zsagent.domain.agent.model.AgentConversation;
+import com.lazycece.zsagent.domain.agent.model.AgentMessage;
 import com.lazycece.zsagent.domain.agent.repository.AgentConversationRepository;
 import com.lazycece.zsagent.infra.acl.converter.AgentInfraConverter;
 import com.lazycece.zsagent.infra.dal.mapper.udf.AgentConversationUdfMapper;
@@ -43,16 +45,16 @@ public class AgentConversationRepositoryImpl implements AgentConversationReposit
         AgentConversationPO convPO = AgentInfraConverter.toConversationPO(conversation);
         conversationMapper.insert(convPO);
 
-        if (conversation.getMessages() != null && !conversation.getMessages().isEmpty()) {
-            List<AgentMessagePO> messagePOs = conversation.getMessages().stream()
+        List<AgentMessage> messages = DefaultUtils.defaultList(conversation.getMessages());
+        if (!messages.isEmpty()) {
+            List<AgentMessagePO> messagePOs = messages.stream()
                     .map(AgentInfraConverter::toMessagePO)
                     .collect(Collectors.toList());
             messageMapper.insertBatch(messagePOs);
         }
 
         log.debug("新建对话: conversationId={}, 消息数={}",
-                conversation.getConversationId(),
-                conversation.getMessages() != null ? conversation.getMessages().size() : 0);
+                conversation.getConversationId(), messages.size());
         return conversation.getConversationId();
     }
 
@@ -89,18 +91,19 @@ public class AgentConversationRepositoryImpl implements AgentConversationReposit
         conversationMapper.update(convPO);
 
         if (conversation.getMessages() != null) {
+            List<AgentMessage> messages = conversation.getMessages();
             LocalDateTime now = LocalDateTime.now();
             messageMapper.deleteByConversationId(conversation.getConversationId(), now);
-            if (!conversation.getMessages().isEmpty()) {
-                List<AgentMessagePO> messagePOs = conversation.getMessages().stream()
+            if (!messages.isEmpty()) {
+                List<AgentMessagePO> messagePOs = messages.stream()
                         .map(AgentInfraConverter::toMessagePO)
                         .collect(Collectors.toList());
                 messageMapper.insertBatch(messagePOs);
             }
+            log.debug("更新对话: conversationId={}, 消息数={}",
+                    conversation.getConversationId(), messages.size());
+        } else {
+            log.debug("更新对话: conversationId={}", conversation.getConversationId());
         }
-
-        log.debug("更新对话: conversationId={}, 消息数={}",
-                conversation.getConversationId(),
-                conversation.getMessages() != null ? conversation.getMessages().size() : 0);
     }
 }
