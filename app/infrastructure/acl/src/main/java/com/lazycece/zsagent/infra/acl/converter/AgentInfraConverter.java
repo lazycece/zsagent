@@ -30,8 +30,6 @@ public final class AgentInfraConverter {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private AgentInfraConverter() {
-    }
 
     // ======================== Conversation: 领域 → PO ========================
 

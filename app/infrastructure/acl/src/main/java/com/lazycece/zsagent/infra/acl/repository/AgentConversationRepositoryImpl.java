@@ -1,5 +1,6 @@
 package com.lazycece.zsagent.infra.acl.repository;
 
+import com.lazycece.rapidf.domain.anotation.DomainRepository;
 import com.lazycece.rapidf.domain.model.Pagination;
 import com.lazycece.zsagent.domain.agent.model.AgentConversation;
 import com.lazycece.zsagent.domain.agent.repository.AgentConversationRepository;
@@ -10,9 +11,9 @@ import com.lazycece.zsagent.infra.dal.po.AgentConversationPO;
 import com.lazycece.zsagent.infra.dal.po.AgentMessagePO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  *
  * @author lazycece
  */
-@Repository
+@DomainRepository
 public class AgentConversationRepositoryImpl implements AgentConversationRepository {
 
     private static final Logger log = LoggerFactory.getLogger(AgentConversationRepositoryImpl.class);
@@ -84,13 +85,12 @@ public class AgentConversationRepositoryImpl implements AgentConversationReposit
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(AgentConversation conversation) {
-        // 更新对话记录
         AgentConversationPO convPO = AgentInfraConverter.toConversationPO(conversation);
         conversationMapper.update(convPO);
 
-        // 消息处理：逻辑删除旧消息，批量插入当前消息列表
         if (conversation.getMessages() != null) {
-            messageMapper.deleteByConversationId(conversation.getConversationId());
+            LocalDateTime now = LocalDateTime.now();
+            messageMapper.deleteByConversationId(conversation.getConversationId(), now);
             if (!conversation.getMessages().isEmpty()) {
                 List<AgentMessagePO> messagePOs = conversation.getMessages().stream()
                         .map(AgentInfraConverter::toMessagePO)
