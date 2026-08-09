@@ -3,7 +3,7 @@ package com.lazycece.zsagent.domain.agent.model;
 import com.lazycece.rapidf.domain.anotation.DomainEntity;
 import com.lazycece.rapidf.domain.model.Entity;
 import lombok.Getter;
-
+import lombok.Setter;
 
 import java.util.Map;
 
@@ -13,6 +13,7 @@ import java.util.Map;
  * @author lazycece
  */
 @Getter
+@Setter
 @DomainEntity
 public class KnowledgeChunk extends Entity<String> {
 
@@ -26,6 +27,8 @@ public class KnowledgeChunk extends Entity<String> {
     private String content;
     /** 向量表示（仅索引时使用） */
     private float[] embedding;
+    /** 检索相似度得分（仅查询结果时有值） */
+    private Float score;
     /** 扩展元数据（页码、章节等） */
     private Map<String, Object> metadata;
 
