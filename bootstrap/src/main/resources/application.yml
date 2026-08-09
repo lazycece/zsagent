@@ -28,7 +28,7 @@ spring:
       filters: stat
   ai:
     openai:
-      api-key: ${DEEPSEEK_API_KEY}
+      api-key: ${deepseek_api_Key}
       base-url: https://api.deepseek.com
       chat:
         options:
@@ -38,8 +38,8 @@ spring:
     chat:
       memory:
         redis:
-          host: ${REDIS_HOST:localhost}
-          port: ${REDIS_PORT:6379}
+          host: ${redis.host:localhost}
+          port: ${redis.port:6379}
           key-prefix: "zsagent:chat:memory:"
           time-to-live: 30m
           initialize-schema: true
@@ -49,14 +49,14 @@ spring:
         dimensions: 1024
         similarity: cosine
   elasticsearch:
-    uris: ${ES_URIS:http://localhost:9200}
-    username: ${ES_USERNAME:}
-    password: ${ES_PASSWORD:}
+    uris: ${es.uri:http://localhost:9200}
+    username: ${es.username:}
+    password: ${es.password:}
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      host: ${redis.host:localhost}
+      port: ${redis.port:6379}
+      password: ${redis.password:}
 
 server:
   port: ${app.port:8080}
