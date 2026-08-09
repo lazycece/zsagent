@@ -110,8 +110,10 @@ respData.isSuccess();    // code == 200
 respData.isNeedRetry();  // code == 704
 ```
 
-## JSON处理
-业务功能json转换用 `JsonUtils`工具类，已封装在`rapidf-utils`中，参考如下：
+## 自定义工具类
+> 已封装在`rapidf-utils`
+### JSON处理
+业务功能json转换用 `JsonUtils`工具类，参考如下：
 ```java
 // 对象转字符串
 JsonUtils.toJSONString(object);
@@ -122,11 +124,11 @@ JsonUtils.parseArray("json str", objectClass);
 // json转Map
 JsonUtils.parseMap("json str", objectClass);
 ```
+### 枚举
+- 根据枚举值映射枚举类用`EnumUtils.getEnum(enumClass,value)`，需要`value`对应方法为`getCode`;
+- 否则用`EnumUtils.getEnum(enumClass,enumValueMethod,value)`
 
-## 枚举
-- 根据枚举值映射枚举类用`EnumUtils.getEnum(enumClass,value)`，需要`value`对应方法为`getCode`;否则用`EnumUtils.getEnum(enumClass,enumValueMethod,value)`
-
-## uuid
+### uuid
 - 基础的UUID获取直接用`UUIDUtils.uuid()`
 
 
