@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lazycece.zsagent.infra.dal.mapper.udf.AgentConversationUdfMapper">
+
+    <resultMap id="BaseResultMap" type="com.lazycece.zsagent.infra.dal.po.AgentConversationPO">
+        <id column="id" property="id"/>
+        <result column="conversation_id" property="conversationId"/>
+        <result column="user_id" property="userId"/>
+        <result column="title" property="title"/>
+        <result column="status" property="status"/>
+        <result column="creator" property="creator"/>
+        <result column="updater" property="updater"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted" property="deleted"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lazycece.zsagent.infra.dal.po.AgentConversationPO"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO agent_conversation
+            (conversation_id, user_id, title, status, creator, updater, create_time, update_time, deleted)
+        VALUES
+            (#{conversationId}, #{userId}, #{title}, #{status}, #{creator}, #{updater},
+             #{createTime}, #{updateTime}, #{deleted})
+    </insert>
+
+    <select id="selectByUserIdAndConversationId" resultMap="BaseResultMap">
+        SELECT id, conversation_id, user_id, title, status, creator, updater,
+               create_time, update_time, deleted
+        FROM agent_conversation
+        WHERE user_id = #{param1} AND conversation_id = #{param2} AND deleted = 0
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT id, conversation_id, user_id, title, status, creator, updater,
+               create_time, update_time, deleted
+        FROM agent_conversation
+        WHERE user_id = #{param1} AND deleted = 0
+        ORDER BY update_time DESC
+        LIMIT #{param2}, #{param3}
+    </select>
+
+    <select id="countByUserId" resultType="long">
+        SELECT COUNT(*)
+        FROM agent_conversation
+        WHERE user_id = #{param1} AND deleted = 0
+    </select>
+
+    <update id="update" parameterType="com.lazycece.zsagent.infra.dal.po.AgentConversationPO">
+        UPDATE agent_conversation
+        SET title       = #{title},
+            status      = #{status},
+            updater     = #{updater},
+            update_time = #{updateTime}
+        WHERE conversation_id = #{conversationId} AND deleted = 0
+    </update>
+
+</mapper>

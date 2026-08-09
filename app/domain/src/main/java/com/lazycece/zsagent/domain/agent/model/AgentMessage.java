@@ -6,6 +6,7 @@ import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
 import com.lazycece.zsagent.domain.agent.enums.MessageRole;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * @author lazycece
  */
 @Getter
+@Setter
 @DomainEntity
 public class AgentMessage extends Entity<String> {
 

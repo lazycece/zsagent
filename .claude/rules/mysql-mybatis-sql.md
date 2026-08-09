@@ -33,6 +33,10 @@ paths:
 
 ## MyBatis 映射规范
 
+### mapper
+- 裸参数需要用`@Param`标记，其`value`为实际参数名
+- 多个参数尽量用封装成dto对象
+
 ### 参数占位符
 - 所有用户输入必须用 `#{}`，**禁止 `${}`**（除非是动态表名/列名，且必须白名单校验）
 - 集合参数用 `<foreach collection="list" item="item" open="(" separator="," close=")">#{item}</foreach>`

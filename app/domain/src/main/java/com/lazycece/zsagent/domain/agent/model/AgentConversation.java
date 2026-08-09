@@ -9,6 +9,7 @@ import com.lazycece.zsagent.domain.agent.enums.MessageRole;
 import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import java.util.List;
  * @author lazycece
  */
 @Getter
+@Setter
 @DomainAggregate
 public class AgentConversation extends Aggregate<String> {
 
