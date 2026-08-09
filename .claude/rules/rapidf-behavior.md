@@ -125,9 +125,23 @@ JsonUtils.parseArray("json str", objectClass);
 JsonUtils.parseMap("json str", objectClass);
 ```
 ### 枚举
-- 根据枚举值映射枚举类用`EnumUtils.getEnum(enumClass,value)`，需要`value`对应方法为`getCode`;否则用`EnumUtils.getEnum(enumClass,enumValueMethod,value)`
-
+根据枚举值映射枚举类用`EnumUtils.getEnum(enumClass,value)`，需要`value`对应方法为`getCode`;否则用`EnumUtils.getEnum(enumClass,enumValueMethod,value)`
 ### uuid
-- 基础的UUID获取直接用`UUIDUtils.uuid()`
-
+基础的UUID获取直接用`UUIDUtils.uuid()`
+### 默认值控制
+针对空值的判断并且需要处理默认值的情况下，用`DefaultUtils`
+```java
+// 字符串为赋予默认值
+DefaultUtils.defaultValue("str","default");
+// 目标类型为null赋予默认值
+DefaultUtils.defaultValue(target,defaultV);
+// 数组为null赋予空List
+DefaultUtils.defaultArray(array);
+// list为null赋予空list
+DefaultUtils.defaultList(list);
+// map为null赋予空map
+DefaultUtils.defaultMap(map);
+// obj为null赋予defaultV，否则用function获取值
+DefaultUtils.defaultValueIfNullObj(obj,function,defaultV);
+```
 
