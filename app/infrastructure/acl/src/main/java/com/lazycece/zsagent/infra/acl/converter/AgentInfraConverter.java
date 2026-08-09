@@ -1,9 +1,8 @@
 package com.lazycece.zsagent.infra.acl.converter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
+import com.lazycece.rapidf.utils.DefaultUtils;
+import com.lazycece.rapidf.utils.EnumUtils;
+import com.lazycece.rapidf.utils.json.JsonUtils;
 import com.lazycece.zsagent.domain.agent.enums.ConversationStatus;
 import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
 import com.lazycece.zsagent.domain.agent.enums.MessageRole;
@@ -12,8 +11,7 @@ import com.lazycece.zsagent.domain.agent.model.AgentMessage;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import com.lazycece.zsagent.infra.dal.po.AgentConversationPO;
 import com.lazycece.zsagent.infra.dal.po.AgentMessagePO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -26,10 +24,8 @@ import java.util.stream.Collectors;
  */
 public final class AgentInfraConverter {
 
-    private static final Logger log = LoggerFactory.getLogger(AgentInfraConverter.class);
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
+    private AgentInfraConverter() {
+    }
 
     // ======================== Conversation: 领域 → PO ========================
 
@@ -60,19 +56,15 @@ public final class AgentInfraConverter {
         conversation.setConversationId(po.getConversationId());
         conversation.setUserId(po.getUserId());
         conversation.setTitle(po.getTitle());
-        conversation.setStatus(enumByCode(ConversationStatus.values(), po.getStatus()));
+        conversation.setStatus(EnumUtils.getEnum(ConversationStatus.class, po.getStatus()));
         conversation.setCreator(po.getCreator());
         conversation.setUpdater(po.getUpdater());
         conversation.setCreateTime(po.getCreateTime());
         conversation.setUpdateTime(po.getUpdateTime());
-        conversation.setDeleted(po.getDeleted() != null ? po.getDeleted() : false);
-        if (messagePOs != null) {
-            conversation.setMessages(messagePOs.stream()
-                    .map(AgentInfraConverter::toMessage)
-                    .collect(Collectors.toList()));
-        } else {
-            conversation.setMessages(Collections.emptyList());
-        }
+        conversation.setDeleted(DefaultUtils.defaultValue(po.getDeleted(), false));
+        conversation.setMessages(DefaultUtils.defaultList(messagePOs).stream()
+                .map(AgentInfraConverter::toMessage)
+                .collect(Collectors.toList()));
         return conversation;
     }
 
@@ -109,57 +101,33 @@ public final class AgentInfraConverter {
         AgentMessage message = new AgentMessage();
         message.setMessageId(po.getMessageId());
         message.setConversationId(po.getConversationId());
-        message.setRole(enumByCode(MessageRole.values(), po.getRole()));
+        message.setRole(EnumUtils.getEnum(MessageRole.class, po.getRole()));
         message.setContent(po.getContent());
         message.setSources(parseSources(po.getSources()));
-        message.setFeedback(enumByCode(FeedbackType.values(), po.getFeedback()));
+        message.setFeedback(EnumUtils.getEnum(FeedbackType.class, po.getFeedback()));
         message.setFeedbackReason(po.getFeedbackReason());
         message.setCreator(po.getCreator());
         message.setUpdater(po.getUpdater());
         message.setCreateTime(po.getCreateTime());
         message.setUpdateTime(po.getUpdateTime());
-        message.setDeleted(po.getDeleted() != null ? po.getDeleted() : false);
+        message.setDeleted(DefaultUtils.defaultValue(po.getDeleted(), false));
         return message;
     }
 
     // ======================== Sources JSON ========================
 
     private static String toSourcesJson(List<SourceReference> sources) {
-        if (sources == null || sources.isEmpty()) {
+        List<SourceReference> safeSources = DefaultUtils.defaultList(sources);
+        if (safeSources.isEmpty()) {
             return null;
         }
-        try {
-            return objectMapper.writeValueAsString(sources);
-        } catch (JsonProcessingException e) {
-            log.error("序列化 sources 失败", e);
-            throw ExceptionFactory.serverException("序列化 sources 失败");
-        }
+        return JsonUtils.toJSONString(safeSources);
     }
 
     private static List<SourceReference> parseSources(String sourcesJson) {
-        if (sourcesJson == null || sourcesJson.isBlank()) {
-            return Collections.emptyList();
+        if (StringUtils.isNotBlank(sourcesJson)) {
+            return JsonUtils.parseArray(sourcesJson, SourceReference.class);
         }
-        try {
-            return objectMapper.readValue(sourcesJson, new TypeReference<>() {});
-        } catch (JsonProcessingException e) {
-            log.error("反序列化 sources 失败: {}", sourcesJson, e);
-            return Collections.emptyList();
-        }
-    }
-
-    // ======================== Enum 转换 ========================
-
-    private static <T extends com.lazycece.rapidf.domain.model.BaseEnum<String>> T enumByCode(
-            T[] values, String code) {
-        if (code == null) {
-            return null;
-        }
-        for (T v : values) {
-            if (v.getCode().equals(code)) {
-                return v;
-            }
-        }
-        return null;
+        return Collections.emptyList();
     }
 }
