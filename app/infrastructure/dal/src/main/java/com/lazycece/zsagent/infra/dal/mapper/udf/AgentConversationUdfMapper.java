@@ -2,6 +2,7 @@ package com.lazycece.zsagent.infra.dal.mapper.udf;
 
 import com.lazycece.zsagent.infra.dal.po.AgentConversationPO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -21,17 +22,22 @@ public interface AgentConversationUdfMapper {
     /**
      * 按 userId + conversationId 查询单条记录。
      */
-    AgentConversationPO selectByUserIdAndConversationId(String userId, String conversationId);
+    AgentConversationPO selectByUserIdAndConversationId(
+            @Param("userId") String userId,
+            @Param("conversationId") String conversationId);
 
     /**
      * 按 userId 分页查询，不含消息列表。
      */
-    List<AgentConversationPO> selectByUserId(String userId, int offset, int size);
+    List<AgentConversationPO> selectByUserId(
+            @Param("userId") String userId,
+            @Param("offset") int offset,
+            @Param("size") int size);
 
     /**
      * 按 userId 统计对话总数。
      */
-    long countByUserId(String userId);
+    long countByUserId(@Param("userId") String userId);
 
     /**
      * 更新对话。
