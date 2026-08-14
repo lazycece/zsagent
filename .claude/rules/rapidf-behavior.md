@@ -66,7 +66,8 @@ ExceptionFactory.businessException("message");
 
 ## Assert 断言
 方法入参校验用断言`Assert`模式，原定义在`rapidf-restful`组件中:
-> 携带指定的 `Status` + 格式化消息；消息格式使用 `{}` 占位符（SLF4J 风格）
+- 携带指定的 `Status` + 格式化消息；消息格式使用 `{}` 占位符（SLF4J 风格）
+- 字符串空值检查不能用`Assert.notNull`，而是用`Assert.notBlank`
 
 参考案例如下：
 ```java
