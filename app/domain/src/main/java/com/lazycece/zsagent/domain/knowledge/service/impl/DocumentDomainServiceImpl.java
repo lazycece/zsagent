@@ -45,7 +45,7 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Document document = Document.create(command);
         DocumentVersion version = document.createNewVersion(
-                command.filePath(), command.fileSize(), "初始版本");
+                command.getFilePath(), command.getFileSize(), "初始版本");
         documentRepository.save(document);
         versionRepository.save(List.of(version));
         return document.getDocumentId();
@@ -57,12 +57,12 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public void updateMetadata(UpdateDocumentMetadataCommand command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
-        Document document = documentRepository.findById(command.documentId());
+        Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        document.setUpdater(command.userId());
+        document.setUpdater(command.getUserId());
         document.setUpdateTime(LocalDateTime.now());
-        document.updateMetadata(command.title(), command.summary(), command.directoryId(),
-                command.tags(), command.visibility(), command.visibleTo());
+        document.updateMetadata(command.getTitle(), command.getSummary(), command.getDirectoryId(),
+                command.getTags(), command.getVisibility(), command.getVisibleTo());
         documentRepository.update(document);
     }
 
@@ -72,13 +72,13 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public DocumentVersion updateContent(UpdateDocumentContentCommand command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
-        Document document = documentRepository.findById(command.documentId());
+        Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        document.setUpdater(command.userId());
+        document.setUpdater(command.getUserId());
         document.setUpdateTime(LocalDateTime.now());
         document.updateEtlStatus(EtlStatus.PENDING);
         DocumentVersion version = document.createNewVersion(
-                command.filePath(), command.fileSize(), command.changeLog());
+                command.getFilePath(), command.getFileSize(), command.getChangeLog());
         documentRepository.update(document);
         versionRepository.save(List.of(version));
         return version;
@@ -89,6 +89,8 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
      */
     @Override
     public void delete(String userId, String documentId) {
+        Assert.notBlank(userId, RespStatus.PARAM_ERROR, "userId 不能为空");
+        Assert.notBlank(documentId, RespStatus.PARAM_ERROR, "documentId 不能为空");
         Document document = documentRepository.findById(documentId);
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
         document.setUpdater(userId);
@@ -102,6 +104,8 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
      */
     @Override
     public void restore(String userId, String documentId) {
+        Assert.notBlank(userId, RespStatus.PARAM_ERROR, "userId 不能为空");
+        Assert.notBlank(documentId, RespStatus.PARAM_ERROR, "documentId 不能为空");
         Document document = documentRepository.findById(documentId);
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
         document.setUpdater(userId);
@@ -116,11 +120,11 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public DocumentVersion rollback(RollbackDocumentCommand command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
-        DocumentVersion targetVersion = versionRepository.findByVersionId(command.targetVersionId());
+        DocumentVersion targetVersion = versionRepository.findByVersionId(command.getTargetVersionId());
         Assert.notNull(targetVersion, RespStatus.PARAM_ERROR, "版本不存在");
-        Document document = documentRepository.findById(command.documentId());
+        Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        document.setUpdater(command.userId());
+        document.setUpdater(command.getUserId());
         document.setUpdateTime(LocalDateTime.now());
         document.updateEtlStatus(EtlStatus.PENDING);
         DocumentVersion newVersion = document.createNewVersion(
@@ -137,12 +141,12 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public void updateEtlStatus(UpdateEtlStatusCommand command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
-        Document document = documentRepository.findById(command.documentId());
+        Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        if (command.status() == EtlStatus.FAILED) {
-            document.markEtlFailed(command.errorMessage());
+        if (command.getStatus() == EtlStatus.FAILED) {
+            document.markEtlFailed(command.getErrorMessage());
         } else {
-            document.updateEtlStatus(command.status());
+            document.updateEtlStatus(command.getStatus());
             document.setEtlErrorMessage(null);
         }
         documentRepository.update(document);
@@ -153,6 +157,7 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
      */
     @Override
     public void publish(String documentId) {
+        Assert.notBlank(documentId, RespStatus.PARAM_ERROR, "documentId 不能为空");
         Document document = documentRepository.findById(documentId);
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
         document.publish();

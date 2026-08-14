@@ -1,20 +1,22 @@
 package com.lazycece.zsagent.domain.knowledge.valueobject;
 
-import com.lazycece.rapidf.domain.anotation.ValueObject;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * 更新 ETL 状态命令（值对象）
+ * 更新 ETL 状态命令
  *
  * @author lazycece
  */
-@ValueObject
-public record UpdateEtlStatusCommand(
-        /** 文档ID */
-        String documentId,
-        /** ETL 状态 */
-        EtlStatus status,
-        /** 错误信息（仅 FAILED 时有值） */
-        String errorMessage
-) {
+@Getter
+@Setter
+public class UpdateEtlStatusCommand {
+
+    /** 文档ID */
+    private String documentId;
+    /** ETL 状态 */
+    private EtlStatus status;
+    /** 错误信息（仅 FAILED 时有值） */
+    private String errorMessage;
 }

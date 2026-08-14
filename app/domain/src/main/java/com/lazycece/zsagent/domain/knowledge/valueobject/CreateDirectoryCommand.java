@@ -1,19 +1,21 @@
 package com.lazycece.zsagent.domain.knowledge.valueobject;
 
-import com.lazycece.rapidf.domain.anotation.ValueObject;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * 创建目录命令（值对象）
+ * 创建目录命令
  *
  * @author lazycece
  */
-@ValueObject
-public record CreateDirectoryCommand(
-        /** 操作主体标识 */
-        String userId,
-        /** 父目录ID（可空，根目录） */
-        String parentId,
-        /** 目录名称 */
-        String name
-) {
+@Getter
+@Setter
+public class CreateDirectoryCommand {
+
+    /** 操作主体标识 */
+    private String userId;
+    /** 父目录ID（可空，根目录） */
+    private String parentId;
+    /** 目录名称 */
+    private String name;
 }

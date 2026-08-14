@@ -73,18 +73,18 @@ public class Document extends Aggregate<String> {
     public static Document create(CreateDocumentCommand command) {
         Document document = new Document();
         document.documentId = UUIDUtils.uuid();
-        document.title = command.title();
-        document.format = command.format();
-        document.directoryId = command.directoryId();
-        document.tags = new ArrayList<>(DefaultUtils.defaultList(command.tags()));
-        document.visibility = command.visibility();
-        document.visibleTo = new ArrayList<>(DefaultUtils.defaultList(command.visibleTo()));
+        document.title = command.getTitle();
+        document.format = command.getFormat();
+        document.directoryId = command.getDirectoryId();
+        document.tags = new ArrayList<>(DefaultUtils.defaultList(command.getTags()));
+        document.visibility = command.getVisibility();
+        document.visibleTo = new ArrayList<>(DefaultUtils.defaultList(command.getVisibleTo()));
         document.status = DocumentStatus.DRAFT;
         document.etlStatus = EtlStatus.PENDING;
         document.currentVersion = 0;
         document.versions = new ArrayList<>();
-        document.setCreator(command.userId());
-        document.setUpdater(command.userId());
+        document.setCreator(command.getUserId());
+        document.setUpdater(command.getUserId());
         document.setCreateTime(LocalDateTime.now());
         document.setUpdateTime(LocalDateTime.now());
         document.setDeleted(false);

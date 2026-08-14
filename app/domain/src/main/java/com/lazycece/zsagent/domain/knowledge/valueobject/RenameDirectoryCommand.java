@@ -3,21 +3,19 @@ package com.lazycece.zsagent.domain.knowledge.valueobject;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
- * 单文档查询条件
+ * 重命名目录命令
  *
  * @author lazycece
  */
 @Getter
 @Setter
-public class DocumentQuery {
+public class RenameDirectoryCommand {
 
     /** 操作主体标识 */
     private String userId;
-    /** 用户所属部门列表 */
-    private List<String> userDepts;
-    /** 目标文档ID */
-    private String documentId;
+    /** 目录ID */
+    private String directoryId;
+    /** 新名称 */
+    private String newName;
 }

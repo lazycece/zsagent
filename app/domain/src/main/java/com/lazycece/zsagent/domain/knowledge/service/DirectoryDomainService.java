@@ -1,6 +1,8 @@
 package com.lazycece.zsagent.domain.knowledge.service;
 
 import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDirectoryCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.MoveDirectoryCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.RenameDirectoryCommand;
 
 /**
  * 目录领域服务接口
@@ -20,20 +22,16 @@ public interface DirectoryDomainService {
     /**
      * 重命名目录。
      *
-     * @param userId      操作者
-     * @param directoryId 目录ID
-     * @param newName     新名称
+     * @param command 重命名目录命令
      */
-    void rename(String userId, String directoryId, String newName);
+    void rename(RenameDirectoryCommand command);
 
     /**
      * 移动目录（改变父级）。
      *
-     * @param userId      操作者
-     * @param directoryId 目录ID
-     * @param newParentId 新父目录ID
+     * @param command 移动目录命令
      */
-    void moveTo(String userId, String directoryId, String newParentId);
+    void moveTo(MoveDirectoryCommand command);
 
     /**
      * 删除目录（需先检查无子目录、无关连文档）。

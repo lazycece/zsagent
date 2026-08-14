@@ -1,23 +1,25 @@
 package com.lazycece.zsagent.domain.knowledge.valueobject;
 
-import com.lazycece.rapidf.domain.anotation.ValueObject;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * 更新文档内容命令（值对象）
+ * 更新文档内容命令
  *
  * @author lazycece
  */
-@ValueObject
-public record UpdateDocumentContentCommand(
-        /** 操作主体标识 */
-        String userId,
-        /** 文档ID */
-        String documentId,
-        /** 新文件存储路径 */
-        String filePath,
-        /** 新文件大小（字节） */
-        Long fileSize,
-        /** 变更说明 */
-        String changeLog
-) {
+@Getter
+@Setter
+public class UpdateDocumentContentCommand {
+
+    /** 操作主体标识 */
+    private String userId;
+    /** 文档ID */
+    private String documentId;
+    /** 新文件存储路径 */
+    private String filePath;
+    /** 新文件大小（字节） */
+    private Long fileSize;
+    /** 变更说明 */
+    private String changeLog;
 }

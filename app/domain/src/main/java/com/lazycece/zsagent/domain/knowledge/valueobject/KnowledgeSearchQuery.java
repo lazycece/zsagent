@@ -1,23 +1,25 @@
 package com.lazycece.zsagent.domain.knowledge.valueobject;
 
-import com.lazycece.rapidf.domain.anotation.ValueObject;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 /**
- * 知识块权限检索条件（值对象）
+ * 知识块权限检索条件
  *
  * @author lazycece
  */
-@ValueObject
-public record KnowledgeSearchQuery(
-        /** 查询文本 */
-        String query,
-        /** 返回数量上限 */
-        int topK,
-        /** 当前用户 ID */
-        String userId,
-        /** 当前用户所属部门列表 */
-        List<String> userDepts
-) {
+@Getter
+@Setter
+public class KnowledgeSearchQuery {
+
+    /** 查询文本 */
+    private String query;
+    /** 返回数量上限 */
+    private int topK;
+    /** 当前用户 ID */
+    private String userId;
+    /** 当前用户所属部门列表 */
+    private List<String> userDepts;
 }

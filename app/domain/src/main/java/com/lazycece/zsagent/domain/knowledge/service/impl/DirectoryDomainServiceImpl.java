@@ -8,6 +8,8 @@ import com.lazycece.zsagent.domain.knowledge.repository.DirectoryRepository;
 import com.lazycece.zsagent.domain.knowledge.repository.DocumentRepository;
 import com.lazycece.zsagent.domain.knowledge.service.DirectoryDomainService;
 import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDirectoryCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.MoveDirectoryCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.RenameDirectoryCommand;
 
 import java.time.LocalDateTime;
 
@@ -34,9 +36,8 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
     @Override
     public String createDirectory(CreateDirectoryCommand command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
-        Assert.notNull(command.userId(), RespStatus.PARAM_ERROR, "userId 不能为 null");
-        Assert.notNull(command.name(), RespStatus.PARAM_ERROR, "name 不能为 null");
-        Directory directory = Directory.create(command.userId(), command.parentId(), command.name());
+        Assert.notBlank(command.getName(), RespStatus.PARAM_ERROR, "name 不能为空");
+        Directory directory = Directory.create(command.getUserId(), command.getParentId(), command.getName());
         directoryRepository.save(directory);
         return directory.getDirectoryId();
     }
@@ -45,13 +46,14 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      * 重命名目录。
      */
     @Override
-    public void rename(String userId, String directoryId, String newName) {
-        Directory directory = directoryRepository.findByDirectoryId(directoryId);
+    public void rename(RenameDirectoryCommand command) {
+        Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        Assert.notBlank(command.getNewName(), RespStatus.PARAM_ERROR, "newName 不能为空");
+        Directory directory = directoryRepository.findByDirectoryId(command.getDirectoryId());
         Assert.notNull(directory, RespStatus.PARAM_ERROR, "目录不存在");
-        Assert.notNull(newName, RespStatus.PARAM_ERROR, "newName 不能为 null");
-        directory.setUpdater(userId);
+        directory.setUpdater(command.getUserId());
         directory.setUpdateTime(LocalDateTime.now());
-        directory.rename(newName);
+        directory.rename(command.getNewName());
         directoryRepository.update(directory);
     }
 
@@ -59,12 +61,13 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      * 移动目录。
      */
     @Override
-    public void moveTo(String userId, String directoryId, String newParentId) {
-        Directory directory = directoryRepository.findByDirectoryId(directoryId);
+    public void moveTo(MoveDirectoryCommand command) {
+        Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        Directory directory = directoryRepository.findByDirectoryId(command.getDirectoryId());
         Assert.notNull(directory, RespStatus.PARAM_ERROR, "目录不存在");
-        directory.setUpdater(userId);
+        directory.setUpdater(command.getUserId());
         directory.setUpdateTime(LocalDateTime.now());
-        directory.moveTo(newParentId);
+        directory.moveTo(command.getNewParentId());
         directoryRepository.update(directory);
     }
 
@@ -73,6 +76,8 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      */
     @Override
     public void delete(String userId, String directoryId) {
+        Assert.notBlank(userId, RespStatus.PARAM_ERROR, "userId 不能为空");
+        Assert.notBlank(directoryId, RespStatus.PARAM_ERROR, "directoryId 不能为空");
         Directory directory = directoryRepository.findByDirectoryId(directoryId);
         Assert.notNull(directory, RespStatus.PARAM_ERROR, "目录不存在");
         int childCount = directoryRepository.countByParentId(directoryId);
