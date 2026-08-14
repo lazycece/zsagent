@@ -17,13 +17,13 @@ paths:
 ## valueobject
 
 - 标记`@ValueObject`注解，引用自`rapidf-domain`组件
-- 用java的`record`实现
+- 除非特殊要求用`class`，否则一律用java的`record`实现
 
 ## service
 
 - 领域服务需要定义接口+实现类模式，实现类用`@DomainService`注解注入
 - 属于充血模型的范围，就不要放在领域服务内实现
-- 领域服务方法入参超过三个时需要封装成值对象
+- 领域服务方法入参超过三个时需要封装成`class`对象, 放在`valueobject`子包中
 
 ## factory
 
