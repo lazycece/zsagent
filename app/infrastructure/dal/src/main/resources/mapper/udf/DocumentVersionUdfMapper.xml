@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lazycece.zsagent.infra.dal.mapper.udf.DocumentVersionUdfMapper">
+
+    <sql id="Base_Column_List">
+        `id`, `version_id`, `document_id`, `version_number`, `file_path`, `file_size`,
+        `change_log`, `creator`, `updater`, `create_time`, `update_time`, `deleted`
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.lazycece.zsagent.infra.dal.po.DocumentVersionPO"
+               autoMapping="true">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insertBatch" parameterType="list">
+        insert into `agent_document_version`
+            (`version_id`, `document_id`, `version_number`, `file_path`, `file_size`,
+             `change_log`, `creator`, `updater`, `create_time`, `update_time`, `deleted`)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.versionId}, #{item.documentId}, #{item.versionNumber}, #{item.filePath}, #{item.fileSize},
+             #{item.changeLog}, #{item.creator}, #{item.updater}, #{item.createTime}, #{item.updateTime}, #{item.deleted})
+        </foreach>
+    </insert>
+
+    <select id="selectByDocumentId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_document_version`
+        where `document_id` = #{documentId}
+          and `deleted` = 0
+        order by `version_number` desc
+    </select>
+
+    <select id="selectByVersionId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_document_version`
+        where `version_id` = #{versionId}
+          and `deleted` = 0
+    </select>
+
+</mapper>
