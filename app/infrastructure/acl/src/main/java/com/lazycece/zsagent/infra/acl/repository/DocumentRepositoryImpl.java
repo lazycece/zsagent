@@ -38,7 +38,7 @@ public class DocumentRepositoryImpl implements DocumentRepository {
 
     @Override
     public Document findByDocumentId(DocumentQuery query) {
-        DocumentQueryDTO dto = buildQueryDTO(query.getUserId(), query.getUserDepts(),
+        DocumentQueryDTO dto = DocumentQueryDTO.build(query.getUserId(), query.getUserDepts(),
                 query.getDocumentId(), null, null, null);
         DocumentPO po = documentMapper.selectByDocumentId(dto);
         return DocumentInfraConverter.toDocument(po);
@@ -52,7 +52,7 @@ public class DocumentRepositoryImpl implements DocumentRepository {
 
     @Override
     public List<Document> findByUserId(DocumentListQuery query, Pagination pagination) {
-        DocumentQueryDTO dto = buildQueryDTO(query.getUserId(), query.getUserDepts(),
+        DocumentQueryDTO dto = DocumentQueryDTO.build(query.getUserId(), query.getUserDepts(),
                 null, query.getDirectoryId(),
                 query.getStatus() != null ? query.getStatus().getCode() : null,
                 query.getKeyword());
@@ -68,7 +68,7 @@ public class DocumentRepositoryImpl implements DocumentRepository {
 
     @Override
     public int countByUserId(DocumentCountQuery query) {
-        DocumentQueryDTO dto = buildQueryDTO(query.getUserId(), query.getUserDepts(),
+        DocumentQueryDTO dto = DocumentQueryDTO.build(query.getUserId(), query.getUserDepts(),
                 null, query.getDirectoryId(),
                 query.getStatus() != null ? query.getStatus().getCode() : null,
                 query.getKeyword());
@@ -84,20 +84,5 @@ public class DocumentRepositoryImpl implements DocumentRepository {
     @Override
     public int countByDirectoryId(String directoryId) {
         return documentMapper.countByDirectoryId(directoryId);
-    }
-
-    /**
-     * 构建数据库访问层查询 DTO。
-     */
-    private DocumentQueryDTO buildQueryDTO(String userId, List<String> userDepts, String documentId,
-                                           String directoryId, String status, String keyword) {
-        DocumentQueryDTO dto = new DocumentQueryDTO();
-        dto.setUserId(userId);
-        dto.setUserDepts(userDepts);
-        dto.setDocumentId(documentId);
-        dto.setDirectoryId(directoryId);
-        dto.setStatus(status);
-        dto.setKeyword(keyword);
-        return dto;
     }
 }
