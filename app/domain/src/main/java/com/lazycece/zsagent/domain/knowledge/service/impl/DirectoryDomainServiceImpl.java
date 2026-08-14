@@ -45,12 +45,13 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      * 重命名目录。
      */
     @Override
-    public void rename(String directoryId, String newName) {
+    public void rename(String userId, String directoryId, String newName) {
         Directory directory = directoryRepository.findByDirectoryId(directoryId);
         Assert.notNull(directory, RespStatus.PARAM_ERROR, "目录不存在");
         Assert.notNull(newName, RespStatus.PARAM_ERROR, "newName 不能为 null");
-        directory.rename(newName);
+        directory.setUpdater(userId);
         directory.setUpdateTime(LocalDateTime.now());
+        directory.rename(newName);
         directoryRepository.update(directory);
     }
 
@@ -58,11 +59,12 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      * 移动目录。
      */
     @Override
-    public void moveTo(String directoryId, String newParentId) {
+    public void moveTo(String userId, String directoryId, String newParentId) {
         Directory directory = directoryRepository.findByDirectoryId(directoryId);
         Assert.notNull(directory, RespStatus.PARAM_ERROR, "目录不存在");
-        directory.moveTo(newParentId);
+        directory.setUpdater(userId);
         directory.setUpdateTime(LocalDateTime.now());
+        directory.moveTo(newParentId);
         directoryRepository.update(directory);
     }
 
@@ -70,13 +72,16 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      * 删除目录（需先检查无子目录、无关连文档）。
      */
     @Override
-    public void delete(String directoryId) {
+    public void delete(String userId, String directoryId) {
         Directory directory = directoryRepository.findByDirectoryId(directoryId);
         Assert.notNull(directory, RespStatus.PARAM_ERROR, "目录不存在");
         int childCount = directoryRepository.countByParentId(directoryId);
         Assert.isTrue(childCount == 0, RespStatus.FAIL, "目录下存在子目录，无法删除");
         int documentCount = documentRepository.countByDirectoryId(directoryId);
         Assert.isTrue(documentCount == 0, RespStatus.FAIL, "目录下存在文档，无法删除");
-        directoryRepository.delete(directoryId);
+        directory.setUpdater(userId);
+        directory.setUpdateTime(LocalDateTime.now());
+        directory.setDeleted(true);
+        directoryRepository.update(directory);
     }
 }

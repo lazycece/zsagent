@@ -49,13 +49,6 @@ public interface DirectoryRepository {
     void update(Directory directory);
 
     /**
-     * 删除目录（软删除）。
-     *
-     * @param directoryId 目录ID
-     */
-    void delete(String directoryId);
-
-    /**
      * 统计子目录数。
      *
      * @param parentId 父目录ID
