@@ -17,7 +17,7 @@ paths:
 ## valueobject
 
 - 标记`@ValueObject`注解，引用自`rapidf-domain`组件
-- 除非特殊要求用`class`，否则一律用java的`record`实现
+- 用java的`record`实现
 
 ## service
 
