@@ -79,7 +79,7 @@ public final class AgentInfraConverter {
         po.setConversationId(message.getConversationId());
         po.setRole(message.getRole() != null ? message.getRole().getCode() : null);
         po.setContent(message.getContent());
-        po.setSources(toSourcesJson(message.getSources()));
+        po.setSources(JsonUtils.toJSONString(message.getSources()));
         if (message.getFeedback() != null) {
             po.setFeedback(message.getFeedback().getCode());
         }
@@ -103,7 +103,7 @@ public final class AgentInfraConverter {
         message.setConversationId(po.getConversationId());
         message.setRole(EnumUtils.getEnum(MessageRole.class, po.getRole()));
         message.setContent(po.getContent());
-        message.setSources(parseSources(po.getSources()));
+        message.setSources(JsonUtils.parseArray(po.getSources(), SourceReference.class));
         message.setFeedback(EnumUtils.getEnum(FeedbackType.class, po.getFeedback()));
         message.setFeedbackReason(po.getFeedbackReason());
         message.setCreator(po.getCreator());
@@ -112,22 +112,5 @@ public final class AgentInfraConverter {
         message.setUpdateTime(po.getUpdateTime());
         message.setDeleted(DefaultUtils.defaultValue(po.getDeleted(), false));
         return message;
-    }
-
-    // ======================== Sources JSON ========================
-
-    private static String toSourcesJson(List<SourceReference> sources) {
-        List<SourceReference> safeSources = DefaultUtils.defaultList(sources);
-        if (safeSources.isEmpty()) {
-            return null;
-        }
-        return JsonUtils.toJSONString(safeSources);
-    }
-
-    private static List<SourceReference> parseSources(String sourcesJson) {
-        if (StringUtils.isNotBlank(sourcesJson)) {
-            return JsonUtils.parseArray(sourcesJson, SourceReference.class);
-        }
-        return Collections.emptyList();
     }
 }
