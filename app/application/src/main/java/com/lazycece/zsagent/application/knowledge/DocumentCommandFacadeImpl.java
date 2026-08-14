@@ -96,7 +96,9 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
         command.setSummary(request.getSummary());
         command.setDirectoryId(request.getDirectoryId());
         command.setTags(request.getTags());
-        command.setVisibility(EnumUtils.getEnum(Visibility.class, request.getVisibility()));
+        command.setVisibility(StringUtils.isNotBlank(request.getVisibility())
+                ? EnumUtils.getEnum(Visibility.class, request.getVisibility())
+                : null);
         command.setVisibleTo(request.getVisibleTo());
         documentService.updateMetadata(command);
         return RespData.success(new DocumentUpdateMetadataResult());

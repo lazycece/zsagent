@@ -11,6 +11,7 @@ import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
 import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDocumentCommand;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -148,12 +149,24 @@ public class Document extends Aggregate<String> {
      */
     public void updateMetadata(String title, String summary, String directoryId,
                                List<String> tags, Visibility visibility, List<String> visibleTo) {
-        this.title = title;
-        this.summary = summary;
-        this.directoryId = directoryId;
-        this.tags = new ArrayList<>(DefaultUtils.defaultList(tags));
-        this.visibility = visibility;
-        this.visibleTo = new ArrayList<>(DefaultUtils.defaultList(visibleTo));
+        if (StringUtils.isNotBlank(title)) {
+            this.title = title;
+        }
+        if (summary != null) {
+            this.summary = summary;
+        }
+        if (directoryId != null) {
+            this.directoryId = directoryId;
+        }
+        if (tags != null) {
+            this.tags = new ArrayList<>(tags);
+        }
+        if (visibility != null) {
+            this.visibility = visibility;
+        }
+        if (visibleTo != null) {
+            this.visibleTo = new ArrayList<>(visibleTo);
+        }
     }
 
     /**
