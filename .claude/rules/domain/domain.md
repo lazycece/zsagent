@@ -23,14 +23,14 @@ paths:
 
 - 领域服务需要定义接口+实现类模式，实现类用`@DomainService`注解注入
 - 属于充血模型的范围，就不要放在领域服务内实现
-- 领域服务方法入参超过三个时需要封装成`class`对象, 放在`valueobject`子包中
+- 领域服务方法入参超过两个时需要封装成`class`对象, 放在`valueobject`子包中
 
 ## factory
 
 - `factory`用 `@DomainFactory`标记
 
 ## repository
-- 仓储方法入参超过三个时需要封装成值对象
+- 仓储方法入参超过两个时需要封装成`class`对象, 放在`valueobject`子包中
 
 
 
