@@ -1,8 +1,16 @@
+zsagent:
+  storage:
+    local-file-base-dir: ${ZSAGENT_STORAGE_DIR:./storage/files/}
+
 spring:
   application:
     name: ${app.name}
   profiles:
     active: ${profile:dev}
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
