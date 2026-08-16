@@ -19,6 +19,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import reactor.core.publisher.Flux;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -67,6 +68,8 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
         return chatClientBuilder.build().prompt()
                 .advisors(ragAdvisor, memoryAdvisor)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+                .advisors(a -> a.param("user_id", userId))
+                .advisors(a -> a.param("user_depts", getUserDepts()))
                 .user(question)
                 .stream()
                 .content()
@@ -92,5 +95,13 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
         conversationDomainService.recordFeedback(
                 AgentAssembler.toFeedbackRecord(request));
         return RespData.success(new FeedbackResult());
+    }
+
+    /**
+     * 获取当前用户的所属部门列表。
+     * TODO: 接入用户服务获取真实部门，当前 stub 返回空列表。
+     */
+    private List<String> getUserDepts() {
+        return Collections.emptyList();
     }
 }

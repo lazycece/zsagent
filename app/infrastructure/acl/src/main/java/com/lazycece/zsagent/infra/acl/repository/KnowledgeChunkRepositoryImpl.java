@@ -77,6 +77,18 @@ public class KnowledgeChunkRepositoryImpl implements KnowledgeChunkRepository {
         if (chunk.getEmbedding() != null) {
             metadata.put("embedding", chunk.getEmbedding());
         }
+        if (chunk.getTags() != null) {
+            metadata.put("tags", chunk.getTags());
+        }
+        if (chunk.getPermissionType() != null) {
+            metadata.put("permission_type", chunk.getPermissionType());
+        }
+        if (chunk.getPermissionDepts() != null) {
+            metadata.put("permission_depts", chunk.getPermissionDepts());
+        }
+        if (chunk.getPermissionUsers() != null) {
+            metadata.put("permission_users", chunk.getPermissionUsers());
+        }
         return Document.builder()
                 .id(chunk.getChunkId())
                 .text(chunk.getContent())
