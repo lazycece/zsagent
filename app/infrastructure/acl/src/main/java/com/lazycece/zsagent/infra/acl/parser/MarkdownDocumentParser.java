@@ -12,9 +12,8 @@ import org.commonmark.renderer.text.TextContentRenderer;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +29,8 @@ public class MarkdownDocumentParser implements DocumentParser {
     private static final TextContentRenderer TEXT_RENDERER = TextContentRenderer.builder().build();
 
     @Override
-    public ParsedDocument parse(String filePath) throws IOException {
-        String markdown = Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
+    public ParsedDocument parse(InputStream inputStream) throws IOException {
+        String markdown = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         Node document = PARSER.parse(markdown);
         String fullText = TEXT_RENDERER.render(document);
         List<Section> sections = buildSections(document);

@@ -4,6 +4,7 @@ import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 文档解析器接口（领域 SPI）。
@@ -15,12 +16,13 @@ public interface DocumentParser {
 
     /**
      * 解析文档，提取结构化内容。
+     * 解析器不负责关闭输入流，由调用方管理其生命周期。
      *
-     * @param filePath 文件存储路径（通过 FileStorage 读取）
+     * @param inputStream 文档内容输入流
      * @return 结构化文档内容
      * @throws IOException IO 异常
      */
-    ParsedDocument parse(String filePath) throws IOException;
+    ParsedDocument parse(InputStream inputStream) throws IOException;
 
     /**
      * 支持的文档格式。

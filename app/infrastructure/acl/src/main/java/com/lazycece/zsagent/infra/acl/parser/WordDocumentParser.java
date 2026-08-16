@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,9 +24,8 @@ import java.util.List;
 public class WordDocumentParser implements DocumentParser {
 
     @Override
-    public ParsedDocument parse(String filePath) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(Path.of(filePath));
-             XWPFDocument doc = new XWPFDocument(inputStream)) {
+    public ParsedDocument parse(InputStream inputStream) throws IOException {
+        try (XWPFDocument doc = new XWPFDocument(inputStream)) {
             StringBuilder fullText = new StringBuilder();
             List<Section> sections = new ArrayList<>();
             int charOffset = 0;

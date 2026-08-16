@@ -5,6 +5,7 @@ import com.lazycece.rapidf.domain.model.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +32,14 @@ public class KnowledgeChunk extends Entity<String> {
     private Float score;
     /** 扩展元数据（页码、章节等） */
     private Map<String, Object> metadata;
+    /** 文档标签（继承自 Document.tags） */
+    private List<String> tags;
+    /** 可见类型：public / department / specific */
+    private String permissionType;
+    /** 可见部门 ID 列表 */
+    private List<String> permissionDepts;
+    /** 可见用户 ID 列表 */
+    private List<String> permissionUsers;
 
     @Override
     public String getId() {

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.Filter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,16 @@ public class KnowledgeChunkRepositoryImpl implements KnowledgeChunkRepository {
                 .collect(Collectors.toList());
         vectorStore.add(documents);
         log.info("批量索引知识块: 数量={}", chunks.size());
+    }
+
+    @Override
+    public void deleteByDocumentId(String documentId) {
+        Filter.Expression filter = new Filter.Expression(
+                Filter.ExpressionType.EQ,
+                new Filter.Key("document_id"),
+                new Filter.Value(documentId));
+        vectorStore.delete(filter);
+        log.info("按文档删除知识块: documentId={}", documentId);
     }
 
     /**

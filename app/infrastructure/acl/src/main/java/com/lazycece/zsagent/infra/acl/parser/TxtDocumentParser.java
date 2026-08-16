@@ -7,9 +7,8 @@ import com.lazycece.zsagent.domain.knowledge.valueobject.Section;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +21,8 @@ import java.util.List;
 public class TxtDocumentParser implements DocumentParser {
 
     @Override
-    public ParsedDocument parse(String filePath) throws IOException {
-        String fullText = Files.readString(Path.of(filePath), StandardCharsets.UTF_8);
+    public ParsedDocument parse(InputStream inputStream) throws IOException {
+        String fullText = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         List<Section> sections = new ArrayList<>();
         sections.add(new Section(0, "", fullText, 0, 0));
         return new ParsedDocument(ParserSupport.extractTitle(fullText), fullText, sections);

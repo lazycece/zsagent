@@ -26,4 +26,11 @@ public interface KnowledgeChunkRepository {
      * @param chunks 待索引的知识块列表
      */
     void index(List<KnowledgeChunk> chunks);
+
+    /**
+     * 按文档 ID 批量删除知识块（文档更新或删除时调用）。
+     *
+     * @param documentId 文档ID
+     */
+    void deleteByDocumentId(String documentId);
 }

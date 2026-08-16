@@ -10,8 +10,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +24,8 @@ import java.util.List;
 public class HtmlDocumentParser implements DocumentParser {
 
     @Override
-    public ParsedDocument parse(String filePath) throws IOException {
-        Document htmlDoc = Jsoup.parse(new File(filePath), "UTF-8");
+    public ParsedDocument parse(InputStream inputStream) throws IOException {
+        Document htmlDoc = Jsoup.parse(inputStream, "UTF-8", "");
         htmlDoc.select("script, style, nav, footer, header").remove();
 
         String bodyText = htmlDoc.body() != null ? htmlDoc.body().text() : htmlDoc.text();

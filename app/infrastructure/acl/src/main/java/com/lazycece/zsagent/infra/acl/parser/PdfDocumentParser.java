@@ -9,8 +9,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +23,8 @@ import java.util.List;
 public class PdfDocumentParser implements DocumentParser {
 
     @Override
-    public ParsedDocument parse(String filePath) throws IOException {
-        try (PDDocument pdfDoc = Loader.loadPDF(new File(filePath))) {
+    public ParsedDocument parse(InputStream inputStream) throws IOException {
+        try (PDDocument pdfDoc = Loader.loadPDF(inputStream.readAllBytes())) {
             StringBuilder fullText = new StringBuilder();
             List<Section> sections = new ArrayList<>();
             PDFTextStripper stripper = new PDFTextStripper();
