@@ -1,0 +1,99 @@
+### upload
+POST {{httpUrl}}/api/v1/document/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="test.md"
+Content-Type: text/markdown
+
+# 产品手册
+## 概述
+这是产品手册的概述内容。
+## 安装
+安装步骤如下：
+1. 下载安装包
+2. 解压
+3. 运行安装程序
+
+--WebAppBoundary
+Content-Disposition: form-data; name="userId"
+
+user_123
+
+--WebAppBoundary
+Content-Disposition: form-data; name="visibility"
+
+public
+
+--WebAppBoundary
+Content-Disposition: form-data; name="tags"
+
+产品,手册
+
+--WebAppBoundary--
+
+### updateMetadata
+POST {{httpUrl}}/api/v1/document/update-metadata
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "your-document-id",
+  "title": "产品手册 V2"
+}
+
+### updateContent
+POST {{httpUrl}}/api/v1/document/update-content
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="test-v2.md"
+Content-Type: text/markdown
+
+# 产品手册 V2
+这是更新后的内容。
+
+--WebAppBoundary
+Content-Disposition: form-data; name="userId"
+
+user_123
+
+--WebAppBoundary
+Content-Disposition: form-data; name="documentId"
+
+your-document-id
+
+--WebAppBoundary
+Content-Disposition: form-data; name="changeLog"
+
+更新价格信息
+
+--WebAppBoundary--
+
+### delete
+POST {{httpUrl}}/api/v1/document/delete
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "your-document-id"
+}
+
+### restore
+POST {{httpUrl}}/api/v1/document/restore
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "your-document-id"
+}
+
+### rollback
+POST {{httpUrl}}/api/v1/document/rollback
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "your-document-id",
+  "targetVersionId": "your-version-id"
+}

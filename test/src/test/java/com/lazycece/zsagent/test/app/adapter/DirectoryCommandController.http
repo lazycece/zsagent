@@ -1,0 +1,37 @@
+### create
+POST {{httpUrl}}/api/v1/directory/create
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "name": "产品文档"
+}
+
+### rename
+POST {{httpUrl}}/api/v1/directory/rename
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "directoryId": "your-directory-id",
+  "newName": "产品手册"
+}
+
+### move
+POST {{httpUrl}}/api/v1/directory/move
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "directoryId": "your-directory-id",
+  "newParentId": "your-parent-id"
+}
+
+### delete
+POST {{httpUrl}}/api/v1/directory/delete
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "directoryId": "your-directory-id"
+}
