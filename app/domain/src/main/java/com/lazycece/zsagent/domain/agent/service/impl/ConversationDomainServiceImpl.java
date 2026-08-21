@@ -6,9 +6,9 @@ import com.lazycece.rapidf.restful.response.RespStatus;
 import com.lazycece.zsagent.domain.agent.model.AgentConversation;
 import com.lazycece.zsagent.domain.agent.repository.AgentConversationRepository;
 import com.lazycece.zsagent.domain.agent.service.ConversationDomainService;
-import com.lazycece.zsagent.domain.agent.valueobject.AssistantMessageRecord;
-import com.lazycece.zsagent.domain.agent.valueobject.FeedbackRecord;
-import com.lazycece.zsagent.domain.agent.valueobject.UserMessageRecord;
+import com.lazycece.zsagent.domain.agent.valueobject.cmd.AssistantMessageCmd;
+import com.lazycece.zsagent.domain.agent.valueobject.cmd.FeedbackCmd;
+import com.lazycece.zsagent.domain.agent.valueobject.cmd.UserMessageCmd;
 
 import java.time.LocalDateTime;
 
@@ -33,11 +33,11 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
      * 首次对话时通过工厂方法创建聚合根，已有对话时仅更新操作者信息。
      */
     @Override
-    public void recordUserMessage(UserMessageRecord record) {
-        Assert.notNull(record, RespStatus.PARAM_ERROR, "record 不能为 null");
-        String userId = record.userId();
-        String conversationId = record.conversationId();
-        String content = record.content();
+    public void recordUserMessage(UserMessageCmd command) {
+        Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        String userId = command.getUserId();
+        String conversationId = command.getConversationId();
+        String content = command.getContent();
         Assert.notNull(userId, RespStatus.PARAM_ERROR, "userId 不能为 null");
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(content, RespStatus.PARAM_ERROR, "content 不能为 null");
@@ -60,11 +60,11 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
      * 记录助手回答消息。
      */
     @Override
-    public void recordAssistantMessage(AssistantMessageRecord record) {
-        Assert.notNull(record, RespStatus.PARAM_ERROR, "record 不能为 null");
-        String userId = record.userId();
-        String conversationId = record.conversationId();
-        String content = record.content();
+    public void recordAssistantMessage(AssistantMessageCmd command) {
+        Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        String userId = command.getUserId();
+        String conversationId = command.getConversationId();
+        String content = command.getContent();
         Assert.notNull(userId, RespStatus.PARAM_ERROR, "userId 不能为 null");
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(content, RespStatus.PARAM_ERROR, "content 不能为 null");
@@ -74,7 +74,7 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
 
         conversation.setUpdater(userId);
         conversation.setUpdateTime(LocalDateTime.now());
-        conversation.answer(content, record.sources());
+        conversation.answer(content, command.getSources());
         conversationRepository.update(conversation);
     }
 
@@ -82,22 +82,22 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
      * 记录用户反馈。
      */
     @Override
-    public void recordFeedback(FeedbackRecord record) {
-        Assert.notNull(record, RespStatus.PARAM_ERROR, "record 不能为 null");
-        String userId = record.userId();
-        String conversationId = record.conversationId();
-        String messageId = record.messageId();
+    public void recordFeedback(FeedbackCmd command) {
+        Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        String userId = command.getUserId();
+        String conversationId = command.getConversationId();
+        String messageId = command.getMessageId();
         Assert.notNull(userId, RespStatus.PARAM_ERROR, "userId 不能为 null");
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(messageId, RespStatus.PARAM_ERROR, "messageId 不能为 null");
-        Assert.notNull(record.type(), RespStatus.PARAM_ERROR, "feedbackType 不能为 null");
+        Assert.notNull(command.getType(), RespStatus.PARAM_ERROR, "feedbackType 不能为 null");
 
         AgentConversation conversation = conversationRepository.findByConversationId(userId, conversationId);
         Assert.notNull(conversation, RespStatus.PARAM_ERROR, "对话不存在");
 
         conversation.setUpdater(userId);
         conversation.setUpdateTime(LocalDateTime.now());
-        conversation.submitFeedback(messageId, record.type(), record.reason());
+        conversation.submitFeedback(messageId, command.getType(), command.getReason());
         conversationRepository.update(conversation);
     }
 }

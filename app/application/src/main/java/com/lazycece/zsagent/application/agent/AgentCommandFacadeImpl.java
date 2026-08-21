@@ -63,7 +63,7 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
 
         // 阶段 A: 记录用户消息（domain 层）
         conversationDomainService.recordUserMessage(
-                AgentAssembler.toUserMessageRecord(request));
+                AgentAssembler.toUserMessageCmd(request));
 
         // 阶段 B: 通过 ChatClient + RAG Advisor + Memory Advisor 执行流水线
         StringBuilder fullAnswer = new StringBuilder();
@@ -82,7 +82,7 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
                     List<Document> docs = documentCachePostProcessor.getLastRetrievedDocuments(conversationId);
                     List<SourceReference> sources = documentCachePostProcessor.extractSources(docs);
                     conversationDomainService.recordAssistantMessage(
-                            AgentAssembler.toAssistantMessageRecord(
+                            AgentAssembler.toAssistantMessageCmd(
                                     userId, conversationId, fullAnswer.toString(), sources));
                     documentCachePostProcessor.clearDocuments(conversationId);
                     log.info("问答完成: userId={}, conversationId={}, 答案长度={}, 来源数={}",
@@ -98,7 +98,7 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
     @Override
     public RespData<FeedbackResult> submitFeedback(FeedbackRequest request) {
         conversationDomainService.recordFeedback(
-                AgentAssembler.toFeedbackRecord(request));
+                AgentAssembler.toFeedbackCmd(request));
         return RespData.success(new FeedbackResult());
     }
 

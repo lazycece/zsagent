@@ -1,10 +1,10 @@
 package com.lazycece.zsagent.application.agent.assembler;
 
 import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
-import com.lazycece.zsagent.domain.agent.valueobject.AssistantMessageRecord;
-import com.lazycece.zsagent.domain.agent.valueobject.FeedbackRecord;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
-import com.lazycece.zsagent.domain.agent.valueobject.UserMessageRecord;
+import com.lazycece.zsagent.domain.agent.valueobject.cmd.AssistantMessageCmd;
+import com.lazycece.zsagent.domain.agent.valueobject.cmd.FeedbackCmd;
+import com.lazycece.zsagent.domain.agent.valueobject.cmd.UserMessageCmd;
 import com.lazycece.zsagent.facade.agent.request.AskQuestionRequest;
 import com.lazycece.zsagent.facade.agent.request.FeedbackRequest;
 
@@ -19,36 +19,41 @@ import java.util.List;
 public final class AgentAssembler {
 
     /**
-     * 从 AskQuestionRequest 构建用户提问记录。
+     * 从 AskQuestionRequest 构建用户提问命令。
      */
-    public static UserMessageRecord toUserMessageRecord(AskQuestionRequest request) {
-        return new UserMessageRecord(
-                request.getUserId(),
-                request.getConversationId(),
-                request.getQuestion()
-        );
+    public static UserMessageCmd toUserMessageCmd(AskQuestionRequest request) {
+        UserMessageCmd command = new UserMessageCmd();
+        command.setUserId(request.getUserId());
+        command.setConversationId(request.getConversationId());
+        command.setContent(request.getQuestion());
+        return command;
     }
 
     /**
-     * 构建助手回答记录。
+     * 构建助手回答命令。
      */
-    public static AssistantMessageRecord toAssistantMessageRecord(
+    public static AssistantMessageCmd toAssistantMessageCmd(
             String userId, String conversationId, String content, List<SourceReference> sources) {
-        return new AssistantMessageRecord(userId, conversationId, content, sources);
+        AssistantMessageCmd command = new AssistantMessageCmd();
+        command.setUserId(userId);
+        command.setConversationId(conversationId);
+        command.setContent(content);
+        command.setSources(sources);
+        return command;
     }
 
     /**
-     * 从 FeedbackRequest 构建反馈记录。
+     * 从 FeedbackRequest 构建反馈命令。
      * 将请求中的 type 字符串转换为 FeedbackType 枚举。
      */
-    public static FeedbackRecord toFeedbackRecord(FeedbackRequest request) {
+    public static FeedbackCmd toFeedbackCmd(FeedbackRequest request) {
         FeedbackType feedbackType = FeedbackType.valueOf(request.getType().toUpperCase());
-        return new FeedbackRecord(
-                request.getUserId(),
-                request.getConversationId(),
-                request.getMessageId(),
-                feedbackType,
-                request.getReason()
-        );
+        FeedbackCmd command = new FeedbackCmd();
+        command.setUserId(request.getUserId());
+        command.setConversationId(request.getConversationId());
+        command.setMessageId(request.getMessageId());
+        command.setType(feedbackType);
+        command.setReason(request.getReason());
+        return command;
     }
 }
