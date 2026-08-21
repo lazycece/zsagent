@@ -54,13 +54,16 @@ spring:
           initialize-schema: true
     vectorstore:
       elasticsearch:
+        initialize-schema: false
         index-name: zsagent_knowledge
         dimensions: 1024
         similarity: cosine
+        embedding-field-name: embedding
   elasticsearch:
     uris: ${es.uri:http://localhost:9200}
     username: ${es.username:}
     password: ${es.password:}
+
   data:
     redis:
       host: ${redis.host:localhost}
