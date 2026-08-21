@@ -5,10 +5,12 @@ import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.rapidf.utils.EnumUtils;
 import com.lazycece.zsagent.application.knowledge.etl.DocumentEtlOrchestrator;
 import com.lazycece.zsagent.application.knowledge.validator.DocumentCreateValidator;
+import com.lazycece.zsagent.domain.common.utils.FileUtils;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
+import com.lazycece.zsagent.domain.knowledge.utils.DocumentUtils;
 import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDocumentCommand;
 import com.lazycece.zsagent.domain.knowledge.valueobject.RollbackDocumentCommand;
 import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateDocumentContentCommand;
@@ -53,7 +55,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
     public RespData<DocumentCreateResult> create(DocumentCreateRequest request) {
         DocumentCreateValidator.validate(request);
 
-        DocumentFormat format = detectFormat(request.getFilePath());
+        DocumentFormat format = DocumentUtils.detectFormat(request.getFilePath());
         String title = StringUtils.isNotBlank(request.getTitle())
                 ? request.getTitle()
                 : extractFileNameWithoutExtension(request.getFilePath());
@@ -132,48 +134,12 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
         return RespData.success(new DocumentRollbackResult());
     }
 
-    /**
-     * 从路径中提取文件名。
-     */
-    private String extractFilename(String path) {
-        if (StringUtils.isBlank(path)) {
-            return "";
-        }
-        int slash = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
-        return slash >= 0 ? path.substring(slash + 1) : path;
-    }
-
-    /**
-     * 根据文件扩展名识别格式。
-     */
-    private DocumentFormat detectFormat(String filePath) {
-        String filename = extractFilename(filePath);
-        if (StringUtils.isBlank(filename)) {
-            return DocumentFormat.OTHER;
-        }
-        int dotIndex = filename.lastIndexOf('.');
-        if (dotIndex < 0) {
-            return DocumentFormat.OTHER;
-        }
-        String ext = filename.substring(dotIndex + 1).toLowerCase();
-        return switch (ext) {
-            case "pdf" -> DocumentFormat.PDF;
-            case "docx" -> DocumentFormat.DOCX;
-            case "md", "markdown" -> DocumentFormat.MD;
-            case "html", "htm" -> DocumentFormat.HTML;
-            case "txt" -> DocumentFormat.TXT;
-            case "xlsx" -> DocumentFormat.XLSX;
-            case "pptx" -> DocumentFormat.PPTX;
-            case "csv" -> DocumentFormat.CSV;
-            default -> DocumentFormat.OTHER;
-        };
-    }
 
     /**
      * 从路径提取文件名（去除扩展名），用作默认标题。
      */
     private String extractFileNameWithoutExtension(String filePath) {
-        String filename = extractFilename(filePath);
+        String filename = FileUtils.extractFilename(filePath);
         int dotIndex = filename.lastIndexOf('.');
         return dotIndex > 0 ? filename.substring(0, dotIndex) : filename;
     }

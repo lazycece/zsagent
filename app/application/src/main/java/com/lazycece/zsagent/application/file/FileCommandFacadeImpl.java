@@ -6,11 +6,11 @@ import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.rapidf.restful.response.RespStatus;
 import com.lazycece.rapidf.utils.UUIDUtils;
+import com.lazycece.zsagent.domain.common.utils.FileUtils;
 import com.lazycece.zsagent.domain.knowledge.repository.FileStorage;
 import com.lazycece.zsagent.facade.file.api.FileCommandFacade;
 import com.lazycece.zsagent.facade.file.request.FileUploadRequest;
 import com.lazycece.zsagent.facade.file.result.FileUploadResult;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class FileCommandFacadeImpl implements FileCommandFacade {
         Assert.isTrue(!request.getFile().isEmpty(), RespStatus.PARAM_ERROR, "文件内容不能为空");
 
         LocalDateTime now = LocalDateTime.now();
-        String filePath = buildFilePath(now, extractFileSuffix(request.getFile().getOriginalFilename()));
+        String filePath = buildFilePath(now, FileUtils.extractFileSuffix(request.getFile().getOriginalFilename()));
         try (InputStream inputStream = request.getFile().getInputStream()) {
             fileStorage.store(filePath, inputStream);
         } catch (IOException e) {
@@ -68,23 +68,5 @@ public class FileCommandFacadeImpl implements FileCommandFacade {
         return "upload/" + datePath + "/" + fileName;
     }
 
-    /**
-     * 从原始文件名提取安全的文件后缀（含点，如 ".pdf"），无有效后缀返回空串。
-     */
-    private String extractFileSuffix(String originalFilename) {
-        if (StringUtils.isBlank(originalFilename)) {
-            return "";
-        }
-        String name = originalFilename;
-        int slash = Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\'));
-        if (slash >= 0) {
-            name = name.substring(slash + 1);
-        }
-        int dotIndex = name.lastIndexOf('.');
-        if (dotIndex < 0 || dotIndex == name.length() - 1) {
-            return "";
-        }
-        String suffix = name.substring(dotIndex).replaceAll("[^A-Za-z0-9._-]", "_");
-        return ".".equals(suffix) ? "" : suffix;
-    }
+
 }
