@@ -13,13 +13,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.lazycece.zsagent</groupId>
-            <artifactId>zsagent-facade</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.lazycece.rapidf</groupId>
+            <artifactId>rapidf-domain</artifactId>
         </dependency>
         <dependency>
             <groupId>com.lazycece.rapidf</groupId>
-            <artifactId>rapidf-domain</artifactId>
+            <artifactId>rapidf-restful</artifactId>
         </dependency>
         <dependency>
             <groupId>com.lazycece.rapidf</groupId>
