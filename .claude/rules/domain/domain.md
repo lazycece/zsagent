@@ -18,7 +18,7 @@ paths:
 
 - 标记`@ValueObject`注解，引用自`rapidf-domain`组件
 - 实体和聚合中的值对象用`record`定义
-- 方法入参对象用`class`定义，命令以`Cmd`结尾，查询以`Query`结尾,
+- 方法入参对象用`class`定义，命令以`Cmd`结尾，查询以`Query`结尾，分别放子包`cmd`和`query`中
 
 ## service
 
