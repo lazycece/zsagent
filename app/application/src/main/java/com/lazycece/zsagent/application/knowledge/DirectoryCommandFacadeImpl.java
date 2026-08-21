@@ -3,9 +3,9 @@ package com.lazycece.zsagent.application.knowledge;
 import com.lazycece.rapidf.domain.anotation.ApplicationService;
 import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.zsagent.domain.knowledge.service.DirectoryDomainService;
-import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDirectoryCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.MoveDirectoryCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.RenameDirectoryCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDirectoryCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.MoveDirectoryCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RenameDirectoryCmd;
 import com.lazycece.zsagent.facade.knowledge.api.DirectoryCommandFacade;
 import com.lazycece.zsagent.facade.knowledge.request.DirectoryCreateRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DirectoryDeleteRequest;
@@ -34,7 +34,7 @@ public class DirectoryCommandFacadeImpl implements DirectoryCommandFacade {
 
     @Override
     public RespData<DirectoryCreateResult> create(DirectoryCreateRequest request) {
-        CreateDirectoryCommand command = new CreateDirectoryCommand();
+        CreateDirectoryCmd command = new CreateDirectoryCmd();
         command.setUserId(request.getUserId());
         command.setParentId(request.getParentId());
         command.setName(request.getName());
@@ -46,7 +46,7 @@ public class DirectoryCommandFacadeImpl implements DirectoryCommandFacade {
 
     @Override
     public RespData<DirectoryRenameResult> rename(DirectoryRenameRequest request) {
-        RenameDirectoryCommand command = new RenameDirectoryCommand();
+        RenameDirectoryCmd command = new RenameDirectoryCmd();
         command.setUserId(request.getUserId());
         command.setDirectoryId(request.getDirectoryId());
         command.setNewName(request.getNewName());
@@ -56,7 +56,7 @@ public class DirectoryCommandFacadeImpl implements DirectoryCommandFacade {
 
     @Override
     public RespData<DirectoryMoveResult> move(DirectoryMoveRequest request) {
-        MoveDirectoryCommand command = new MoveDirectoryCommand();
+        MoveDirectoryCmd command = new MoveDirectoryCmd();
         command.setUserId(request.getUserId());
         command.setDirectoryId(request.getDirectoryId());
         command.setNewParentId(request.getNewParentId());

@@ -7,9 +7,9 @@ import com.lazycece.zsagent.domain.knowledge.model.Directory;
 import com.lazycece.zsagent.domain.knowledge.repository.DirectoryRepository;
 import com.lazycece.zsagent.domain.knowledge.repository.DocumentRepository;
 import com.lazycece.zsagent.domain.knowledge.service.DirectoryDomainService;
-import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDirectoryCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.MoveDirectoryCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.RenameDirectoryCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDirectoryCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.MoveDirectoryCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RenameDirectoryCmd;
 
 import java.time.LocalDateTime;
 
@@ -34,7 +34,7 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      * 创建目录。
      */
     @Override
-    public String createDirectory(CreateDirectoryCommand command) {
+    public String createDirectory(CreateDirectoryCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Assert.notBlank(command.getName(), RespStatus.PARAM_ERROR, "name 不能为空");
         Directory directory = Directory.create(command.getUserId(), command.getParentId(), command.getName());
@@ -46,7 +46,7 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      * 重命名目录。
      */
     @Override
-    public void rename(RenameDirectoryCommand command) {
+    public void rename(RenameDirectoryCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Assert.notBlank(command.getNewName(), RespStatus.PARAM_ERROR, "newName 不能为空");
         Directory directory = directoryRepository.findByDirectoryId(command.getDirectoryId());
@@ -61,7 +61,7 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
      * 移动目录。
      */
     @Override
-    public void moveTo(MoveDirectoryCommand command) {
+    public void moveTo(MoveDirectoryCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Directory directory = directoryRepository.findByDirectoryId(command.getDirectoryId());
         Assert.notNull(directory, RespStatus.PARAM_ERROR, "目录不存在");
