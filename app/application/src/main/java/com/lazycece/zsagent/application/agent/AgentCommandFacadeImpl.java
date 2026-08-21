@@ -17,6 +17,8 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
 import java.util.Collections;
@@ -28,6 +30,7 @@ import java.util.List;
  *
  * @author lazycece
  */
+@Primary
 @ApplicationService
 public class AgentCommandFacadeImpl implements AgentCommandFacade {
 
@@ -53,7 +56,7 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
     }
 
     @Override
-    public Flux<String> askQuestion(AskQuestionRequest request) {
+    public Flux<ServerSentEvent<String>> askQuestion(AskQuestionRequest request) {
         String userId = request.getUserId();
         String conversationId = request.getConversationId();
         String question = request.getQuestion();
@@ -87,7 +90,9 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
                 })
                 .doOnError(error -> {
                     log.error("RAG 流水线异常: userId={}, conversationId={}", userId, conversationId, error);
-                });
+                })
+                .map(chunk -> ServerSentEvent.<String>builder().data(chunk).build())
+                .concatWith(Flux.just(ServerSentEvent.<String>builder().event("done").data("[DONE]").build()));
     }
 
     @Override

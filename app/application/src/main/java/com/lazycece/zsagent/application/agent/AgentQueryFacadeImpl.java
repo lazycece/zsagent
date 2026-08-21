@@ -13,6 +13,7 @@ import com.lazycece.zsagent.facade.agent.request.ConversationListQueryRequest;
 import com.lazycece.zsagent.facade.agent.request.ConversationQueryRequest;
 import com.lazycece.zsagent.facade.agent.result.ConversationListResult;
 import com.lazycece.zsagent.facade.agent.result.ConversationResult;
+import org.springframework.context.annotation.Primary;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
  *
  * @author lazycece
  */
+@Primary
 @ApplicationService
 public class AgentQueryFacadeImpl implements AgentQueryFacade {
 

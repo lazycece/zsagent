@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 /**
- * Agent 命令控制器
+ * Agent 命令控制器，直接实现门面接口，仅负责请求转发。
  *
  * @author lazycece
  */
 @RestController
 @RequestMapping("/api/v1/agent")
-public class AgentCommandController {
+public class AgentCommandController implements AgentCommandFacade {
 
     private final AgentCommandFacade agentCommandFacade;
 
@@ -32,17 +32,16 @@ public class AgentCommandController {
     /**
      * 流式问答 — SSE。
      */
+    @Override
     @PostMapping(value = "/ask-question", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> askQuestion(@Validated @RequestBody AskQuestionRequest request) {
-        return agentCommandFacade.askQuestion(request)
-                .map(chunk -> ServerSentEvent.<String>builder().data(chunk).build())
-                .concatWith(Flux.just(
-                        ServerSentEvent.<String>builder().event("done").data("[DONE]").build()));
+        return agentCommandFacade.askQuestion(request);
     }
 
     /**
      * 提交反馈。
      */
+    @Override
     @PostMapping("/submit-feedback")
     public RespData<FeedbackResult> submitFeedback(@Validated @RequestBody FeedbackRequest request) {
         return agentCommandFacade.submitFeedback(request);
