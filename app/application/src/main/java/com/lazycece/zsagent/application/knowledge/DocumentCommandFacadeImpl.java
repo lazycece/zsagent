@@ -11,10 +11,10 @@ import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
 import com.lazycece.zsagent.domain.knowledge.utils.DocumentUtils;
-import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDocumentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.RollbackDocumentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateDocumentContentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateDocumentMetadataCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RollbackDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentContentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
 import com.lazycece.zsagent.facade.knowledge.api.DocumentCommandFacade;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentDeleteRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentRestoreRequest;
@@ -60,7 +60,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
                 ? request.getTitle()
                 : extractFileNameWithoutExtension(request.getFilePath());
 
-        CreateDocumentCommand command = new CreateDocumentCommand();
+        CreateDocumentCmd command = new CreateDocumentCmd();
         command.setUserId(request.getUserId());
         command.setTitle(title);
         command.setFormat(format);
@@ -81,7 +81,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
     @Override
     public RespData<DocumentUpdateMetadataResult> updateMetadata(DocumentUpdateMetadataRequest request) {
-        UpdateDocumentMetadataCommand command = new UpdateDocumentMetadataCommand();
+        UpdateDocumentMetadataCmd command = new UpdateDocumentMetadataCmd();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());
         command.setTitle(request.getTitle());
@@ -98,7 +98,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
     @Override
     public RespData<DocumentUpdateContentResult> updateContent(DocumentUpdateContentRequest request) {
-        UpdateDocumentContentCommand command = new UpdateDocumentContentCommand();
+        UpdateDocumentContentCmd command = new UpdateDocumentContentCmd();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());
         command.setFilePath(request.getFilePath());
@@ -125,7 +125,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
     @Override
     public RespData<DocumentRollbackResult> rollback(DocumentRollbackRequest request) {
-        RollbackDocumentCommand command = new RollbackDocumentCommand();
+        RollbackDocumentCmd command = new RollbackDocumentCmd();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());
         command.setTargetVersionId(request.getTargetVersionId());

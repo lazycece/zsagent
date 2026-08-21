@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.domain.knowledge.valueobject;
+package com.lazycece.zsagent.domain.knowledge.valueobject.cmd;
 
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class UpdateEtlStatusCommand {
+public class UpdateEtlStatusCmd {
 
     /** 文档ID */
     private String documentId;

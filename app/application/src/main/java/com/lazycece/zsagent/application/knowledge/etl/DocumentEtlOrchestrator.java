@@ -11,8 +11,8 @@ import com.lazycece.zsagent.domain.knowledge.repository.FileStorage;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentParser;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateDocumentMetadataCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateEtlStatusCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
 import com.lazycece.zsagent.infra.acl.parser.ParserRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +86,7 @@ public class DocumentEtlOrchestrator {
             // Phase 3: 增强（LLM 摘要/标签）
             updateEtlStatus(documentId, EtlStatus.ENRICHING, null);
             com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult enrichResult = enricher.enrich(parsed, document.getTitle());
-            UpdateDocumentMetadataCommand metadataCommand = new UpdateDocumentMetadataCommand();
+            UpdateDocumentMetadataCmd metadataCommand = new UpdateDocumentMetadataCmd();
             metadataCommand.setUserId(document.getCreator());
             metadataCommand.setDocumentId(documentId);
             metadataCommand.setSummary(enrichResult.getSummary());
@@ -157,7 +157,7 @@ public class DocumentEtlOrchestrator {
      * 更新 ETL 状态。
      */
     private void updateEtlStatus(String documentId, EtlStatus status, String errorMessage) {
-        UpdateEtlStatusCommand command = new UpdateEtlStatusCommand();
+        UpdateEtlStatusCmd command = new UpdateEtlStatusCmd();
         command.setDocumentId(documentId);
         command.setStatus(status);
         command.setErrorMessage(errorMessage);

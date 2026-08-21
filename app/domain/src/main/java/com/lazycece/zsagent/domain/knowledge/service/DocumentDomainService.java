@@ -1,11 +1,11 @@
 package com.lazycece.zsagent.domain.knowledge.service;
 
 import com.lazycece.zsagent.domain.knowledge.model.DocumentVersion;
-import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDocumentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.RollbackDocumentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateDocumentContentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateDocumentMetadataCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateEtlStatusCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RollbackDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentContentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
 
 /**
  * 文档领域服务接口
@@ -20,14 +20,14 @@ public interface DocumentDomainService {
      * @param command 创建文档命令
      * @return documentId
      */
-    String createDocument(CreateDocumentCommand command);
+    String createDocument(CreateDocumentCmd command);
 
     /**
      * 更新文档元数据（标题、标签、目录、权限），不产生新版本。
      *
      * @param command 更新元数据命令
      */
-    void updateMetadata(UpdateDocumentMetadataCommand command);
+    void updateMetadata(UpdateDocumentMetadataCmd command);
 
     /**
      * 更新文档文件内容——创建新版本 + 重置 ETL 状态为 PENDING。
@@ -35,7 +35,7 @@ public interface DocumentDomainService {
      * @param command 更新内容命令
      * @return 新创建的版本
      */
-    DocumentVersion updateContent(UpdateDocumentContentCommand command);
+    DocumentVersion updateContent(UpdateDocumentContentCmd command);
 
     /**
      * 删除文档——移入回收站。
@@ -59,14 +59,14 @@ public interface DocumentDomainService {
      * @param command 回滚命令
      * @return 新创建的版本
      */
-    DocumentVersion rollback(RollbackDocumentCommand command);
+    DocumentVersion rollback(RollbackDocumentCmd command);
 
     /**
      * 更新 ETL 状态。
      *
      * @param command ETL 状态命令
      */
-    void updateEtlStatus(UpdateEtlStatusCommand command);
+    void updateEtlStatus(UpdateEtlStatusCmd command);
 
     /**
      * ETL 完成后发布文档（DRAFT → PUBLISHED）。

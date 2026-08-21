@@ -8,7 +8,7 @@ import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
-import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDocumentCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDocumentCmd;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -71,7 +71,7 @@ public class Document extends Aggregate<String> {
      * 创建文档聚合根。
      * 初始版本由调用方通过 {@link #createNewVersion(String, Long, String)} 创建。
      */
-    public static Document create(CreateDocumentCommand command) {
+    public static Document create(CreateDocumentCmd command) {
         Document document = new Document();
         document.documentId = UUIDUtils.uuid();
         document.title = command.getTitle();

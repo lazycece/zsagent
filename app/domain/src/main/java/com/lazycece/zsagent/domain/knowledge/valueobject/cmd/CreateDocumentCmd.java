@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.domain.knowledge.valueobject;
+package com.lazycece.zsagent.domain.knowledge.valueobject.cmd;
 
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class CreateDocumentCommand {
+public class CreateDocumentCmd {
 
     /** 操作主体标识 */
     private String userId;

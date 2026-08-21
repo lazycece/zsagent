@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.domain.knowledge.valueobject;
+package com.lazycece.zsagent.domain.knowledge.valueobject.cmd;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RollbackDocumentCommand {
+public class RollbackDocumentCmd {
 
     /** 操作主体标识 */
     private String userId;

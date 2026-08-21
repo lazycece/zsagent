@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.domain.knowledge.valueobject;
+package com.lazycece.zsagent.domain.knowledge.valueobject.cmd;
 
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class UpdateDocumentMetadataCommand {
+public class UpdateDocumentMetadataCmd {
 
     /** 操作主体标识 */
     private String userId;

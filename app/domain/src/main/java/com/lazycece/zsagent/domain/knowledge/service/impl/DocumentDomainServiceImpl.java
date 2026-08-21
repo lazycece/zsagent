@@ -9,11 +9,11 @@ import com.lazycece.zsagent.domain.knowledge.model.DocumentVersion;
 import com.lazycece.zsagent.domain.knowledge.repository.DocumentRepository;
 import com.lazycece.zsagent.domain.knowledge.repository.DocumentVersionRepository;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
-import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDocumentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.RollbackDocumentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateDocumentContentCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateDocumentMetadataCommand;
-import com.lazycece.zsagent.domain.knowledge.valueobject.UpdateEtlStatusCommand;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RollbackDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentContentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,7 +41,7 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
      * 创建文档，并创建初始版本（V1）。
      */
     @Override
-    public String createDocument(CreateDocumentCommand command) {
+    public String createDocument(CreateDocumentCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Document document = Document.create(command);
         DocumentVersion version = document.createNewVersion(
@@ -55,7 +55,7 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
      * 更新文档元数据，不产生新版本。
      */
     @Override
-    public void updateMetadata(UpdateDocumentMetadataCommand command) {
+    public void updateMetadata(UpdateDocumentMetadataCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
@@ -70,7 +70,7 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
      * 更新文档内容，创建新版本并重置 ETL 状态。
      */
     @Override
-    public DocumentVersion updateContent(UpdateDocumentContentCommand command) {
+    public DocumentVersion updateContent(UpdateDocumentContentCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
@@ -118,7 +118,7 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
      * 回滚到指定版本——创建新版本（复用目标版本文件）。
      */
     @Override
-    public DocumentVersion rollback(RollbackDocumentCommand command) {
+    public DocumentVersion rollback(RollbackDocumentCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         DocumentVersion targetVersion = versionRepository.findByVersionId(command.getTargetVersionId());
         Assert.notNull(targetVersion, RespStatus.PARAM_ERROR, "版本不存在");
@@ -139,7 +139,7 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
      * 更新 ETL 状态。
      */
     @Override
-    public void updateEtlStatus(UpdateEtlStatusCommand command) {
+    public void updateEtlStatus(UpdateEtlStatusCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
