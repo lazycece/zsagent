@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Primary;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -28,11 +29,10 @@ import java.time.format.DateTimeFormatter;
 @ApplicationService
 public class FileCommandFacadeImpl implements FileCommandFacade {
 
-    /** 日期目录格式（upload/yyyy/MM/dd） */
+    /**
+     * 日期目录格式（upload/yyyy/MM/dd）
+     */
     private static final DateTimeFormatter DATE_PATH_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-
-    /** 文件名时间戳格式（uuid + 时间戳 + 后缀） */
-    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     private final FileStorage fileStorage;
 
@@ -60,11 +60,11 @@ public class FileCommandFacadeImpl implements FileCommandFacade {
     }
 
     /**
-     * 构建存储路径：目录按日期分割（yyyy/MM/dd），文件名由 uuid + 时间戳 + 原始文件后缀组成。
+     * 构建存储路径：目录按日期分割（yyyy/MM/dd），文件名由 uuid + unix时间戳 + 原始文件后缀组成。
      */
     private String buildFilePath(LocalDateTime now, String fileSuffix) {
         String datePath = now.format(DATE_PATH_FORMAT);
-        String fileName = UUIDUtils.uuid() + now.format(TIMESTAMP_FORMAT) + fileSuffix;
+        String fileName = UUIDUtils.uuid() + "_" + now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() + fileSuffix;
         return "upload/" + datePath + "/" + fileName;
     }
 

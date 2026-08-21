@@ -1,0 +1,23 @@
+### upload markdown
+POST {{httpUrl}}/api/v1/file/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="test.md"
+Content-Type: text/markdown
+
+# 文件上传测试
+这是通过 FileCommandController 上传的测试文件内容。
+
+--WebAppBoundary--
+
+### upload txt
+POST {{httpUrl}}/api/v1/file/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+hello file upload
+--WebAppBoundary--
