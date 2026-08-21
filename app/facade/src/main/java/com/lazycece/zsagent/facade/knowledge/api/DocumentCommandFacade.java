@@ -6,13 +6,13 @@ import com.lazycece.zsagent.facade.knowledge.request.DocumentRestoreRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentRollbackRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentUpdateContentRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentUpdateMetadataRequest;
-import com.lazycece.zsagent.facade.knowledge.request.DocumentUploadRequest;
+import com.lazycece.zsagent.facade.knowledge.request.DocumentCreateRequest;
+import com.lazycece.zsagent.facade.knowledge.result.DocumentCreateResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentDeleteResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentRestoreResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentRollbackResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentUpdateContentResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentUpdateMetadataResult;
-import com.lazycece.zsagent.facade.knowledge.result.DocumentUploadResult;
 
 /**
  * 文档命令门面接口
@@ -22,12 +22,12 @@ import com.lazycece.zsagent.facade.knowledge.result.DocumentUploadResult;
 public interface DocumentCommandFacade {
 
     /**
-     * 上传文档，异步触发 ETL。
+     * 创建文档，异步触发 ETL。
      *
-     * @param request 上传请求
-     * @return 上传结果
+     * @param request 创建请求
+     * @return 创建结果
      */
-    RespData<DocumentUploadResult> upload(DocumentUploadRequest request);
+    RespData<DocumentCreateResult> create(DocumentCreateRequest request);
 
     /**
      * 更新文档元数据（标题、标签、目录、权限），不产生新版本。

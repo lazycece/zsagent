@@ -4,7 +4,7 @@ import com.lazycece.rapidf.domain.anotation.ApplicationService;
 import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.rapidf.utils.EnumUtils;
 import com.lazycece.zsagent.application.knowledge.etl.DocumentEtlOrchestrator;
-import com.lazycece.zsagent.application.knowledge.validator.DocumentUploadValidator;
+import com.lazycece.zsagent.application.knowledge.validator.DocumentCreateValidator;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
@@ -19,19 +19,19 @@ import com.lazycece.zsagent.facade.knowledge.request.DocumentRestoreRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentRollbackRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentUpdateContentRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentUpdateMetadataRequest;
-import com.lazycece.zsagent.facade.knowledge.request.DocumentUploadRequest;
+import com.lazycece.zsagent.facade.knowledge.request.DocumentCreateRequest;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentDeleteResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentRestoreResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentRollbackResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentUpdateContentResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentUpdateMetadataResult;
-import com.lazycece.zsagent.facade.knowledge.result.DocumentUploadResult;
+import com.lazycece.zsagent.facade.knowledge.result.DocumentCreateResult;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 
 /**
  * 文档命令门面实现。
- * 负责文档上传、更新、删除、恢复、回滚的编排：文件路径 → 领域操作 → 触发 ETL。
+ * 负责文档创建、更新、删除、恢复、回滚的编排：文件路径 → 领域操作 → 触发 ETL。
  * 文件本体已由文件上传接口（FileCommandFacade）预先落盘，此处仅接收相对路径。
  *
  * @author lazycece
@@ -50,8 +50,8 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
     }
 
     @Override
-    public RespData<DocumentUploadResult> upload(DocumentUploadRequest request) {
-        DocumentUploadValidator.validate(request);
+    public RespData<DocumentCreateResult> create(DocumentCreateRequest request) {
+        DocumentCreateValidator.validate(request);
 
         DocumentFormat format = detectFormat(request.getFilePath());
         String title = StringUtils.isNotBlank(request.getTitle())
@@ -71,7 +71,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
         etlOrchestrator.process(documentId);
 
-        DocumentUploadResult result = new DocumentUploadResult();
+        DocumentCreateResult result = new DocumentCreateResult();
         result.setDocumentId(documentId);
         result.setEtlStatus(EtlStatus.PENDING.getCode());
         return RespData.success(result);

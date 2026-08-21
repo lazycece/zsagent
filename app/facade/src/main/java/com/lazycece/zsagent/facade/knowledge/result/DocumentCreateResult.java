@@ -6,13 +6,13 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * 文档上传结果
+ * 文档创建结果
  *
  * @author lazycece
  */
 @Getter
 @Setter
-public class DocumentUploadResult implements Serializable {
+public class DocumentCreateResult implements Serializable {
 
     /** 新建文档 ID */
     private String documentId;

@@ -9,13 +9,13 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 文档上传请求
+ * 文档创建请求
  *
  * @author lazycece
  */
 @Getter
 @Setter
-public class DocumentUploadRequest extends BaseRequest implements Serializable {
+public class DocumentCreateRequest extends BaseRequest implements Serializable {
 
     /** 操作主体标识 */
     @NotBlank(message = "userId不能为空")

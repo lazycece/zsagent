@@ -4,22 +4,22 @@ import com.lazycece.rapidf.restful.Assert;
 import com.lazycece.rapidf.restful.response.RespStatus;
 import com.lazycece.rapidf.utils.EnumUtils;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
-import com.lazycece.zsagent.facade.knowledge.request.DocumentUploadRequest;
+import com.lazycece.zsagent.facade.knowledge.request.DocumentCreateRequest;
 
 /**
- * 文档上传校验器。
+ * 文档创建校验器。
  *
  * @author lazycece
  */
-public final class DocumentUploadValidator {
+public final class DocumentCreateValidator {
 
-    private DocumentUploadValidator() {
+    private DocumentCreateValidator() {
     }
 
     /**
-     * 校验上传请求。
+     * 校验创建请求。
      */
-    public static void validate(DocumentUploadRequest request) {
+    public static void validate(DocumentCreateRequest request) {
         Assert.notNull(request, RespStatus.PARAM_ERROR, "request 不能为 null");
         Assert.notBlank(request.getFilePath(), RespStatus.PARAM_ERROR, "filePath不能为空");
 

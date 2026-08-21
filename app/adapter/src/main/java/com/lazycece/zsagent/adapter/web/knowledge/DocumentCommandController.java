@@ -7,13 +7,13 @@ import com.lazycece.zsagent.facade.knowledge.request.DocumentRestoreRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentRollbackRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentUpdateContentRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentUpdateMetadataRequest;
-import com.lazycece.zsagent.facade.knowledge.request.DocumentUploadRequest;
+import com.lazycece.zsagent.facade.knowledge.request.DocumentCreateRequest;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentDeleteResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentRestoreResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentRollbackResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentUpdateContentResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentUpdateMetadataResult;
-import com.lazycece.zsagent.facade.knowledge.result.DocumentUploadResult;
+import com.lazycece.zsagent.facade.knowledge.result.DocumentCreateResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,12 +36,12 @@ public class DocumentCommandController implements DocumentCommandFacade {
     }
 
     /**
-     * 上传文档（文件需先经文件上传接口获取相对路径）。
+     * 创建文档（文件需先经文件上传接口获取相对路径）。
      */
     @Override
-    @PostMapping("/upload")
-    public RespData<DocumentUploadResult> upload(@Validated @RequestBody DocumentUploadRequest request) {
-        return documentCommandFacade.upload(request);
+    @PostMapping("/create")
+    public RespData<DocumentCreateResult> create(@Validated @RequestBody DocumentCreateRequest request) {
+        return documentCommandFacade.create(request);
     }
 
     /**
