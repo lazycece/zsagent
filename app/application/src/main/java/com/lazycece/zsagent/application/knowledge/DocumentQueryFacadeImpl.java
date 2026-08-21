@@ -26,6 +26,7 @@ import com.lazycece.zsagent.facade.knowledge.result.DocumentDetailResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentVersionListResult;
 import com.lazycece.zsagent.facade.knowledge.result.EtlStatusResult;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Primary;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
  *
  * @author lazycece
  */
+@Primary
 @ApplicationService
 public class DocumentQueryFacadeImpl implements DocumentQueryFacade {
 

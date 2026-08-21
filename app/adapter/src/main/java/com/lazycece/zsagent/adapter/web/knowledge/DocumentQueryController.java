@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/document")
-public class DocumentQueryController {
+public class DocumentQueryController implements DocumentQueryFacade {
 
     private final DocumentQueryFacade documentQueryFacade;
 
@@ -34,6 +34,7 @@ public class DocumentQueryController {
     /**
      * 查询文档详情。
      */
+    @Override
     @GetMapping("/get-document")
     public RespData<DocumentDetailResult> getDocument(
             @Validated DocumentDetailQueryRequest request) {
@@ -43,6 +44,7 @@ public class DocumentQueryController {
     /**
      * 分页查询文档列表。
      */
+    @Override
     @GetMapping("/list-documents")
     public RespData<PageData<DocumentDTO>> listDocuments(
             @Validated DocumentListQueryRequest request) {
@@ -52,6 +54,7 @@ public class DocumentQueryController {
     /**
      * 查询文档版本历史。
      */
+    @Override
     @GetMapping("/list-versions")
     public RespData<DocumentVersionListResult> listVersions(
             @Validated DocumentVersionListRequest request) {
@@ -61,6 +64,7 @@ public class DocumentQueryController {
     /**
      * 查询 ETL 处理状态。
      */
+    @Override
     @GetMapping("/get-etl-status")
     public RespData<EtlStatusResult> getEtlStatus(
             @Validated EtlStatusQueryRequest request) {
