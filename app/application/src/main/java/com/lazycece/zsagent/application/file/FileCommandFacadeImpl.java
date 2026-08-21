@@ -15,16 +15,24 @@ import org.springframework.context.annotation.Primary;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * 文件命令门面实现。
- * 负责文件上传编排：参数校验、文件名清理、路径构建、落盘存储。
+ * 负责文件上传编排：参数校验、文件命名、日期目录路径构建、落盘存储。
  *
  * @author lazycece
  */
 @Primary
 @ApplicationService
 public class FileCommandFacadeImpl implements FileCommandFacade {
+
+    /** 日期目录格式（upload/yyyy/MM/dd） */
+    private static final DateTimeFormatter DATE_PATH_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+    /** 文件名时间戳格式（uuid + 时间戳 + 后缀） */
+    private static final DateTimeFormatter TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     private final FileStorage fileStorage;
 
@@ -38,7 +46,8 @@ public class FileCommandFacadeImpl implements FileCommandFacade {
         Assert.notNull(request.getFile(), RespStatus.PARAM_ERROR, "文件不能为空");
         Assert.isTrue(!request.getFile().isEmpty(), RespStatus.PARAM_ERROR, "文件内容不能为空");
 
-        String filePath = "upload/" + UUIDUtils.uuid() + "/" + sanitizeFilename(request.getFile().getOriginalFilename());
+        LocalDateTime now = LocalDateTime.now();
+        String filePath = buildFilePath(now, extractFileSuffix(request.getFile().getOriginalFilename()));
         try (InputStream inputStream = request.getFile().getInputStream()) {
             fileStorage.store(filePath, inputStream);
         } catch (IOException e) {
@@ -51,18 +60,31 @@ public class FileCommandFacadeImpl implements FileCommandFacade {
     }
 
     /**
-     * 清理文件名，仅保留安全字符，避免路径穿越。
+     * 构建存储路径：目录按日期分割（yyyy/MM/dd），文件名由 uuid + 时间戳 + 原始文件后缀组成。
      */
-    private String sanitizeFilename(String filename) {
-        if (StringUtils.isBlank(filename)) {
-            return "file";
+    private String buildFilePath(LocalDateTime now, String fileSuffix) {
+        String datePath = now.format(DATE_PATH_FORMAT);
+        String fileName = UUIDUtils.uuid() + now.format(TIMESTAMP_FORMAT) + fileSuffix;
+        return "upload/" + datePath + "/" + fileName;
+    }
+
+    /**
+     * 从原始文件名提取安全的文件后缀（含点，如 ".pdf"），无有效后缀返回空串。
+     */
+    private String extractFileSuffix(String originalFilename) {
+        if (StringUtils.isBlank(originalFilename)) {
+            return "";
         }
-        String name = filename;
+        String name = originalFilename;
         int slash = Math.max(name.lastIndexOf('/'), name.lastIndexOf('\\'));
         if (slash >= 0) {
             name = name.substring(slash + 1);
         }
-        String safe = name.replaceAll("[^A-Za-z0-9._-]", "_");
-        return StringUtils.isBlank(safe) ? "file" : safe;
+        int dotIndex = name.lastIndexOf('.');
+        if (dotIndex < 0 || dotIndex == name.length() - 1) {
+            return "";
+        }
+        String suffix = name.substring(dotIndex).replaceAll("[^A-Za-z0-9._-]", "_");
+        return ".".equals(suffix) ? "" : suffix;
     }
 }

@@ -27,6 +27,9 @@ replay_pid*
 .flattened-pom.xml
 target
 
+# file
+storage
+
 # claude
 .claude/CLAUDE.local.md
 .claude/settings.local.json

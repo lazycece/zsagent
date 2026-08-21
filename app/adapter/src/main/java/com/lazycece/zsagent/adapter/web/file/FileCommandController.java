@@ -28,7 +28,7 @@ public class FileCommandController implements FileCommandFacade {
      */
     @Override
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public RespData<FileUploadResult> upload(@Validated @RequestBody FileUploadRequest request) {
+    public RespData<FileUploadResult> upload(@Validated FileUploadRequest request) {
         return fileCommandFacade.upload(request);
     }
 }
