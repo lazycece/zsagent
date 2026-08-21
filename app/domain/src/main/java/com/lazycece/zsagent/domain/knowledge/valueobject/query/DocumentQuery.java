@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.domain.knowledge.valueobject;
+package com.lazycece.zsagent.domain.knowledge.valueobject.query;
 
 import lombok.Getter;
 import lombok.Setter;

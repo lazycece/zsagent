@@ -2,9 +2,9 @@ package com.lazycece.zsagent.domain.knowledge.repository;
 
 import com.lazycece.rapidf.domain.model.Pagination;
 import com.lazycece.zsagent.domain.knowledge.model.Document;
-import com.lazycece.zsagent.domain.knowledge.valueobject.DocumentCountQuery;
-import com.lazycece.zsagent.domain.knowledge.valueobject.DocumentListQuery;
-import com.lazycece.zsagent.domain.knowledge.valueobject.DocumentQuery;
+import com.lazycece.zsagent.domain.knowledge.valueobject.query.DocumentCountQuery;
+import com.lazycece.zsagent.domain.knowledge.valueobject.query.DocumentListQuery;
+import com.lazycece.zsagent.domain.knowledge.valueobject.query.DocumentQuery;
 
 import java.util.List;
 
