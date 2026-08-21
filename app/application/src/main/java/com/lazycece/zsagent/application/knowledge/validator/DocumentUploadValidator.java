@@ -21,8 +21,7 @@ public final class DocumentUploadValidator {
      */
     public static void validate(DocumentUploadRequest request) {
         Assert.notNull(request, RespStatus.PARAM_ERROR, "request 不能为 null");
-        Assert.isTrue(request.getFileContent() != null && request.getFileContent().length > 0,
-                RespStatus.PARAM_ERROR, "文件内容不能为空");
+        Assert.notBlank(request.getFilePath(), RespStatus.PARAM_ERROR, "filePath不能为空");
 
         Visibility visibility = EnumUtils.getEnum(Visibility.class, request.getVisibility());
         Assert.notNull(visibility, RespStatus.PARAM_ERROR, "非法的可见范围: {}", request.getVisibility());

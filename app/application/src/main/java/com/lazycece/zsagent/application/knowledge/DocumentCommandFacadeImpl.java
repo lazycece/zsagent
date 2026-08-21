@@ -1,16 +1,13 @@
 package com.lazycece.zsagent.application.knowledge;
 
 import com.lazycece.rapidf.domain.anotation.ApplicationService;
-import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.rapidf.utils.EnumUtils;
-import com.lazycece.rapidf.utils.UUIDUtils;
 import com.lazycece.zsagent.application.knowledge.etl.DocumentEtlOrchestrator;
 import com.lazycece.zsagent.application.knowledge.validator.DocumentUploadValidator;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
-import com.lazycece.zsagent.domain.knowledge.repository.FileStorage;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
 import com.lazycece.zsagent.domain.knowledge.valueobject.CreateDocumentCommand;
 import com.lazycece.zsagent.domain.knowledge.valueobject.RollbackDocumentCommand;
@@ -30,49 +27,42 @@ import com.lazycece.zsagent.facade.knowledge.result.DocumentUpdateContentResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentUpdateMetadataResult;
 import com.lazycece.zsagent.facade.knowledge.result.DocumentUploadResult;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import org.springframework.context.annotation.Primary;
 
 /**
  * 文档命令门面实现。
- * 负责文档上传、更新、删除、恢复、回滚的编排：文件落盘 → 领域操作 → 触发 ETL。
+ * 负责文档上传、更新、删除、恢复、回滚的编排：文件路径 → 领域操作 → 触发 ETL。
+ * 文件本体已由文件上传接口（FileCommandFacade）预先落盘，此处仅接收相对路径。
  *
  * @author lazycece
  */
+@Primary
 @ApplicationService
 public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
     private final DocumentDomainService documentService;
     private final DocumentEtlOrchestrator etlOrchestrator;
-    private final FileStorage fileStorage;
 
     public DocumentCommandFacadeImpl(DocumentDomainService documentService,
-                                     DocumentEtlOrchestrator etlOrchestrator,
-                                     FileStorage fileStorage) {
+                                     DocumentEtlOrchestrator etlOrchestrator) {
         this.documentService = documentService;
         this.etlOrchestrator = etlOrchestrator;
-        this.fileStorage = fileStorage;
     }
 
     @Override
     public RespData<DocumentUploadResult> upload(DocumentUploadRequest request) {
         DocumentUploadValidator.validate(request);
 
-        DocumentFormat format = detectFormat(request.getOriginalFilename());
+        DocumentFormat format = detectFormat(request.getFilePath());
         String title = StringUtils.isNotBlank(request.getTitle())
                 ? request.getTitle()
-                : extractFileNameWithoutExtension(request.getOriginalFilename());
-
-        String filePath = buildFilePath(request.getUserId(), request.getOriginalFilename());
-        long fileSize = storeFile(filePath, request.getFileContent());
+                : extractFileNameWithoutExtension(request.getFilePath());
 
         CreateDocumentCommand command = new CreateDocumentCommand();
         command.setUserId(request.getUserId());
         command.setTitle(title);
         command.setFormat(format);
-        command.setFileSize(fileSize);
-        command.setFilePath(filePath);
+        command.setFilePath(request.getFilePath());
         command.setDirectoryId(request.getDirectoryId());
         command.setTags(request.getTags());
         command.setVisibility(EnumUtils.getEnum(Visibility.class, request.getVisibility()));
@@ -106,15 +96,10 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
     @Override
     public RespData<DocumentUpdateContentResult> updateContent(DocumentUpdateContentRequest request) {
-        String filePath = buildVersionFilePath(request.getUserId(), request.getDocumentId(),
-                request.getOriginalFilename());
-        long fileSize = storeFile(filePath, request.getFileContent());
-
         UpdateDocumentContentCommand command = new UpdateDocumentContentCommand();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());
-        command.setFilePath(filePath);
-        command.setFileSize(fileSize);
+        command.setFilePath(request.getFilePath());
         command.setChangeLog(request.getChangeLog());
         documentService.updateContent(command);
 
@@ -148,9 +133,21 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
     }
 
     /**
+     * 从路径中提取文件名。
+     */
+    private String extractFilename(String path) {
+        if (StringUtils.isBlank(path)) {
+            return "";
+        }
+        int slash = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+        return slash >= 0 ? path.substring(slash + 1) : path;
+    }
+
+    /**
      * 根据文件扩展名识别格式。
      */
-    private DocumentFormat detectFormat(String filename) {
+    private DocumentFormat detectFormat(String filePath) {
+        String filename = extractFilename(filePath);
         if (StringUtils.isBlank(filename)) {
             return DocumentFormat.OTHER;
         }
@@ -173,38 +170,11 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
     }
 
     /**
-     * 从文件名提取标题（去除扩展名）。
+     * 从路径提取文件名（去除扩展名），用作默认标题。
      */
-    private String extractFileNameWithoutExtension(String filename) {
-        if (StringUtils.isBlank(filename)) {
-            return "";
-        }
+    private String extractFileNameWithoutExtension(String filePath) {
+        String filename = extractFilename(filePath);
         int dotIndex = filename.lastIndexOf('.');
         return dotIndex > 0 ? filename.substring(0, dotIndex) : filename;
-    }
-
-    /**
-     * 构建上传文件存储路径。
-     */
-    private String buildFilePath(String userId, String filename) {
-        return "documents/" + userId + "/" + UUIDUtils.uuid() + "/" + filename;
-    }
-
-    /**
-     * 构建新版本文件存储路径。
-     */
-    private String buildVersionFilePath(String userId, String documentId, String filename) {
-        return "documents/" + documentId + "/" + UUIDUtils.uuid() + "/" + filename;
-    }
-
-    /**
-     * 保存文件，将 IO 异常包装为运行时异常。
-     */
-    private long storeFile(String filePath, byte[] content) {
-        try {
-            return fileStorage.store(filePath, new ByteArrayInputStream(content));
-        } catch (IOException e) {
-            throw ExceptionFactory.serverException("文件存储失败", e);
-        }
     }
 }

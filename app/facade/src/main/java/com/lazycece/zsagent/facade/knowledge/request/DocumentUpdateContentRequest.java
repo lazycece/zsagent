@@ -27,9 +27,7 @@ public class DocumentUpdateContentRequest extends BaseRequest implements Seriali
     /** 变更说明（可空） */
     private String changeLog;
 
-    /** 新文件二进制内容（Controller 读取 multipart 后注入） */
-    private byte[] fileContent;
-
-    /** 原始文件名（Controller 注入） */
-    private String originalFilename;
+    /** 新文件相对路径（先经文件上传接口获取） */
+    @NotBlank(message = "filePath不能为空")
+    private String filePath;
 }
