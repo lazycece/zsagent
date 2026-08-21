@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.lazycece.zsagent</groupId>
         <artifactId>zsagent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>zsagent-bootstrap</artifactId>
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.lazycece.zsagent</groupId>
             <artifactId>zsagent-adapter</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
