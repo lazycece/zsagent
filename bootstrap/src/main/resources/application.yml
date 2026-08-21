@@ -39,10 +39,11 @@ spring:
       api-key: ${deepseek_api_Key}
       base-url: https://api.deepseek.com
       chat:
-        options:
-          model: deepseek-v4-pro
-          temperature: 0.3
-          max-tokens: 4096
+        model: deepseek-v4-flash
+        temperature: 0.3
+        max-tokens: 4096
+        extra-body:
+          thinking.type: disabled
     chat:
       memory:
         redis:

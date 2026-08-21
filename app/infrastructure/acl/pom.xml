@@ -31,11 +31,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-        <!-- ES VectorStore -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-elasticsearch-store</artifactId>
-        </dependency>
         <!-- Spring AI: Redis ChatMemory Starter（自动配置 RedisChatMemoryRepository + ChatMemory） -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
@@ -45,6 +40,10 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-client-chat</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>

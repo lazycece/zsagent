@@ -22,10 +22,9 @@
             <artifactId>zsagent-infra-acl</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <!-- Spring AI: DeepSeek via OpenAI 兼容协议 -->
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-openai</artifactId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
         </dependency>
         <!-- Spring AI: RAG 模块化流水线 -->
         <dependency>
