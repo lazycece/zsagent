@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/directory")
-public class DirectoryCommandController {
+public class DirectoryCommandController implements DirectoryCommandFacade{
 
     private final DirectoryCommandFacade directoryCommandFacade;
 
@@ -34,6 +34,7 @@ public class DirectoryCommandController {
     /**
      * 创建目录。
      */
+    @Override
     @PostMapping("/create")
     public RespData<DirectoryCreateResult> create(
             @Validated @RequestBody DirectoryCreateRequest request) {
@@ -43,6 +44,7 @@ public class DirectoryCommandController {
     /**
      * 重命名目录。
      */
+    @Override
     @PostMapping("/rename")
     public RespData<DirectoryRenameResult> rename(
             @Validated @RequestBody DirectoryRenameRequest request) {
@@ -52,6 +54,7 @@ public class DirectoryCommandController {
     /**
      * 移动目录。
      */
+    @Override
     @PostMapping("/move")
     public RespData<DirectoryMoveResult> move(
             @Validated @RequestBody DirectoryMoveRequest request) {
@@ -61,6 +64,7 @@ public class DirectoryCommandController {
     /**
      * 删除目录。
      */
+    @Override
     @PostMapping("/delete")
     public RespData<DirectoryDeleteResult> delete(
             @Validated @RequestBody DirectoryDeleteRequest request) {

@@ -8,6 +8,7 @@ import com.lazycece.zsagent.domain.knowledge.repository.DirectoryRepository;
 import com.lazycece.zsagent.facade.knowledge.api.DirectoryQueryFacade;
 import com.lazycece.zsagent.facade.knowledge.request.DirectoryChildrenQueryRequest;
 import com.lazycece.zsagent.facade.knowledge.result.DirectoryListResult;
+import org.springframework.context.annotation.Primary;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
  *
  * @author lazycece
  */
+@Primary
 @ApplicationService
 public class DirectoryQueryFacadeImpl implements DirectoryQueryFacade {
 

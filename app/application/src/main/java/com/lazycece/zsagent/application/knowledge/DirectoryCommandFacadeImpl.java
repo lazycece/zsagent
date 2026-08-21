@@ -15,12 +15,14 @@ import com.lazycece.zsagent.facade.knowledge.result.DirectoryCreateResult;
 import com.lazycece.zsagent.facade.knowledge.result.DirectoryDeleteResult;
 import com.lazycece.zsagent.facade.knowledge.result.DirectoryMoveResult;
 import com.lazycece.zsagent.facade.knowledge.result.DirectoryRenameResult;
+import org.springframework.context.annotation.Primary;
 
 /**
  * 目录命令门面实现。
  *
  * @author lazycece
  */
+@Primary
 @ApplicationService
 public class DirectoryCommandFacadeImpl implements DirectoryCommandFacade {
 

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/directory")
-public class DirectoryQueryController {
+public class DirectoryQueryController implements DirectoryQueryFacade {
 
     private final DirectoryQueryFacade directoryQueryFacade;
 
@@ -27,6 +27,7 @@ public class DirectoryQueryController {
     /**
      * 查询子目录列表。
      */
+    @Override
     @GetMapping("/list-children")
     public RespData<DirectoryListResult> listChildren(
             @Validated DirectoryChildrenQueryRequest request) {
@@ -36,6 +37,7 @@ public class DirectoryQueryController {
     /**
      * 查询完整目录树。
      */
+    @Override
     @GetMapping("/tree")
     public RespData<DirectoryListResult> tree() {
         return directoryQueryFacade.tree();
