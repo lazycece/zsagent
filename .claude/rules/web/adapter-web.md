@@ -7,6 +7,7 @@ paths:
 
 - 以业务领域 {agg} 定义子package，如order、goods等，在{agg}子包下定义web的控制器controller
 - 控制器命名按CQRS模式拆分: `{领域}{操作类型}Controller`（如 `OrderCommandController`, `OrderQueryController`）
+- 直接实现facade模块对应的接口，无需担心同接口多实现注入问题，application模块的实现会标记`@Primary`
 
 ## URL
 - url路径全部小写，短横线分割
@@ -30,13 +31,17 @@ web控制器参考案例如下：
 ```java
 @RestController
 @RequestMapping("/api/v1/order")
-public class OrderCommandController {
+public class OrderCommandController implements OrderCommandFacade{
 
-    @Autowired
     private OrderCommandFacade commandFacade;
+    
+    public OrderCommandController(OrderCommandFacade commandFacade){
+        this.commandFacade = commandFacade;
+    }
 
+    @Override
     @PostMapping("/create")
-    public RespData<?> create(@RequestBody @Validated OrderCreateRequest request) {
+    public RespData<OrderCreateResult> create(@RequestBody @Validated OrderCreateRequest request) {
         return commandFacade.createOrder(request);
     }
 }
