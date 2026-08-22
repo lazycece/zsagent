@@ -2,8 +2,8 @@ package com.lazycece.zsagent.infra.acl.service.parser;
 
 import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
-import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandler;
-import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandlerRegistry;
+import com.lazycece.zsagent.domain.knowledge.service.acl.DocumentParseHandler;
+import com.lazycece.zsagent.domain.knowledge.service.acl.DocumentParseHandlerRegistry;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

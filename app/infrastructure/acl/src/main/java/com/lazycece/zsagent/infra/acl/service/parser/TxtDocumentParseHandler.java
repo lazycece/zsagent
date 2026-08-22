@@ -1,7 +1,7 @@
 package com.lazycece.zsagent.infra.acl.service.parser;
 
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
-import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandler;
+import com.lazycece.zsagent.domain.knowledge.service.acl.DocumentParseHandler;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
 import com.lazycece.zsagent.domain.knowledge.valueobject.Section;
 import org.springframework.stereotype.Component;
