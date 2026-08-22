@@ -1,18 +1,19 @@
 package com.lazycece.zsagent.application.knowledge.handler.etl;
 
+import com.lazycece.rapidf.domain.anotation.ApplicationHandler;
 import com.lazycece.rapidf.utils.json.JsonUtils;
+import com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.stereotype.Component;
 
 /**
  * 文档增强器，通过 LLM 生成摘要与候选标签。
  *
  * @author lazycece
  */
-@Component
+@ApplicationHandler
 public class DocumentEnricher {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentEnricher.class);
@@ -28,7 +29,7 @@ public class DocumentEnricher {
     /**
      * 生成文档摘要与标签。
      */
-    public com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult enrich(ParsedDocument parsed, String title) {
+    public EnrichResult enrich(ParsedDocument parsed, String title) {
         try {
             String previewContent = parsed.fullText();
             if (previewContent.length() > PREVIEW_LENGTH) {
@@ -36,14 +37,14 @@ public class DocumentEnricher {
             }
             String prompt = buildPrompt(title, previewContent);
             String response = chatClientBuilder.build().prompt().user(prompt).call().content();
-            com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult result = JsonUtils.parseObject(response, com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult.class);
+            EnrichResult result = JsonUtils.parseObject(response, EnrichResult.class);
             if (result == null) {
-                return com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult.empty();
+                return EnrichResult.empty();
             }
             return result;
         } catch (Exception e) {
             log.warn("摘要/标签生成失败，返回空结果, title={}", title, e);
-            return com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult.empty();
+            return EnrichResult.empty();
         }
     }
 

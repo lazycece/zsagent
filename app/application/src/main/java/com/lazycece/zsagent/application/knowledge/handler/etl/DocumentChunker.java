@@ -1,5 +1,6 @@
 package com.lazycece.zsagent.application.knowledge.handler.etl;
 
+import com.lazycece.rapidf.domain.anotation.ApplicationHandler;
 import com.lazycece.rapidf.utils.UUIDUtils;
 import com.lazycece.zsagent.domain.agent.model.KnowledgeChunk;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
@@ -7,7 +8,6 @@ import com.lazycece.zsagent.domain.knowledge.model.Document;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
 import com.lazycece.zsagent.domain.knowledge.valueobject.Section;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @author lazycece
  */
-@Component
+@ApplicationHandler
 public class DocumentChunker {
 
     /** 目标 chunk 大小（字符） */
