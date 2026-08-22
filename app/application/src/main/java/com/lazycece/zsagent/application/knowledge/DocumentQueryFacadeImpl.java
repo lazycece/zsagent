@@ -2,12 +2,12 @@ package com.lazycece.zsagent.application.knowledge;
 
 import com.lazycece.rapidf.domain.anotation.ApplicationService;
 import com.lazycece.rapidf.domain.model.Pagination;
+import com.lazycece.rapidf.restful.Assert;
 import com.lazycece.rapidf.restful.dto.PageData;
-import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.rapidf.restful.response.RespData;
-import com.lazycece.rapidf.utils.EnumUtils;
+import com.lazycece.rapidf.restful.response.RespStatus;
+import com.lazycece.zsagent.application.knowledge.assembler.DocumentAssembler;
 import com.lazycece.zsagent.application.knowledge.converter.DocumentConverter;
-import com.lazycece.zsagent.domain.knowledge.enums.DocumentStatus;
 import com.lazycece.zsagent.domain.knowledge.model.Directory;
 import com.lazycece.zsagent.domain.knowledge.model.Document;
 import com.lazycece.zsagent.domain.knowledge.model.DocumentVersion;
@@ -15,7 +15,6 @@ import com.lazycece.zsagent.domain.knowledge.repository.DirectoryRepository;
 import com.lazycece.zsagent.domain.knowledge.repository.DocumentRepository;
 import com.lazycece.zsagent.domain.knowledge.repository.DocumentVersionRepository;
 import com.lazycece.zsagent.domain.knowledge.valueobject.query.DocumentListQuery;
-import com.lazycece.zsagent.domain.knowledge.valueobject.query.DocumentQuery;
 import com.lazycece.zsagent.facade.knowledge.api.DocumentQueryFacade;
 import com.lazycece.zsagent.facade.knowledge.dto.DocumentDTO;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentDetailQueryRequest;
@@ -55,15 +54,9 @@ public class DocumentQueryFacadeImpl implements DocumentQueryFacade {
 
     @Override
     public RespData<DocumentDetailResult> getDocument(DocumentDetailQueryRequest request) {
-        DocumentQuery query = new DocumentQuery();
-        query.setUserId(request.getUserId());
-        query.setUserDepts(getUserDeptsFromContext());
-        query.setDocumentId(request.getDocumentId());
-
-        Document document = documentRepository.findByDocumentId(query);
-        if (document == null) {
-            throw ExceptionFactory.businessException("文档不存在或无权访问");
-        }
+        Document document = documentRepository.findByDocumentId(
+                DocumentAssembler.toDocumentQuery(request, getUserDeptsFromContext()));
+        Assert.notNull(document, RespStatus.DATA_NOT_EXIST, "文档不存在或无权访问");
         DocumentDetailResult result = new DocumentDetailResult();
         result.setDocument(DocumentConverter.toDocumentDTO(document));
         return RespData.success(result);
@@ -71,18 +64,8 @@ public class DocumentQueryFacadeImpl implements DocumentQueryFacade {
 
     @Override
     public RespData<PageData<DocumentDTO>> listDocuments(DocumentListQueryRequest request) {
-        List<String> userDepts = getUserDeptsFromContext();
-        DocumentStatus status = StringUtils.isNotBlank(request.getStatus())
-                ? EnumUtils.getEnum(DocumentStatus.class, request.getStatus())
-                : null;
-
-        DocumentListQuery query = new DocumentListQuery();
-        query.setUserId(request.getUserId());
-        query.setUserDepts(userDepts);
-        query.setDirectoryId(request.getDirectoryId());
-        query.setStatus(status);
-        query.setKeyword(request.getKeyword());
-
+        DocumentListQuery query = DocumentAssembler.toDocumentListQuery(
+                request, getUserDeptsFromContext());
         Pagination pagination = new Pagination(request.getPage(), request.getSize());
         List<Document> documents = documentRepository.findByUserId(query, pagination);
 
@@ -118,9 +101,7 @@ public class DocumentQueryFacadeImpl implements DocumentQueryFacade {
     public RespData<EtlStatusResult> getEtlStatus(EtlStatusQueryRequest request) {
         // ETL 状态不涉及敏感内容，按 ID 直查即可，无需权限过滤
         Document document = documentRepository.findById(request.getDocumentId());
-        if (document == null) {
-            throw ExceptionFactory.businessException("文档不存在");
-        }
+        Assert.notNull(document, RespStatus.DATA_NOT_EXIST, "文档不存在");
         EtlStatusResult result = new EtlStatusResult();
         result.setDocumentId(document.getDocumentId());
         result.setEtlStatus(document.getEtlStatus() != null ? document.getEtlStatus().getCode() : null);
