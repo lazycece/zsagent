@@ -15,6 +15,7 @@ import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentConte
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
@@ -85,16 +86,22 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public DocumentVersion updateContent(UpdateDocumentContentCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        // load
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        document.setUpdater(command.getUserId());
-        document.setUpdateTime(LocalDateTime.now());
-        document.updateEtlStatus(EtlStatus.PENDING);
-        DocumentVersion version = document.createNewVersion(
-                command.getFilePath(), command.getFileSize(), command.getChangeLog());
-        documentRepository.update(document);
-        versionRepository.save(List.of(version));
-        return version;
+
+        // update
+        DocumentVersion version = document.updateContent(command);
+
+        // persistence
+        return transactionTemplate.execute(new TransactionCallback<DocumentVersion>() {
+            @Override
+            public DocumentVersion doInTransaction(TransactionStatus status) {
+                documentRepository.update(document);
+                versionRepository.save(List.of(version));
+                return version;
+            }
+        });
     }
 
     /**
@@ -137,15 +144,17 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
         Assert.notNull(targetVersion, RespStatus.PARAM_ERROR, "版本不存在");
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        document.setUpdater(command.getUserId());
-        document.setUpdateTime(LocalDateTime.now());
-        document.updateEtlStatus(EtlStatus.PENDING);
-        DocumentVersion newVersion = document.createNewVersion(
-                targetVersion.getFilePath(), targetVersion.getFileSize(),
-                "回滚到 V" + targetVersion.getVersionNumber());
-        documentRepository.update(document);
-        versionRepository.save(List.of(newVersion));
-        return newVersion;
+
+        // persistence
+        return transactionTemplate.execute(new TransactionCallback<DocumentVersion>() {
+            @Override
+            public DocumentVersion doInTransaction(TransactionStatus status) {
+                DocumentVersion newVersion = document.rollback(command, targetVersion);
+                documentRepository.update(document);
+                versionRepository.save(List.of(newVersion));
+                return newVersion;
+            }
+        });
     }
 
     /**

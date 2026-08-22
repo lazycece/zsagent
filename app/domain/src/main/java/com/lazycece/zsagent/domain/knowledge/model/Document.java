@@ -11,6 +11,8 @@ import com.lazycece.zsagent.domain.knowledge.enums.DocumentStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RollbackDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentContentCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
 import lombok.Getter;
 import lombok.Setter;
@@ -145,6 +147,35 @@ public class Document extends Aggregate<String> {
                 this.documentId, this.currentVersion, filePath, fileSize, changeLog, this.getUpdater());
         this.versions.add(version);
         return version;
+    }
+
+    /**
+     * 更新文档内容——创建新版本并重置 ETL 状态。
+     *
+     * @param cmd 更新内容命令
+     * @return 新创建的版本
+     */
+    public DocumentVersion updateContent(UpdateDocumentContentCmd cmd) {
+        super.setUpdater(cmd.getUserId());
+        super.setUpdateTime(LocalDateTime.now());
+        this.updateEtlStatus(EtlStatus.PENDING);
+        return this.createNewVersion(cmd.getFilePath(), cmd.getFileSize(), cmd.getChangeLog());
+    }
+
+    /**
+     * 回滚到指定版本——创建新版本（复用目标版本文件）。
+     *
+     * @param cmd           回滚命令
+     * @param targetVersion 目标版本
+     * @return 新创建的版本
+     */
+    public DocumentVersion rollback(RollbackDocumentCmd cmd, DocumentVersion targetVersion) {
+        super.setUpdater(cmd.getUserId());
+        super.setUpdateTime(LocalDateTime.now());
+        this.updateEtlStatus(EtlStatus.PENDING);
+        return this.createNewVersion(
+                targetVersion.getFilePath(), targetVersion.getFileSize(),
+                "回滚到 V" + targetVersion.getVersionNumber());
     }
 
     /**
