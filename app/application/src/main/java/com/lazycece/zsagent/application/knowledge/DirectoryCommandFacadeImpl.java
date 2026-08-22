@@ -2,10 +2,8 @@ package com.lazycece.zsagent.application.knowledge;
 
 import com.lazycece.rapidf.domain.anotation.ApplicationService;
 import com.lazycece.rapidf.restful.response.RespData;
+import com.lazycece.zsagent.application.knowledge.assembler.DirectoryAssembler;
 import com.lazycece.zsagent.domain.knowledge.service.DirectoryDomainService;
-import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDirectoryCmd;
-import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.MoveDirectoryCmd;
-import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RenameDirectoryCmd;
 import com.lazycece.zsagent.facade.knowledge.api.DirectoryCommandFacade;
 import com.lazycece.zsagent.facade.knowledge.request.DirectoryCreateRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DirectoryDeleteRequest;
@@ -34,11 +32,7 @@ public class DirectoryCommandFacadeImpl implements DirectoryCommandFacade {
 
     @Override
     public RespData<DirectoryCreateResult> create(DirectoryCreateRequest request) {
-        CreateDirectoryCmd command = new CreateDirectoryCmd();
-        command.setUserId(request.getUserId());
-        command.setParentId(request.getParentId());
-        command.setName(request.getName());
-        String directoryId = directoryService.createDirectory(command);
+        String directoryId = directoryService.createDirectory(DirectoryAssembler.toCreateDirectoryCmd(request));
         DirectoryCreateResult result = new DirectoryCreateResult();
         result.setDirectoryId(directoryId);
         return RespData.success(result);
@@ -46,21 +40,13 @@ public class DirectoryCommandFacadeImpl implements DirectoryCommandFacade {
 
     @Override
     public RespData<DirectoryRenameResult> rename(DirectoryRenameRequest request) {
-        RenameDirectoryCmd command = new RenameDirectoryCmd();
-        command.setUserId(request.getUserId());
-        command.setDirectoryId(request.getDirectoryId());
-        command.setNewName(request.getNewName());
-        directoryService.rename(command);
+        directoryService.rename(DirectoryAssembler.toRenameDirectoryCmd(request));
         return RespData.success(new DirectoryRenameResult());
     }
 
     @Override
     public RespData<DirectoryMoveResult> move(DirectoryMoveRequest request) {
-        MoveDirectoryCmd command = new MoveDirectoryCmd();
-        command.setUserId(request.getUserId());
-        command.setDirectoryId(request.getDirectoryId());
-        command.setNewParentId(request.getNewParentId());
-        directoryService.moveTo(command);
+        directoryService.moveTo(DirectoryAssembler.toMoveDirectoryCmd(request));
         return RespData.success(new DirectoryMoveResult());
     }
 
