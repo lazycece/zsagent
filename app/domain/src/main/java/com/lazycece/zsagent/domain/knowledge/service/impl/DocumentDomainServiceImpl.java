@@ -94,14 +94,14 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
         DocumentVersion version = document.updateContent(command);
 
         // persistence
-        return transactionTemplate.execute(new TransactionCallback<DocumentVersion>() {
+        transactionTemplate.executeWithoutResult(new Consumer<TransactionStatus>() {
             @Override
-            public DocumentVersion doInTransaction(TransactionStatus status) {
+            public void accept(TransactionStatus transactionStatus) {
                 documentRepository.update(document);
                 versionRepository.save(List.of(version));
-                return version;
             }
         });
+        return version;
     }
 
     /**
