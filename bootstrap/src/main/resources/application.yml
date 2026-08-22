@@ -2,6 +2,13 @@
 server:
   port: ${app.port:8080}
 
+# 日志
+logging:
+  file:
+    path: ${app.log.path}
+  level:
+    root: info
+
 # spring相关
 spring:
   application:
@@ -37,7 +44,7 @@ spring:
       filters: stat
   ai:
     openai:
-      api-key: ${deepseek_api_Key}
+      api-key: ${app.deepseek.api-key}
       base-url: https://api.deepseek.com
       chat:
         model: deepseek-v4-flash
@@ -94,4 +101,5 @@ cell:
 # 项目自定义配置
 zsagent:
   storage:
-    local-file-base-dir: ${ZSAGENT_STORAGE_DIR:./storage/files/}
+    local-file-base-dir: ${app.zsagent.storage.dir:./storage/files/}
+
