@@ -145,9 +145,9 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
         Assert.notNull(targetVersion, RespStatus.PARAM_ERROR, "版本不存在");
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-
-        // persistence
+        // rollback
         DocumentVersion newVersion = document.rollback(command, targetVersion);
+        // persistence
         transactionTemplate.executeWithoutResult(new Consumer<TransactionStatus>() {
             @Override
             public void accept(TransactionStatus transactionStatus) {
@@ -164,14 +164,17 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public void updateEtlStatus(UpdateEtlStatusCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        // load
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
+
         if (command.getStatus() == EtlStatus.FAILED) {
             document.markEtlFailed(command.getErrorMessage());
         } else {
             document.updateEtlStatus(command.getStatus());
             document.setEtlErrorMessage(null);
         }
+        // persistence
         documentRepository.update(document);
     }
 
@@ -181,9 +184,12 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public void publish(String documentId) {
         Assert.notBlank(documentId, RespStatus.PARAM_ERROR, "documentId 不能为空");
+        // load
         Document document = documentRepository.findById(documentId);
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
+        // publish
         document.publish();
+        // persistence
         documentRepository.update(document);
     }
 }
