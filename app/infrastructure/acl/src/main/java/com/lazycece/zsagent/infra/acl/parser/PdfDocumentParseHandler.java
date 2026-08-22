@@ -1,7 +1,7 @@
 package com.lazycece.zsagent.infra.acl.parser;
 
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
-import com.lazycece.zsagent.domain.knowledge.service.DocumentParser;
+import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandler;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
 import com.lazycece.zsagent.domain.knowledge.valueobject.Section;
 import org.apache.pdfbox.Loader;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author lazycece
  */
 @Component
-public class PdfDocumentParser implements DocumentParser {
+public class PdfDocumentParseHandler implements DocumentParseHandler {
 
     @Override
     public ParsedDocument parse(InputStream inputStream) throws IOException {

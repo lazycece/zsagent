@@ -1,7 +1,7 @@
 package com.lazycece.zsagent.infra.acl.parser;
 
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
-import com.lazycece.zsagent.domain.knowledge.service.DocumentParser;
+import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandler;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
 import com.lazycece.zsagent.domain.knowledge.valueobject.Section;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +23,7 @@ import java.util.List;
  * @author lazycece
  */
 @Component
-public class MarkdownDocumentParser implements DocumentParser {
+public class MarkdownDocumentParseHandler implements DocumentParseHandler {
 
     private static final Parser PARSER = Parser.builder().build();
     private static final TextContentRenderer TEXT_RENDERER = TextContentRenderer.builder().build();

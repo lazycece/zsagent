@@ -2,7 +2,8 @@ package com.lazycece.zsagent.infra.acl.parser;
 
 import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
-import com.lazycece.zsagent.domain.knowledge.service.DocumentParser;
+import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandler;
+import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandlerRegistry;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,23 +17,18 @@ import java.util.stream.Collectors;
  * @author lazycece
  */
 @Component
-public class ParserRegistry {
+public class ParseHandlerRegistry implements DocumentParseHandlerRegistry {
 
-    private final Map<DocumentFormat, DocumentParser> parserMap;
+    private final Map<DocumentFormat, DocumentParseHandler> parserMap;
 
-    public ParserRegistry(List<DocumentParser> parsers) {
+    public ParseHandlerRegistry(List<DocumentParseHandler> parsers) {
         this.parserMap = parsers.stream()
-                .collect(Collectors.toMap(DocumentParser::supportedFormat, Function.identity()));
+                .collect(Collectors.toMap(DocumentParseHandler::supportedFormat, Function.identity()));
     }
 
-    /**
-     * 按格式获取解析器。
-     *
-     * @param format 文档格式
-     * @return 对应解析器
-     */
-    public DocumentParser getParser(DocumentFormat format) {
-        DocumentParser parser = parserMap.get(format);
+    @Override
+    public DocumentParseHandler getParser(DocumentFormat format) {
+        DocumentParseHandler parser = parserMap.get(format);
         if (parser == null) {
             throw ExceptionFactory.businessException("不支持的文件格式: " + format.getCode());
         }

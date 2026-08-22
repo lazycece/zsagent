@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.domain.knowledge.service;
+package com.lazycece.zsagent.domain.knowledge.service.handler.parse;
 
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
@@ -12,7 +12,7 @@ import java.io.InputStream;
  *
  * @author lazycece
  */
-public interface DocumentParser {
+public interface DocumentParseHandler {
 
     /**
      * 解析文档，提取结构化内容。

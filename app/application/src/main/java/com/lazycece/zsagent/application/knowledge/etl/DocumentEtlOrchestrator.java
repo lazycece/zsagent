@@ -1,5 +1,6 @@
 package com.lazycece.zsagent.application.knowledge.etl;
 
+import com.lazycece.rapidf.domain.anotation.ApplicationHandler;
 import com.lazycece.rapidf.restful.Assert;
 import com.lazycece.rapidf.restful.response.RespStatus;
 import com.lazycece.zsagent.domain.agent.model.KnowledgeChunk;
@@ -9,16 +10,16 @@ import com.lazycece.zsagent.domain.knowledge.model.Document;
 import com.lazycece.zsagent.domain.knowledge.repository.DocumentRepository;
 import com.lazycece.zsagent.domain.knowledge.repository.FileStorage;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
-import com.lazycece.zsagent.domain.knowledge.service.DocumentParser;
+import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandler;
+import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandlerRegistry;
+import com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
-import com.lazycece.zsagent.infra.acl.parser.ParserRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
  *
  * @author lazycece
  */
-@Component
+@ApplicationHandler
 public class DocumentEtlOrchestrator {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentEtlOrchestrator.class);
@@ -38,7 +39,7 @@ public class DocumentEtlOrchestrator {
     private final DocumentDomainService documentService;
     private final DocumentRepository documentRepository;
     private final FileStorage fileStorage;
-    private final ParserRegistry parserRegistry;
+    private final DocumentParseHandlerRegistry parserRegistry;
     private final DocumentChunker chunker;
     private final DocumentEnricher enricher;
     private final EmbeddingModel embeddingModel;
@@ -47,7 +48,7 @@ public class DocumentEtlOrchestrator {
     public DocumentEtlOrchestrator(DocumentDomainService documentService,
                                    DocumentRepository documentRepository,
                                    FileStorage fileStorage,
-                                   ParserRegistry parserRegistry,
+                                   DocumentParseHandlerRegistry parserRegistry,
                                    DocumentChunker chunker,
                                    DocumentEnricher enricher,
                                    EmbeddingModel embeddingModel,
@@ -73,7 +74,7 @@ public class DocumentEtlOrchestrator {
 
             // Phase 1: 解析
             updateEtlStatus(documentId, EtlStatus.PARSING, null);
-            DocumentParser parser = parserRegistry.getParser(document.getFormat());
+            DocumentParseHandler parser = parserRegistry.getParser(document.getFormat());
             ParsedDocument parsed;
             try (InputStream inputStream = fileStorage.load(document.getFilePath())) {
                 parsed = parser.parse(inputStream);
@@ -85,7 +86,7 @@ public class DocumentEtlOrchestrator {
 
             // Phase 3: 增强（LLM 摘要/标签）
             updateEtlStatus(documentId, EtlStatus.ENRICHING, null);
-            com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult enrichResult = enricher.enrich(parsed, document.getTitle());
+            EnrichResult enrichResult = enricher.enrich(parsed, document.getTitle());
             UpdateDocumentMetadataCmd metadataCommand = new UpdateDocumentMetadataCmd();
             metadataCommand.setUserId(document.getCreator());
             metadataCommand.setDocumentId(documentId);
