@@ -111,11 +111,11 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     public void delete(String userId, String documentId) {
         Assert.notBlank(userId, RespStatus.PARAM_ERROR, "userId 不能为空");
         Assert.notBlank(documentId, RespStatus.PARAM_ERROR, "documentId 不能为空");
+        // load
         Document document = documentRepository.findById(documentId);
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        document.setUpdater(userId);
-        document.setUpdateTime(LocalDateTime.now());
-        document.delete();
+        // persistence
+        document.delete(userId);
         documentRepository.update(document);
     }
 

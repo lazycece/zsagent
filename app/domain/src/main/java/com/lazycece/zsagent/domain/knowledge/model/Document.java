@@ -117,9 +117,11 @@ public class Document extends Aggregate<String> {
     /**
      * 删除文档——移入回收站，记录删除时间用于 30 天自动清理。
      */
-    public void delete() {
+    public void delete(String  userId) {
         this.status = DocumentStatus.DELETED;
         this.deletedTime = LocalDateTime.now();
+        super.setUpdater(userId);
+        super.setUpdateTime(LocalDateTime.now());
     }
 
     /**
