@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.application.knowledge.retriever;
+package com.lazycece.zsagent.application.knowledge.handler.retriever;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

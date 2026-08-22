@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.application.knowledge.etl;
+package com.lazycece.zsagent.application.knowledge.handler.etl;
 
 import com.lazycece.rapidf.domain.anotation.ApplicationHandler;
 import com.lazycece.rapidf.restful.Assert;

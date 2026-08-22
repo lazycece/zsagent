@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.application.knowledge.etl;
+package com.lazycece.zsagent.application.knowledge.handler.etl;
 
 import com.lazycece.rapidf.utils.UUIDUtils;
 import com.lazycece.zsagent.domain.agent.model.KnowledgeChunk;

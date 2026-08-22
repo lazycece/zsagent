@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.application.knowledge.etl;
+package com.lazycece.zsagent.application.knowledge.handler.etl;
 
 import com.lazycece.rapidf.utils.json.JsonUtils;
 import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;

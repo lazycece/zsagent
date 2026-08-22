@@ -3,7 +3,7 @@ package com.lazycece.zsagent.application.knowledge;
 import com.lazycece.rapidf.domain.anotation.ApplicationService;
 import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.zsagent.application.knowledge.assembler.DocumentAssembler;
-import com.lazycece.zsagent.application.knowledge.etl.DocumentEtlOrchestrator;
+import com.lazycece.zsagent.application.knowledge.handler.etl.DocumentEtlOrchestrator;
 import com.lazycece.zsagent.application.knowledge.validator.DocumentCreateValidator;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
