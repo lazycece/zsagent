@@ -21,3 +21,17 @@ Content-Type: text/plain
 
 hello file upload
 --WebAppBoundary--
+
+### upload local file
+# 从本地地址读取文件内容作为 multipart 的 file part，仅需调整下方 @localFile 的路径。
+# 支持相对/绝对路径，Windows 路径用正斜杠（如 C:/Users/xxx/Desktop/test.md）。
+@localFile = C:/path/to/your/file.md
+
+POST {{httpUrl}}/api/v1/file/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="知识库平台 Agent.md"
+
+< C:\lazycece\develop\zsagent\document\brd\知识库平台 Agent.md
+--WebAppBoundary--

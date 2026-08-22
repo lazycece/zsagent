@@ -14,9 +14,12 @@ import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RollbackDocumentCmd
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentContentCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * 文档领域服务实现。
@@ -30,11 +33,14 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
 
     private final DocumentRepository documentRepository;
     private final DocumentVersionRepository versionRepository;
+    private final TransactionTemplate transactionTemplate;
 
     public DocumentDomainServiceImpl(DocumentRepository documentRepository,
-                                     DocumentVersionRepository versionRepository) {
+                                     DocumentVersionRepository versionRepository,
+                                     TransactionTemplate transactionTemplate) {
         this.documentRepository = documentRepository;
         this.versionRepository = versionRepository;
+        this.transactionTemplate = transactionTemplate;
     }
 
     /**
@@ -43,11 +49,18 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public String createDocument(CreateDocumentCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        // build
         Document document = Document.create(command);
-        DocumentVersion version = document.createNewVersion(
-                command.getFilePath(), command.getFileSize(), "初始版本");
-        documentRepository.save(document);
-        versionRepository.save(List.of(version));
+        DocumentVersion version = document.createNewVersion(command.getFilePath(), command.getFileSize(), "初始版本");
+        // persistence
+        transactionTemplate.executeWithoutResult(new Consumer<TransactionStatus>() {
+            @Override
+            public void accept(TransactionStatus transactionStatus) {
+                documentRepository.save(document);
+                versionRepository.save(List.of(version));
+            }
+        });
+
         return document.getDocumentId();
     }
 

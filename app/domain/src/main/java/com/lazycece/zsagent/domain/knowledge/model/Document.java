@@ -1,9 +1,11 @@
 package com.lazycece.zsagent.domain.knowledge.model;
 
+import com.google.common.collect.Lists;
+import com.lazycece.cell.specification.CellHelper;
 import com.lazycece.rapidf.domain.anotation.DomainAggregate;
 import com.lazycece.rapidf.domain.model.Aggregate;
 import com.lazycece.rapidf.utils.DefaultUtils;
-import com.lazycece.rapidf.utils.UUIDUtils;
+import com.lazycece.zsagent.domain.common.enums.CellEnum;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
@@ -73,17 +75,17 @@ public class Document extends Aggregate<String> {
      */
     public static Document create(CreateDocumentCmd command) {
         Document document = new Document();
-        document.documentId = UUIDUtils.uuid();
+        document.documentId = CellHelper.getInstance().generateId(CellEnum.DOCUMENT);
         document.title = command.getTitle();
         document.format = command.getFormat();
         document.directoryId = command.getDirectoryId();
-        document.tags = new ArrayList<>(DefaultUtils.defaultList(command.getTags()));
+        document.tags = DefaultUtils.defaultList(command.getTags());
         document.visibility = command.getVisibility();
-        document.visibleTo = new ArrayList<>(DefaultUtils.defaultList(command.getVisibleTo()));
+        document.visibleTo = DefaultUtils.defaultList(command.getVisibleTo());
         document.status = DocumentStatus.DRAFT;
         document.etlStatus = EtlStatus.PENDING;
         document.currentVersion = 0;
-        document.versions = new ArrayList<>();
+        document.versions = Lists.newArrayList();
         document.setCreator(command.getUserId());
         document.setUpdater(command.getUserId());
         document.setCreateTime(LocalDateTime.now());

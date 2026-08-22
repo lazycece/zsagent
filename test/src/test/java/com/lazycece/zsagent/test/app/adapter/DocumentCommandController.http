@@ -1,74 +1,46 @@
-### upload
-POST {{httpUrl}}/api/v1/document/upload
-Content-Type: multipart/form-data; boundary=WebAppBoundary
+### 前置说明
+# 文档接口接收文件相对路径（filePath），文件本体需先通过 FileCommandController 上传获取。
+# 示例：先执行 FileCommandController.http 中的 upload 请求，将返回的 filePath 填入下方 {{filePath}}。
 
---WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="test.md"
-Content-Type: text/markdown
+### create
+POST {{httpUrl}}/api/v1/document/create
+Content-Type: application/json
 
-# 产品手册
-## 概述
-这是产品手册的概述内容。
-## 安装
-安装步骤如下：
-1. 下载安装包
-2. 解压
-3. 运行安装程序
+{
+  "userId": "user_123",
+  "title": "",
+  "directoryId": "20260822021101120000013024",
+  "tags": ["知识库", "agent"],
+  "visibility": "public",
+  "visibleTo": [],
+  "filePath": "upload/2026/08/22/96348d2c9b7d4341989adc5ca8fb7f95_1787386266592.md"
+}
 
---WebAppBoundary
-Content-Disposition: form-data; name="userId"
-
-user_123
-
---WebAppBoundary
-Content-Disposition: form-data; name="visibility"
-
-public
-
---WebAppBoundary
-Content-Disposition: form-data; name="tags"
-
-产品,手册
-
---WebAppBoundary--
-
-### updateMetadata
+### update-metadata
 POST {{httpUrl}}/api/v1/document/update-metadata
 Content-Type: application/json
 
 {
   "userId": "user_123",
   "documentId": "your-document-id",
-  "title": "产品手册 V2"
+  "title": "产品手册 V2",
+  "summary": "更新后的摘要",
+  "directoryId": "your-directory-id",
+  "tags": ["产品", "手册", "V2"],
+  "visibility": "public",
+  "visibleTo": []
 }
 
-### updateContent
+### update-content
 POST {{httpUrl}}/api/v1/document/update-content
-Content-Type: multipart/form-data; boundary=WebAppBoundary
+Content-Type: application/json
 
---WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="test-v2.md"
-Content-Type: text/markdown
-
-# 产品手册 V2
-这是更新后的内容。
-
---WebAppBoundary
-Content-Disposition: form-data; name="userId"
-
-user_123
-
---WebAppBoundary
-Content-Disposition: form-data; name="documentId"
-
-your-document-id
-
---WebAppBoundary
-Content-Disposition: form-data; name="changeLog"
-
-更新价格信息
-
---WebAppBoundary--
+{
+  "userId": "user_123",
+  "documentId": "your-document-id",
+  "changeLog": "更新价格信息",
+  "filePath": "upload/2026/08/22/96348d2c9b7d4341989adc5ca8fb7f95_1787386266592.md"
+}
 
 ### delete
 POST {{httpUrl}}/api/v1/document/delete

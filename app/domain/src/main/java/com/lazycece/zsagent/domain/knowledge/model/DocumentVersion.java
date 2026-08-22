@@ -1,8 +1,9 @@
 package com.lazycece.zsagent.domain.knowledge.model;
 
+import com.lazycece.cell.specification.CellHelper;
 import com.lazycece.rapidf.domain.anotation.DomainEntity;
 import com.lazycece.rapidf.domain.model.Entity;
-import com.lazycece.rapidf.utils.UUIDUtils;
+import com.lazycece.zsagent.domain.common.enums.CellEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,7 +43,7 @@ public class DocumentVersion extends Entity<String> {
     static DocumentVersion create(String documentId, Integer versionNumber, String filePath,
                                   Long fileSize, String changeLog, String creator) {
         DocumentVersion version = new DocumentVersion();
-        version.versionId = UUIDUtils.uuid();
+        version.versionId = CellHelper.getInstance().generateId(CellEnum.DOCUMENT_VERSION);
         version.documentId = documentId;
         version.versionNumber = versionNumber;
         version.filePath = filePath;

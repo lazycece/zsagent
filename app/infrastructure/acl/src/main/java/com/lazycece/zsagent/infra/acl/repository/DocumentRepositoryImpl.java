@@ -11,7 +11,6 @@ import com.lazycece.zsagent.infra.acl.converter.DocumentInfraConverter;
 import com.lazycece.zsagent.infra.dal.dto.DocumentQueryDTO;
 import com.lazycece.zsagent.infra.dal.mapper.udf.DocumentUdfMapper;
 import com.lazycece.zsagent.infra.dal.po.DocumentPO;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +30,6 @@ public class DocumentRepositoryImpl implements DocumentRepository {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void save(Document document) {
         documentMapper.insert(DocumentInfraConverter.toDocumentPO(document));
     }
@@ -76,7 +74,6 @@ public class DocumentRepositoryImpl implements DocumentRepository {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void update(Document document) {
         documentMapper.update(DocumentInfraConverter.toDocumentPO(document));
     }
