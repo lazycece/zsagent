@@ -126,11 +126,11 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     public void restore(String userId, String documentId) {
         Assert.notBlank(userId, RespStatus.PARAM_ERROR, "userId 不能为空");
         Assert.notBlank(documentId, RespStatus.PARAM_ERROR, "documentId 不能为空");
+        // load
         Document document = documentRepository.findById(documentId);
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        document.setUpdater(userId);
-        document.setUpdateTime(LocalDateTime.now());
-        document.restore();
+        // persistence
+        document.restore(userId);
         documentRepository.update(document);
     }
 
@@ -140,21 +140,22 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public DocumentVersion rollback(RollbackDocumentCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        // load
         DocumentVersion targetVersion = versionRepository.findByVersionId(command.getTargetVersionId());
         Assert.notNull(targetVersion, RespStatus.PARAM_ERROR, "版本不存在");
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
 
         // persistence
-        return transactionTemplate.execute(new TransactionCallback<DocumentVersion>() {
+        DocumentVersion newVersion = document.rollback(command, targetVersion);
+        transactionTemplate.executeWithoutResult(new Consumer<TransactionStatus>() {
             @Override
-            public DocumentVersion doInTransaction(TransactionStatus status) {
-                DocumentVersion newVersion = document.rollback(command, targetVersion);
+            public void accept(TransactionStatus transactionStatus) {
                 documentRepository.update(document);
                 versionRepository.save(List.of(newVersion));
-                return newVersion;
             }
         });
+        return newVersion;
     }
 
     /**

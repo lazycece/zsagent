@@ -127,9 +127,11 @@ public class Document extends Aggregate<String> {
     /**
      * 从回收站恢复文档。
      */
-    public void restore() {
+    public void restore(String userId) {
         this.status = DocumentStatus.PUBLISHED;
         this.deletedTime = null;
+        super.setUpdater(userId);
+        super.setUpdateTime(LocalDateTime.now());
     }
 
     /**
