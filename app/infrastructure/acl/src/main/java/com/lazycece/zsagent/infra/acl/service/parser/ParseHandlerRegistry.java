@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.infra.acl.parser;
+package com.lazycece.zsagent.infra.acl.service.parser;
 
 import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;

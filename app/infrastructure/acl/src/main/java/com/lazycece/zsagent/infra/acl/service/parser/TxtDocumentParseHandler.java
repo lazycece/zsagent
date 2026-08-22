@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.infra.acl.parser;
+package com.lazycece.zsagent.infra.acl.service.parser;
 
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.service.handler.parse.DocumentParseHandler;
