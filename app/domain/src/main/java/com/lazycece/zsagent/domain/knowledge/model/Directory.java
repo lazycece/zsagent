@@ -65,14 +65,28 @@ public class Directory extends Aggregate<String> {
     /**
      * 修改目录名称。
      */
-    public void rename(String newName) {
+    public void rename(String userId, String newName) {
         this.name = newName;
+        super.setUpdater(userId);
+        super.setUpdateTime(LocalDateTime.now());
     }
 
     /**
      * 移动目录（改变父级）。
      */
-    public void moveTo(String newParentId) {
+    public void moveTo(String userId, String newParentId) {
         this.parentId = newParentId;
+        super.setUpdater(userId);
+        super.setUpdateTime(LocalDateTime.now());
     }
+
+    /**
+     * 删除目录
+     */
+    public void delete(String userId) {
+        super.setDeleted(true);
+        super.setUpdater(userId);
+        super.setUpdateTime(LocalDateTime.now());
+    }
+
 }

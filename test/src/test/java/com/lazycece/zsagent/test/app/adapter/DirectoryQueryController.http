@@ -1,5 +1,5 @@
 ### listChildren
-GET {{httpUrl}}/api/v1/directory/list-children?parentId=your-parent-id
+GET {{httpUrl}}/api/v1/directory/list-children?parentId=
 
 ### tree
 GET {{httpUrl}}/api/v1/directory/tree

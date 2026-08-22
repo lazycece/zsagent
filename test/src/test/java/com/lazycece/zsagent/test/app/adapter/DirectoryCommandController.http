@@ -4,7 +4,8 @@ Content-Type: application/json
 
 {
   "userId": "user_123",
-  "name": "产品文档"
+  "parentId": "20260822021101130000025025",
+  "name": "测试test"
 }
 
 ### rename
@@ -13,8 +14,8 @@ Content-Type: application/json
 
 {
   "userId": "user_123",
-  "directoryId": "your-directory-id",
-  "newName": "产品手册"
+  "directoryId": "20260822021101130000025028",
+  "newName": "testhahah"
 }
 
 ### move
@@ -23,8 +24,8 @@ Content-Type: application/json
 
 {
   "userId": "user_123",
-  "directoryId": "your-directory-id",
-  "newParentId": "your-parent-id"
+  "directoryId": "20260822021101130000025028",
+  "newParentId": "20260822021101120000013024"
 }
 
 ### delete
@@ -33,5 +34,5 @@ Content-Type: application/json
 
 {
   "userId": "user_123",
-  "directoryId": "your-directory-id"
+  "directoryId": "20260822021101130000025028"
 }

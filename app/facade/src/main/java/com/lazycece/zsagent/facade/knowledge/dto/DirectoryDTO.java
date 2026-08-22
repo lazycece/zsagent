@@ -33,6 +33,9 @@ public class DirectoryDTO {
     /** 关联文档数（可选） */
     private Integer documentCount;
 
+    private String creator;
+    private String updater;
     /** 创建时间 */
     private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 }

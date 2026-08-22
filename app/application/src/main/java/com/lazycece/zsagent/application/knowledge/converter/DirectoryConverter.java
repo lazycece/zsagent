@@ -33,7 +33,10 @@ public final class DirectoryConverter {
         dto.setParentId(directory.getParentId());
         dto.setName(directory.getName());
         dto.setSortOrder(directory.getSortOrder());
+        dto.setCreator(directory.getCreator());
+        dto.setUpdater(directory.getUpdater());
         dto.setCreateTime(directory.getCreateTime());
+        dto.setUpdateTime(directory.getUpdateTime());
         return dto;
     }
 

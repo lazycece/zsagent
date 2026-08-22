@@ -34,8 +34,17 @@
         select
             <include refid="Base_Column_List"/>
         from `agent_directory`
-        where `parent_id` = #{parentId}
-          and `deleted` = 0
+        <where>
+            <choose>
+                <when test="parentId != null and parentId != ''">
+                    `parent_id` = #{parentId}
+                </when>
+                <otherwise>
+                    `parent_id` is null
+                </otherwise>
+            </choose>
+            and `deleted` = 0
+        </where>
         order by `sort_order` asc, `create_time` asc
     </select>
 
