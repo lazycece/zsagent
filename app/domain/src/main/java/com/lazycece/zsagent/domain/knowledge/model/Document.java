@@ -11,6 +11,7 @@ import com.lazycece.zsagent.domain.knowledge.enums.DocumentStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -148,27 +149,31 @@ public class Document extends Aggregate<String> {
 
     /**
      * 更新元数据——标题、标签、目录、可见范围，不产生新版本。
+     *
+     * @param cmd 更新元数据命令
      */
-    public void updateMetadata(String title, String summary, String directoryId,
-                               List<String> tags, Visibility visibility, List<String> visibleTo) {
-        if (StringUtils.isNotBlank(title)) {
-            this.title = title;
+    public void updateMetadata(UpdateDocumentMetadataCmd cmd) {
+        if (StringUtils.isNotBlank(cmd.getTitle())) {
+            this.title = cmd.getTitle();
         }
-        if (summary != null) {
-            this.summary = summary;
+        if (cmd.getSummary() != null) {
+            this.summary = cmd.getSummary();
         }
-        if (directoryId != null) {
-            this.directoryId = directoryId;
+        if (cmd.getDirectoryId() != null) {
+            this.directoryId = cmd.getDirectoryId();
         }
-        if (tags != null) {
-            this.tags = new ArrayList<>(tags);
+        if (cmd.getTags() != null) {
+            this.tags = new ArrayList<>(cmd.getTags());
         }
-        if (visibility != null) {
-            this.visibility = visibility;
+        if (cmd.getVisibility() != null) {
+            this.visibility = cmd.getVisibility();
         }
-        if (visibleTo != null) {
-            this.visibleTo = new ArrayList<>(visibleTo);
+        if (cmd.getVisibleTo() != null) {
+            this.visibleTo = new ArrayList<>(cmd.getVisibleTo());
         }
+
+        super.setUpdater(cmd.getUserId());
+        super.setUpdateTime(LocalDateTime.now());
     }
 
     /**

@@ -70,12 +70,12 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     @Override
     public void updateMetadata(UpdateDocumentMetadataCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
+        // load
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
-        document.setUpdater(command.getUserId());
-        document.setUpdateTime(LocalDateTime.now());
-        document.updateMetadata(command.getTitle(), command.getSummary(), command.getDirectoryId(),
-                command.getTags(), command.getVisibility(), command.getVisibleTo());
+
+        // persistence
+        document.updateMetadata(command);
         documentRepository.update(document);
     }
 
