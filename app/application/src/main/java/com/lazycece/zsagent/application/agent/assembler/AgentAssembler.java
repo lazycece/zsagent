@@ -21,7 +21,7 @@ public final class AgentAssembler {
     /**
      * 从 AskQuestionRequest 构建用户提问命令。
      */
-    public static UserMessageCmd toUserMessageCmd(AskQuestionRequest request) {
+    public static UserMessageCmd assembleUserMessageCmd(AskQuestionRequest request) {
         UserMessageCmd command = new UserMessageCmd();
         command.setUserId(request.getUserId());
         command.setConversationId(request.getConversationId());
@@ -32,7 +32,7 @@ public final class AgentAssembler {
     /**
      * 构建助手回答命令。
      */
-    public static AssistantMessageCmd toAssistantMessageCmd(
+    public static AssistantMessageCmd assembleAssistantMessageCmd(
             String userId, String conversationId, String content, List<SourceReference> sources) {
         AssistantMessageCmd command = new AssistantMessageCmd();
         command.setUserId(userId);
@@ -46,7 +46,7 @@ public final class AgentAssembler {
      * 从 FeedbackRequest 构建反馈命令。
      * 将请求中的 type 字符串转换为 FeedbackType 枚举。
      */
-    public static FeedbackCmd toFeedbackCmd(FeedbackRequest request) {
+    public static FeedbackCmd assembleFeedbackCmd(FeedbackRequest request) {
         FeedbackType feedbackType = FeedbackType.valueOf(request.getType().toUpperCase());
         FeedbackCmd command = new FeedbackCmd();
         command.setUserId(request.getUserId());

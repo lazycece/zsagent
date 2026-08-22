@@ -55,7 +55,7 @@ public class DocumentQueryFacadeImpl implements DocumentQueryFacade {
     @Override
     public RespData<DocumentDetailResult> getDocument(DocumentDetailQueryRequest request) {
         Document document = documentRepository.findByDocumentId(
-                DocumentAssembler.toDocumentQuery(request, getUserDeptsFromContext()));
+                DocumentAssembler.assembleDocumentQuery(request, getUserDeptsFromContext()));
         Assert.notNull(document, RespStatus.DATA_NOT_EXIST, "文档不存在或无权访问");
         DocumentDetailResult result = new DocumentDetailResult();
         result.setDocument(DocumentConverter.toDocumentDTO(document));
@@ -64,7 +64,7 @@ public class DocumentQueryFacadeImpl implements DocumentQueryFacade {
 
     @Override
     public RespData<PageData<DocumentDTO>> listDocuments(DocumentListQueryRequest request) {
-        DocumentListQuery query = DocumentAssembler.toDocumentListQuery(
+        DocumentListQuery query = DocumentAssembler.assembleDocumentListQuery(
                 request, getUserDeptsFromContext());
         Pagination pagination = new Pagination(request.getPage(), request.getSize());
         List<Document> documents = documentRepository.findByUserId(query, pagination);

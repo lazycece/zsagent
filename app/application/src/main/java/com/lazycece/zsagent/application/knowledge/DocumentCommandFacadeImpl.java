@@ -45,7 +45,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
     @Override
     public RespData<DocumentCreateResult> create(DocumentCreateRequest request) {
         DocumentCreateValidator.validate(request);
-        String documentId = documentService.createDocument(DocumentAssembler.toCreateDocumentCmd(request));
+        String documentId = documentService.createDocument(DocumentAssembler.assembleCreateDocumentCmd(request));
 
         etlOrchestrator.process(documentId);
 
@@ -57,13 +57,13 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
     @Override
     public RespData<DocumentUpdateMetadataResult> updateMetadata(DocumentUpdateMetadataRequest request) {
-        documentService.updateMetadata(DocumentAssembler.toUpdateMetadataCmd(request));
+        documentService.updateMetadata(DocumentAssembler.assembleUpdateMetadataCmd(request));
         return RespData.success(new DocumentUpdateMetadataResult());
     }
 
     @Override
     public RespData<DocumentUpdateContentResult> updateContent(DocumentUpdateContentRequest request) {
-        documentService.updateContent(DocumentAssembler.toUpdateContentCmd(request));
+        documentService.updateContent(DocumentAssembler.assembleUpdateContentCmd(request));
 
         etlOrchestrator.reprocess(request.getDocumentId());
         return RespData.success(new DocumentUpdateContentResult());
@@ -85,7 +85,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
     @Override
     public RespData<DocumentRollbackResult> rollback(DocumentRollbackRequest request) {
-        documentService.rollback(DocumentAssembler.toRollbackCmd(request));
+        documentService.rollback(DocumentAssembler.assembleRollbackCmd(request));
         etlOrchestrator.reprocess(request.getDocumentId());
         return RespData.success(new DocumentRollbackResult());
     }

@@ -32,7 +32,7 @@ public class DirectoryCommandFacadeImpl implements DirectoryCommandFacade {
 
     @Override
     public RespData<DirectoryCreateResult> create(DirectoryCreateRequest request) {
-        String directoryId = directoryService.createDirectory(DirectoryAssembler.toCreateDirectoryCmd(request));
+        String directoryId = directoryService.createDirectory(DirectoryAssembler.assembleCreateDirectoryCmd(request));
         DirectoryCreateResult result = new DirectoryCreateResult();
         result.setDirectoryId(directoryId);
         return RespData.success(result);
@@ -40,13 +40,13 @@ public class DirectoryCommandFacadeImpl implements DirectoryCommandFacade {
 
     @Override
     public RespData<DirectoryRenameResult> rename(DirectoryRenameRequest request) {
-        directoryService.rename(DirectoryAssembler.toRenameDirectoryCmd(request));
+        directoryService.rename(DirectoryAssembler.assembleRenameDirectoryCmd(request));
         return RespData.success(new DirectoryRenameResult());
     }
 
     @Override
     public RespData<DirectoryMoveResult> move(DirectoryMoveRequest request) {
-        directoryService.moveTo(DirectoryAssembler.toMoveDirectoryCmd(request));
+        directoryService.moveTo(DirectoryAssembler.assembleMoveDirectoryCmd(request));
         return RespData.success(new DirectoryMoveResult());
     }
 

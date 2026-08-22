@@ -36,7 +36,7 @@ public final class DocumentAssembler {
      * 从创建请求构建创建文档命令。
      * 标题为空时取文件名（去扩展名）作为默认标题。
      */
-    public static CreateDocumentCmd toCreateDocumentCmd(DocumentCreateRequest request) {
+    public static CreateDocumentCmd assembleCreateDocumentCmd(DocumentCreateRequest request) {
         CreateDocumentCmd command = new CreateDocumentCmd();
         command.setUserId(request.getUserId());
         command.setTitle(StringUtils.isNotBlank(request.getTitle())
@@ -54,7 +54,7 @@ public final class DocumentAssembler {
     /**
      * 从更新元数据请求构建更新元数据命令。
      */
-    public static UpdateDocumentMetadataCmd toUpdateMetadataCmd(DocumentUpdateMetadataRequest request) {
+    public static UpdateDocumentMetadataCmd assembleUpdateMetadataCmd(DocumentUpdateMetadataRequest request) {
         UpdateDocumentMetadataCmd command = new UpdateDocumentMetadataCmd();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());
@@ -72,7 +72,7 @@ public final class DocumentAssembler {
     /**
      * 从更新内容请求构建更新内容命令。
      */
-    public static UpdateDocumentContentCmd toUpdateContentCmd(DocumentUpdateContentRequest request) {
+    public static UpdateDocumentContentCmd assembleUpdateContentCmd(DocumentUpdateContentRequest request) {
         UpdateDocumentContentCmd command = new UpdateDocumentContentCmd();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());
@@ -84,7 +84,7 @@ public final class DocumentAssembler {
     /**
      * 从详情查询请求构建单文档查询条件。
      */
-    public static DocumentQuery toDocumentQuery(DocumentDetailQueryRequest request, List<String> userDepts) {
+    public static DocumentQuery assembleDocumentQuery(DocumentDetailQueryRequest request, List<String> userDepts) {
         DocumentQuery query = new DocumentQuery();
         query.setUserId(request.getUserId());
         query.setUserDepts(userDepts);
@@ -95,7 +95,7 @@ public final class DocumentAssembler {
     /**
      * 从列表查询请求构建文档列表查询条件。
      */
-    public static DocumentListQuery toDocumentListQuery(DocumentListQueryRequest request, List<String> userDepts) {
+    public static DocumentListQuery assembleDocumentListQuery(DocumentListQueryRequest request, List<String> userDepts) {
         DocumentListQuery query = new DocumentListQuery();
         query.setUserId(request.getUserId());
         query.setUserDepts(userDepts);
@@ -110,7 +110,7 @@ public final class DocumentAssembler {
     /**
      * 从回滚请求构建回滚命令。
      */
-    public static RollbackDocumentCmd toRollbackCmd(DocumentRollbackRequest request) {
+    public static RollbackDocumentCmd assembleRollbackCmd(DocumentRollbackRequest request) {
         RollbackDocumentCmd command = new RollbackDocumentCmd();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());

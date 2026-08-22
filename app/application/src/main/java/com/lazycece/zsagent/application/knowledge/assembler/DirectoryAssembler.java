@@ -21,7 +21,7 @@ public final class DirectoryAssembler {
     /**
      * 从创建请求构建创建目录命令。
      */
-    public static CreateDirectoryCmd toCreateDirectoryCmd(DirectoryCreateRequest request) {
+    public static CreateDirectoryCmd assembleCreateDirectoryCmd(DirectoryCreateRequest request) {
         CreateDirectoryCmd command = new CreateDirectoryCmd();
         command.setUserId(request.getUserId());
         command.setParentId(request.getParentId());
@@ -32,7 +32,7 @@ public final class DirectoryAssembler {
     /**
      * 从重命名请求构建重命名目录命令。
      */
-    public static RenameDirectoryCmd toRenameDirectoryCmd(DirectoryRenameRequest request) {
+    public static RenameDirectoryCmd assembleRenameDirectoryCmd(DirectoryRenameRequest request) {
         RenameDirectoryCmd command = new RenameDirectoryCmd();
         command.setUserId(request.getUserId());
         command.setDirectoryId(request.getDirectoryId());
@@ -43,7 +43,7 @@ public final class DirectoryAssembler {
     /**
      * 从移动请求构建移动目录命令。
      */
-    public static MoveDirectoryCmd toMoveDirectoryCmd(DirectoryMoveRequest request) {
+    public static MoveDirectoryCmd assembleMoveDirectoryCmd(DirectoryMoveRequest request) {
         MoveDirectoryCmd command = new MoveDirectoryCmd();
         command.setUserId(request.getUserId());
         command.setDirectoryId(request.getDirectoryId());
