@@ -1,8 +1,9 @@
 package com.lazycece.zsagent.domain.knowledge.model;
 
+import com.lazycece.cell.specification.CellHelper;
 import com.lazycece.rapidf.domain.anotation.DomainAggregate;
 import com.lazycece.rapidf.domain.model.Aggregate;
-import com.lazycece.rapidf.utils.UUIDUtils;
+import com.lazycece.zsagent.domain.common.enums.CellEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,13 +19,21 @@ import java.time.LocalDateTime;
 @DomainAggregate
 public class Directory extends Aggregate<String> {
 
-    /** 目录唯一标识 */
+    /**
+     * 目录唯一标识
+     */
     private String directoryId;
-    /** 父目录ID（根目录为 null） */
+    /**
+     * 父目录ID（根目录为 null）
+     */
     private String parentId;
-    /** 目录名称 */
+    /**
+     * 目录名称
+     */
     private String name;
-    /** 排序序号（值越小越靠前） */
+    /**
+     * 排序序号（值越小越靠前）
+     */
     private Integer sortOrder;
 
     @Override
@@ -39,7 +48,7 @@ public class Directory extends Aggregate<String> {
      */
     public static Directory create(String userId, String parentId, String name) {
         Directory directory = new Directory();
-        directory.directoryId = UUIDUtils.uuid();
+        directory.directoryId = CellHelper.getInstance().generateId(CellEnum.DIRECTORY);
         directory.parentId = parentId;
         directory.name = name;
         directory.sortOrder = 0;

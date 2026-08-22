@@ -78,6 +78,19 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
 
+# cell
+cell:
+  cell-type-class: com.lazycece.zsagent.domain.common.enums.CellEnum
+  specification:
+    pattern: hour
+    min-value: 1024
+    max-value: 121210000
+    step: 6000
+  buffer:
+    thread-pool-core-size: 5
+    thread-pool-max-size: 5
+    thread-pool-keep-alive-time: 60s
+
 # 项目自定义配置
 zsagent:
   storage:

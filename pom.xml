@@ -48,6 +48,7 @@
         <lombok.version>1.18.24</lombok.version>
 
         <!-- Company inside dependencies -->
+        <cell.version>2.0.0</cell.version>
 
         <!-- Open source dependencies -->
         <mybatis-spring-boot-starter.version>4.1.0</mybatis-spring-boot-starter.version>
@@ -93,6 +94,11 @@
             <!-- Basic core dependencies end -->
 
             <!-- Company inside dependencies begin -->
+            <dependency>
+                <groupId>com.lazycece.cell</groupId>
+                <artifactId>cell-spring-boot-starter</artifactId>
+                <version>${cell.version}</version>
+            </dependency>
             <!-- Company inside dependencies end -->
 
             <!-- Open source dependencies begin-->
