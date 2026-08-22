@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.application.knowledge.config;
+package com.lazycece.zsagent.application.knowledge.handler.etl;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
