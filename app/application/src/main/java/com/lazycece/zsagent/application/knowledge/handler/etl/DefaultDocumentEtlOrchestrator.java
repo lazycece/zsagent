@@ -21,8 +21,8 @@ import java.util.List;
 /**
  * 文档 ETL 异步编排器。
  * <p>
- * 基于 Spring AI ETL pipeline（DocumentReader / DocumentTransformer / DocumentWriter）编排：
- * 解析（Extract）→ 增强（Transform）→ 分块（Transform）→ 向量化索引（Load）→ 发布。
+ * 基于 Spring AI ETL pipeline（DocumentReader / DocumentTransformer / DocumentWriter）编排： 解析（Extract）→
+ * 增强（Transform）→ 分块（Transform）→ 向量化索引（Load）→ 发布。
  *
  * @author lazycece
  */
@@ -40,12 +40,12 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
     private final VectorStore vectorStore;
 
     public DefaultDocumentEtlOrchestrator(DocumentDomainService documentDomainService,
-                                          KnowledgeDocumentReader knowledgeDocumentReader,
-                                          DocumentTokenTextSplitter tokenTextSplitter,
-                                          ChunkSummaryMetadataEnricher summaryMetadataEnricher,
-                                          ChunkKeywordMetadataEnricher keywordMetadataEnricher,
-                                          KnowledgeChunkRepository knowledgeChunkRepository,
-                                          VectorStore vectorStore) {
+            KnowledgeDocumentReader knowledgeDocumentReader,
+            DocumentTokenTextSplitter tokenTextSplitter,
+            ChunkSummaryMetadataEnricher summaryMetadataEnricher,
+            ChunkKeywordMetadataEnricher keywordMetadataEnricher,
+            KnowledgeChunkRepository knowledgeChunkRepository,
+            VectorStore vectorStore) {
         this.documentDomainService = documentDomainService;
         this.knowledgeDocumentReader = knowledgeDocumentReader;
         this.tokenTextSplitter = tokenTextSplitter;
@@ -60,19 +60,23 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
     public void process(String documentId) {
         try {
             // 1、文档解析
-            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.PARSING, null));
+            documentDomainService.updateEtlStatus(
+                    UpdateEtlStatusCmd.build(documentId, EtlStatus.PARSING, null));
             List<Document> docs = knowledgeDocumentReader.loadDocument(documentId).read();
 
             // 2、文档chunk，复制源 metadata 到每个分块
-            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.CHUNKING, null));
+            documentDomainService.updateEtlStatus(
+                    UpdateEtlStatusCmd.build(documentId, EtlStatus.CHUNKING, null));
             docs = tokenTextSplitter.transform(docs);
 
             // 3、chunk增强，生成摘要和关键词标签
-            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.ENRICHING, null));
+            documentDomainService.updateEtlStatus(
+                    UpdateEtlStatusCmd.build(documentId, EtlStatus.ENRICHING, null));
             docs = summaryMetadataEnricher.andThen(keywordMetadataEnricher).apply(docs);
 
             // 4、索引写入，VectorStore 自动计算 embedding 并写入
-            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.INDEXING, null));
+            documentDomainService.updateEtlStatus(
+                    UpdateEtlStatusCmd.build(documentId, EtlStatus.INDEXING, null));
             vectorStore.write(docs);
 
             // Phase 5: 发布
@@ -81,8 +85,9 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
 
         } catch (Exception e) {
             log.error("ETL 处理失败: documentId={}", documentId, e);
-            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.FAILED,
-                    DefaultUtils.defaultValue(e.getMessage(), "未知错误")));
+            documentDomainService.updateEtlStatus(
+                    UpdateEtlStatusCmd.build(documentId, EtlStatus.FAILED,
+                            DefaultUtils.defaultValue(e.getMessage(), "未知错误")));
         }
     }
 
