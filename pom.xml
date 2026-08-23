@@ -45,6 +45,7 @@
         <rapidf-dependencies.version>3.0.2</rapidf-dependencies.version>
         <spring-boot-dependencies.version>4.1.0</spring-boot-dependencies.version>
         <spring-ai-bom.version>2.0.0</spring-ai-bom.version>
+        <spring-ai-alibaba-extensions-bom.version>2.0.0-M1.1</spring-ai-alibaba-extensions-bom.version>
         <lombok.version>1.18.24</lombok.version>
 
         <!-- Company inside dependencies -->
@@ -74,6 +75,13 @@
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
                 <version>${spring-ai-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.cloud.ai</groupId>
+                <artifactId>spring-ai-alibaba-extensions-bom</artifactId>
+                <version>${spring-ai-alibaba-extensions-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
