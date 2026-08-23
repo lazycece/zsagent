@@ -19,4 +19,12 @@ public class UpdateEtlStatusCmd {
     private EtlStatus status;
     /** 错误信息（仅 FAILED 时有值） */
     private String errorMessage;
+
+    public static UpdateEtlStatusCmd build(String documentId, EtlStatus status, String errorMessage){
+        UpdateEtlStatusCmd cmd = new UpdateEtlStatusCmd();
+        cmd.setDocumentId(documentId);
+        cmd.setStatus(status);
+        cmd.setErrorMessage(errorMessage);
+        return cmd;
+    }
 }

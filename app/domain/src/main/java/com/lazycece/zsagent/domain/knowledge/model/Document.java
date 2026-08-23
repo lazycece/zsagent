@@ -187,7 +187,7 @@ public class Document extends Aggregate<String> {
      *
      * @param cmd 更新元数据命令
      */
-    public void updateMetadata(UpdateDocumentMetadataCmd cmd) {
+    public void updateMetadataOptional(UpdateDocumentMetadataCmd cmd) {
         if (StringUtils.isNotBlank(cmd.getTitle())) {
             this.title = cmd.getTitle();
         }

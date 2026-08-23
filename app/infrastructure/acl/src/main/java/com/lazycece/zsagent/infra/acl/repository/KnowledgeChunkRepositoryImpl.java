@@ -46,15 +46,6 @@ public class KnowledgeChunkRepositoryImpl implements KnowledgeChunkRepository {
     }
 
     @Override
-    public void index(List<KnowledgeChunk> chunks) {
-        List<Document> documents = chunks.stream()
-                .map(this::toDocument)
-                .collect(Collectors.toList());
-        vectorStore.add(documents);
-        log.info("批量索引知识块: 数量={}", chunks.size());
-    }
-
-    @Override
     public void deleteByDocumentId(String documentId) {
         Filter.Expression filter = new Filter.Expression(
                 Filter.ExpressionType.EQ,
@@ -62,38 +53,6 @@ public class KnowledgeChunkRepositoryImpl implements KnowledgeChunkRepository {
                 new Filter.Value(documentId));
         vectorStore.delete(filter);
         log.info("按文档删除知识块: documentId={}", documentId);
-    }
-
-    /**
-     * 领域 KnowledgeChunk → Spring AI Document。
-     */
-    private Document toDocument(KnowledgeChunk chunk) {
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("document_id", chunk.getDocumentId());
-        metadata.put("document_title", chunk.getDocumentTitle());
-        if (chunk.getMetadata() != null) {
-            metadata.putAll(chunk.getMetadata());
-        }
-        if (chunk.getEmbedding() != null) {
-            metadata.put("embedding", chunk.getEmbedding());
-        }
-        if (chunk.getTags() != null) {
-            metadata.put("tags", chunk.getTags());
-        }
-        if (chunk.getPermissionType() != null) {
-            metadata.put("permission_type", chunk.getPermissionType());
-        }
-        if (chunk.getPermissionDepts() != null) {
-            metadata.put("permission_depts", chunk.getPermissionDepts());
-        }
-        if (chunk.getPermissionUsers() != null) {
-            metadata.put("permission_users", chunk.getPermissionUsers());
-        }
-        return Document.builder()
-                .id(chunk.getChunkId())
-                .text(chunk.getContent())
-                .metadata(metadata)
-                .build();
     }
 
     /**

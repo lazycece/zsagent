@@ -57,7 +57,7 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
     @Override
     public RespData<DocumentUpdateMetadataResult> updateMetadata(DocumentUpdateMetadataRequest request) {
-        documentService.updateMetadata(DocumentAssembler.assembleUpdateMetadataCmd(request));
+        documentService.updateMetadataOptional(DocumentAssembler.assembleUpdateMetadataCmd(request));
         return RespData.success(new DocumentUpdateMetadataResult());
     }
 

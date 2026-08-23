@@ -1,0 +1,108 @@
+package com.lazycece.zsagent.application.knowledge.handler.etl;
+
+import com.lazycece.rapidf.domain.anotation.ApplicationHandler;
+import com.lazycece.rapidf.utils.DefaultUtils;
+import com.lazycece.zsagent.application.knowledge.handler.etl.reader.KnowledgeDocumentReader;
+import com.lazycece.zsagent.application.knowledge.handler.etl.transformer.ChunkKeywordMetadataEnricher;
+import com.lazycece.zsagent.application.knowledge.handler.etl.transformer.ChunkSummaryMetadataEnricher;
+import com.lazycece.zsagent.application.knowledge.handler.etl.transformer.DocumentTokenTextSplitter;
+import com.lazycece.zsagent.domain.agent.repository.KnowledgeChunkRepository;
+import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
+import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.scheduling.annotation.Async;
+
+import java.util.List;
+
+/**
+ * 文档 ETL 异步编排器。
+ * <p>
+ * 基于 Spring AI ETL pipeline（DocumentReader / DocumentTransformer / DocumentWriter）编排：
+ * 解析（Extract）→ 增强（Transform）→ 分块（Transform）→ 向量化索引（Load）→ 发布。
+ *
+ * @author lazycece
+ */
+@ApplicationHandler
+public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
+
+    private static final Logger log = LoggerFactory.getLogger(DefaultDocumentEtlOrchestrator.class);
+
+    private final DocumentDomainService documentDomainService;
+    private final KnowledgeDocumentReader knowledgeDocumentReader;
+    private final DocumentTokenTextSplitter tokenTextSplitter;
+    private final ChunkSummaryMetadataEnricher summaryMetadataEnricher;
+    private final ChunkKeywordMetadataEnricher keywordMetadataEnricher;
+    private final KnowledgeChunkRepository knowledgeChunkRepository;
+    private final VectorStore vectorStore;
+
+    public DefaultDocumentEtlOrchestrator(DocumentDomainService documentDomainService,
+                                          KnowledgeDocumentReader knowledgeDocumentReader,
+                                          DocumentTokenTextSplitter tokenTextSplitter,
+                                          ChunkSummaryMetadataEnricher summaryMetadataEnricher,
+                                          ChunkKeywordMetadataEnricher keywordMetadataEnricher,
+                                          KnowledgeChunkRepository knowledgeChunkRepository,
+                                          VectorStore vectorStore) {
+        this.documentDomainService = documentDomainService;
+        this.knowledgeDocumentReader = knowledgeDocumentReader;
+        this.tokenTextSplitter = tokenTextSplitter;
+        this.summaryMetadataEnricher = summaryMetadataEnricher;
+        this.keywordMetadataEnricher = keywordMetadataEnricher;
+        this.knowledgeChunkRepository = knowledgeChunkRepository;
+        this.vectorStore = vectorStore;
+    }
+
+    @Override
+    @Async("etlTaskExecutor")
+    public void process(String documentId) {
+        try {
+            // 1、文档解析
+            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.PARSING, null));
+            List<Document> docs = knowledgeDocumentReader.loadDocument(documentId).read();
+
+            // 2、文档chunk，复制源 metadata 到每个分块
+            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.CHUNKING, null));
+            docs = tokenTextSplitter.transform(docs);
+
+            // 3、chunk增强，生成摘要和关键词标签
+            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.ENRICHING, null));
+            docs = summaryMetadataEnricher.andThen(keywordMetadataEnricher).apply(docs);
+
+            // 4、索引写入，VectorStore 自动计算 embedding 并写入
+            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.INDEXING, null));
+            vectorStore.write(docs);
+
+            // Phase 5: 发布
+            documentDomainService.publish(documentId);
+            log.info("ETL 处理完成: documentId={}, chunk数={}", documentId, docs.size());
+
+        } catch (Exception e) {
+            log.error("ETL 处理失败: documentId={}", documentId, e);
+            documentDomainService.updateEtlStatus(UpdateEtlStatusCmd.build(documentId, EtlStatus.FAILED,
+                    DefaultUtils.defaultValue(e.getMessage(), "未知错误")));
+        }
+    }
+
+    @Override
+    @Async("etlTaskExecutor")
+    public void reprocess(String documentId) {
+        knowledgeChunkRepository.deleteByDocumentId(documentId);
+        process(documentId);
+    }
+
+    @Override
+    @Async("etlTaskExecutor")
+    public void markDeleted(String documentId) {
+        knowledgeChunkRepository.deleteByDocumentId(documentId);
+    }
+
+    @Override
+    @Async("etlTaskExecutor")
+    public void markRestored(String documentId) {
+        process(documentId);
+    }
+
+}

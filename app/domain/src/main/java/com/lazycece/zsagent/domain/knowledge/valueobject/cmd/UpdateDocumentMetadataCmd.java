@@ -19,6 +19,8 @@ public class UpdateDocumentMetadataCmd {
     private String userId;
     /** 文档ID */
     private String documentId;
+
+    /* ======= metadata ============  */
     /** 文档标题 */
     private String title;
     /** 文档摘要 */

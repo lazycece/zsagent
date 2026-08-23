@@ -9,13 +9,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * ETL 异步任务线程池配置。
+ * ETL 异步任务线程池与文档分块器配置。
  *
  * @author lazycece
  */
 @Configuration
 @EnableAsync
-public class EtlAsyncConfig {
+public class DocumentETLConfig {
 
     @Bean("etlTaskExecutor")
     public Executor etlTaskExecutor() {

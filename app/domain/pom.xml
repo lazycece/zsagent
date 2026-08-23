@@ -22,6 +22,10 @@
         </dependency>
         <dependency>
             <groupId>com.lazycece.rapidf</groupId>
+            <artifactId>rapidf-arrange</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.lazycece.rapidf</groupId>
             <artifactId>rapidf-utils</artifactId>
         </dependency>
         <dependency>

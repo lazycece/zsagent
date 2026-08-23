@@ -23,11 +23,11 @@ public interface DocumentDomainService {
     String createDocument(CreateDocumentCmd command);
 
     /**
-     * 更新文档元数据（标题、标签、目录、权限），不产生新版本。
+     * 可选择性更新文档元数据（标题、标签、目录、权限），不产生新版本。
      *
      * @param command 更新元数据命令
      */
-    void updateMetadata(UpdateDocumentMetadataCmd command);
+    void updateMetadataOptional(UpdateDocumentMetadataCmd command);
 
     /**
      * 更新文档文件内容——创建新版本 + 重置 ETL 状态为 PENDING。
