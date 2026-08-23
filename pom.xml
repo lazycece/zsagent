@@ -219,6 +219,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
+                <dependencies>
+                    <!-- 强制用新版本 Checkstyle 核心 -->
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>11.1.0</version>
+                    </dependency>
+                </dependencies>
                 <configuration>
                     <configLocation>conf/checkstyle/google_checks_indent4.xml</configLocation>
                     <encoding>UTF-8</encoding>
