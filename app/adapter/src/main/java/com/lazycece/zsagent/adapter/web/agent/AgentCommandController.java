@@ -34,7 +34,8 @@ public class AgentCommandController implements AgentCommandFacade {
      */
     @Override
     @PostMapping(value = "/ask-question", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<String>> askQuestion(@Validated @RequestBody AskQuestionRequest request) {
+    public Flux<ServerSentEvent<String>> askQuestion(
+            @Validated @RequestBody AskQuestionRequest request) {
         return agentCommandFacade.askQuestion(request);
     }
 
@@ -43,7 +44,8 @@ public class AgentCommandController implements AgentCommandFacade {
      */
     @Override
     @PostMapping("/submit-feedback")
-    public RespData<FeedbackResult> submitFeedback(@Validated @RequestBody FeedbackRequest request) {
+    public RespData<FeedbackResult> submitFeedback(
+            @Validated @RequestBody FeedbackRequest request) {
         return agentCommandFacade.submitFeedback(request);
     }
 }

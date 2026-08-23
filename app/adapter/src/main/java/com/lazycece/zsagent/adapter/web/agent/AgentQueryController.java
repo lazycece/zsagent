@@ -31,7 +31,8 @@ public class AgentQueryController implements AgentQueryFacade {
      */
     @Override
     @GetMapping("/get-conversation")
-    public RespData<ConversationResult> getConversation(@Validated ConversationQueryRequest request) {
+    public RespData<ConversationResult> getConversation(
+            @Validated ConversationQueryRequest request) {
         return agentQueryFacade.getConversation(request);
     }
 
@@ -40,7 +41,8 @@ public class AgentQueryController implements AgentQueryFacade {
      */
     @Override
     @GetMapping("/list-conversations")
-    public RespData<ConversationListResult> listConversations(@Validated ConversationListQueryRequest request) {
+    public RespData<ConversationListResult> listConversations(
+            @Validated ConversationListQueryRequest request) {
         return agentQueryFacade.listConversations(request);
     }
 }

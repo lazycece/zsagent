@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/v1/directory")
-public class DirectoryCommandController implements DirectoryCommandFacade{
+public class DirectoryCommandController implements DirectoryCommandFacade {
 
     private final DirectoryCommandFacade directoryCommandFacade;
 

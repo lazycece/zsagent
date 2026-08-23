@@ -40,7 +40,8 @@ public class DocumentCommandController implements DocumentCommandFacade {
      */
     @Override
     @PostMapping("/create")
-    public RespData<DocumentCreateResult> create(@Validated @RequestBody DocumentCreateRequest request) {
+    public RespData<DocumentCreateResult> create(
+            @Validated @RequestBody DocumentCreateRequest request) {
         return documentCommandFacade.create(request);
     }
 
@@ -69,7 +70,8 @@ public class DocumentCommandController implements DocumentCommandFacade {
      */
     @Override
     @PostMapping("/delete")
-    public RespData<DocumentDeleteResult> delete(@Validated @RequestBody DocumentDeleteRequest request) {
+    public RespData<DocumentDeleteResult> delete(
+            @Validated @RequestBody DocumentDeleteRequest request) {
         return documentCommandFacade.delete(request);
     }
 
@@ -78,7 +80,8 @@ public class DocumentCommandController implements DocumentCommandFacade {
      */
     @Override
     @PostMapping("/restore")
-    public RespData<DocumentRestoreResult> restore(@Validated @RequestBody DocumentRestoreRequest request) {
+    public RespData<DocumentRestoreResult> restore(
+            @Validated @RequestBody DocumentRestoreRequest request) {
         return documentCommandFacade.restore(request);
     }
 
@@ -87,7 +90,8 @@ public class DocumentCommandController implements DocumentCommandFacade {
      */
     @Override
     @PostMapping("/rollback")
-    public RespData<DocumentRollbackResult> rollback(@Validated @RequestBody DocumentRollbackRequest request) {
+    public RespData<DocumentRollbackResult> rollback(
+            @Validated @RequestBody DocumentRollbackRequest request) {
         return documentCommandFacade.rollback(request);
     }
 }

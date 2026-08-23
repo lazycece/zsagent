@@ -66,8 +66,7 @@ public class DocumentQueryController implements DocumentQueryFacade {
      */
     @Override
     @GetMapping("/get-etl-status")
-    public RespData<EtlStatusResult> getEtlStatus(
-            @Validated EtlStatusQueryRequest request) {
+    public RespData<EtlStatusResult> getEtlStatus(@Validated EtlStatusQueryRequest request) {
         return documentQueryFacade.getEtlStatus(request);
     }
 }
