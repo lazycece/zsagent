@@ -24,10 +24,10 @@ echo "[formatter] 检查格式: $FILE_PATH"
 
 # ---------- 方式一: Spotless Maven Plugin（若已配置）----------
 # 取消注释以启用:
-# MODULE_DIR=$(echo "$FILE_PATH" | grep -oP '^[^/]+/[^/]+' || echo "")
-# if [ -n "$MODULE_DIR" ]; then
-#   mvn spotless:apply -pl "$MODULE_DIR" -q 2>/dev/null && echo "[formatter] Spotless applied." || true
-# fi
+MODULE_DIR=$(echo "$FILE_PATH" | grep -oP '^[^/]+/[^/]+' || echo "")
+if [ -n "$MODULE_DIR" ]; then
+  mvn spotless:apply -pl "$MODULE_DIR" -q 2>/dev/null && echo "[formatter] Spotless applied." || true
+fi
 
 # ---------- 方式二: Google Java Format（独立工具）----------
 # 取消注释以启用:
