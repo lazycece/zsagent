@@ -10,13 +10,12 @@ import com.lazycece.zsagent.domain.agent.repository.KnowledgeChunkRepository;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.scheduling.annotation.Async;
-
-import java.util.List;
 
 /**
  * 文档 ETL 异步编排器。
@@ -62,7 +61,7 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
             // 1、文档解析
             documentDomainService.updateEtlStatus(
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.PARSING, null));
-            List<Document> docs = knowledgeDocumentReader.loadDocument(documentId).read();
+            List<Document> docs = knowledgeDocumentReader.read(documentId);
 
             // 2、文档chunk，复制源 metadata 到每个分块
             documentDomainService.updateEtlStatus(

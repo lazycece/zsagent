@@ -27,17 +27,14 @@ import java.util.Map;
 /**
  * 知识文档读取器（ETL Extract 阶段）。
  * <p>
- * 加载文档文件，通过解析器提取结构化内容，构建一个承载全文与元数据的
- * Spring AI {@link org.springframework.ai.document.Document}。
- * 元数据中的权限 keys（permission_type/permission_depts/permission_users）
- * 会被后续 {@code TokenTextSplitter} 复制到每个分块，供检索侧权限过滤使用。
+ * 加载文档文件，通过解析器提取结构化内容，构建一个承载全文与元数据的 Spring AI {@link org.springframework.ai.document.Document}。
+ * 元数据中的权限 keys（permission_type/permission_depts/permission_users） 会被后续 {@code TokenTextSplitter}
+ * 复制到每个分块，供检索侧权限过滤使用。
  *
  * @author lazycece
  */
 @ApplicationHandler
 public class DefaultKnowledgeDocumentReader implements KnowledgeDocumentReader {
-
-    private Document knowledgeDocument;
 
     private final DocumentRepository documentRepository;
     private final DocumentDomainService documentDomainService;
@@ -46,10 +43,9 @@ public class DefaultKnowledgeDocumentReader implements KnowledgeDocumentReader {
     private final KnowledgeDocumentEnricher knowledgeDocumentEnricher;
 
     public DefaultKnowledgeDocumentReader(DocumentRepository documentRepository,
-                                          DocumentDomainService documentDomainService,
-                                          FileStorage fileStorage,
-                                          DocumentParseHandlerRegistry parserRegistry,
-                                          KnowledgeDocumentEnricher knowledgeDocumentEnricher) {
+            DocumentDomainService documentDomainService, FileStorage fileStorage,
+            DocumentParseHandlerRegistry parserRegistry,
+            KnowledgeDocumentEnricher knowledgeDocumentEnricher) {
         this.documentRepository = documentRepository;
         this.documentDomainService = documentDomainService;
         this.fileStorage = fileStorage;
@@ -58,18 +54,12 @@ public class DefaultKnowledgeDocumentReader implements KnowledgeDocumentReader {
     }
 
     @Override
-    public KnowledgeDocumentReader loadDocument(String documentId) {
+    public List<org.springframework.ai.document.Document> read(String documentId) {
+        // load
         Assert.notBlank(documentId, RespStatus.PARAM_ERROR, "参数 documentId 不能为空");
-        Document document = documentRepository.findById(documentId);
-        Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在: documentId={}", documentId);
-        this.knowledgeDocument = document;
-        return this;
-    }
-
-    @Override
-    public List<org.springframework.ai.document.Document> get() {
-        // check
-        Assert.notNull(this.knowledgeDocument, RespStatus.DATA_NOT_EXIST, "文档不存在，请先执行 loadDocument");
+        Document knowledgeDocument = documentRepository.findById(documentId);
+        Assert.notNull(knowledgeDocument, RespStatus.PARAM_ERROR, "文档不存在: documentId={}",
+                documentId);
 
         // 文档解析
         DocumentParseHandler parser = parserRegistry.getParser(knowledgeDocument.getFormat());
@@ -77,28 +67,28 @@ public class DefaultKnowledgeDocumentReader implements KnowledgeDocumentReader {
         try (InputStream inputStream = fileStorage.load(knowledgeDocument.getFilePath())) {
             parsedDocument = parser.parse(inputStream);
         } catch (IOException e) {
-            throw ExceptionFactory.businessException("文档读取失败: documentId=" + knowledgeDocument.getDocumentId(), e);
+            throw ExceptionFactory.businessException(
+                    "文档读取失败: documentId=" + knowledgeDocument.getDocumentId(), e);
         }
 
         // 增强处理文档元数据
-        EnrichResult enrichResult = knowledgeDocumentEnricher.enrich(parsedDocument, knowledgeDocument.getTitle());
-        this.updateMetadataFromEnrichResult(enrichResult);
+        EnrichResult enrichResult = knowledgeDocumentEnricher.enrich(parsedDocument,
+                knowledgeDocument.getTitle());
+        this.updateMetadataFromEnrichResult(enrichResult, knowledgeDocument);
 
         //
-        org.springframework.ai.document.Document aiDocument =
-                org.springframework.ai.document.Document.builder()
-                        .id(knowledgeDocument.getDocumentId())
-                        .text(parsedDocument.fullText())
-                        .metadata(buildMetadata())
-                        .build();
+        org.springframework.ai.document.Document aiDocument = org.springframework.ai.document.Document.builder()
+                .id(knowledgeDocument.getDocumentId()).text(parsedDocument.fullText())
+                .metadata(buildMetadata(knowledgeDocument)).build();
         return List.of(aiDocument);
     }
 
     /**
      * 从增强结果中提取摘要与标签，持久化到文档元数据。
      */
-    private void updateMetadataFromEnrichResult(EnrichResult enrichResult) {
-        if (enrichResult == null) {
+    private void updateMetadataFromEnrichResult(EnrichResult enrichResult,
+            Document knowledgeDocument) {
+        if (enrichResult == null || enrichResult.isEmpty()) {
             return;
         }
         UpdateDocumentMetadataCmd command = new UpdateDocumentMetadataCmd();
@@ -112,16 +102,23 @@ public class DefaultKnowledgeDocumentReader implements KnowledgeDocumentReader {
     /**
      * 构建文档元数据
      */
-    private Map<String, Object> buildMetadata() {
+    private Map<String, Object> buildMetadata(Document knowledgeDocument) {
 
         Map<String, Object> metadata = new HashMap<>();
         metadata.put(DocumentMetadataKey.DOCUMENT_ID.getCode(), knowledgeDocument.getDocumentId());
         metadata.put(DocumentMetadataKey.TITLE.getCode(), knowledgeDocument.getTitle());
-        metadata.put(DocumentMetadataKey.FORMAT.getCode(), DefaultUtils.defaultValueIfNullObj(knowledgeDocument.getFormat(), DocumentFormat::getCode, null));
-        metadata.put(DocumentMetadataKey.PERMISSION_TYPE.getCode(), DefaultUtils.defaultValueIfNullObj(knowledgeDocument.getVisibility(), Visibility::getCode, null));
-        metadata.put(DocumentMetadataKey.PERMISSION_DEPTS.getCode(), knowledgeDocument.getVisibleTo());
-        metadata.put(DocumentMetadataKey.PERMISSION_USERS.getCode(), knowledgeDocument.getVisibleTo());
-        metadata.put(DocumentMetadataKey.CURRENT_VERSION.getCode(), knowledgeDocument.getCurrentVersion());
+        metadata.put(DocumentMetadataKey.FORMAT.getCode(),
+                DefaultUtils.defaultValueIfNullObj(knowledgeDocument.getFormat(),
+                        DocumentFormat::getCode, null));
+        metadata.put(DocumentMetadataKey.PERMISSION_TYPE.getCode(),
+                DefaultUtils.defaultValueIfNullObj(knowledgeDocument.getVisibility(),
+                        Visibility::getCode, null));
+        metadata.put(DocumentMetadataKey.PERMISSION_DEPTS.getCode(),
+                knowledgeDocument.getVisibleTo());
+        metadata.put(DocumentMetadataKey.PERMISSION_USERS.getCode(),
+                knowledgeDocument.getVisibleTo());
+        metadata.put(DocumentMetadataKey.CURRENT_VERSION.getCode(),
+                knowledgeDocument.getCurrentVersion());
 
         return metadata;
     }
