@@ -58,10 +58,10 @@
             <artifactId>elasticsearch-java</artifactId>
         </dependency>
         <!-- elasticsearch vector end -->
-        <dependency>
-            <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba.cloud.ai</groupId>-->
+<!--            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>-->
+<!--        </dependency>-->
         <!-- PDF 解析 -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>

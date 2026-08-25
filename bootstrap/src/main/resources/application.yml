@@ -69,7 +69,7 @@ spring:
           initialize-schema: true
     vectorstore:
       elasticsearch:
-        initialize-schema: false
+        initialize-schema: true
         index-name: zsagent_knowledge
         dimensions: 1024
         similarity: cosine
