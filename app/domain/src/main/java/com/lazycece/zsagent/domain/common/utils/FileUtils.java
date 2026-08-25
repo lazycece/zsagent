@@ -48,8 +48,10 @@ public class FileUtils {
 
     public static String extractOriginalFilename(String path) {
         String filename = extractFilename(path);
-        int underlineIndex = filename.lastIndexOf(SymbolConstants.UNDERLINE);
-        return underlineIndex > 0 ? filename.substring(underlineIndex + 1) : filename;
+        int firstUnderlineIndex = filename.indexOf(SymbolConstants.UNDERLINE);
+        int secondUnderlineIndex = filename.indexOf(SymbolConstants.UNDERLINE,
+                firstUnderlineIndex + 1);
+        return secondUnderlineIndex > 0 ? filename.substring(secondUnderlineIndex + 1) : filename;
     }
 
 
