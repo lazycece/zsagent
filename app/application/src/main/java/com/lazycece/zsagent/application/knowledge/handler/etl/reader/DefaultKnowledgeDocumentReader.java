@@ -15,7 +15,6 @@ import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
 import com.lazycece.zsagent.domain.knowledge.service.acl.DocumentParseHandler;
 import com.lazycece.zsagent.domain.knowledge.service.acl.DocumentParseHandlerRegistry;
 import com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult;
-import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
 
 import java.io.IOException;
@@ -63,24 +62,24 @@ public class DefaultKnowledgeDocumentReader implements KnowledgeDocumentReader {
 
         // 文档解析
         DocumentParseHandler parser = parserRegistry.getParser(knowledgeDocument.getFormat());
-        ParsedDocument parsedDocument;
+        List<org.springframework.ai.document.Document> aiDocumentList;
         try (InputStream inputStream = fileStorage.load(knowledgeDocument.getFilePath())) {
-            parsedDocument = parser.parse(inputStream);
+            aiDocumentList = parser.parse(inputStream);
         } catch (IOException e) {
             throw ExceptionFactory.businessException(
                     "文档读取失败: documentId=" + knowledgeDocument.getDocumentId(), e);
         }
 
         // 增强处理文档元数据
-        EnrichResult enrichResult = knowledgeDocumentEnricher.enrich(parsedDocument,
+        EnrichResult enrichResult = knowledgeDocumentEnricher.enrich(aiDocumentList,
                 knowledgeDocument.getTitle());
         this.updateMetadataFromEnrichResult(enrichResult, knowledgeDocument);
 
-        //
-        org.springframework.ai.document.Document aiDocument = org.springframework.ai.document.Document.builder()
-                .id(knowledgeDocument.getDocumentId()).text(parsedDocument.fullText())
-                .metadata(buildMetadata(knowledgeDocument)).build();
-        return List.of(aiDocument);
+        // 基础元数据设置
+        Map<String, Object> baseMetadataMap = this.buildMetadata(knowledgeDocument);
+        DefaultUtils.defaultList(aiDocumentList)
+                .forEach(doc -> doc.getMetadata().putAll(baseMetadataMap));
+        return aiDocumentList;
     }
 
     /**

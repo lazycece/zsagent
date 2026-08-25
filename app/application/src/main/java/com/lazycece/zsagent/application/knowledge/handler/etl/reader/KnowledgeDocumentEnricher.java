@@ -1,16 +1,18 @@
 package com.lazycece.zsagent.application.knowledge.handler.etl.reader;
 
 import com.lazycece.rapidf.domain.anotation.ApplicationHandler;
+import com.lazycece.rapidf.utils.DefaultUtils;
 import com.lazycece.zsagent.domain.knowledge.valueobject.EnrichResult;
-import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.template.st.StTemplateRenderer;
-
-import java.util.Map;
 
 /**
  * 文档增强器，通过 LLM 生成摘要与候选标签。
@@ -50,26 +52,25 @@ public class KnowledgeDocumentEnricher {
     /**
      * 生成文档摘要与标签。
      */
-    public EnrichResult enrich(ParsedDocument parsed, String title) {
+    public EnrichResult enrich(List<Document> aiDocList, String title) {
         try {
             // 文档内容截取
-            String previewContent = parsed.fullText();
-            if (previewContent.length() > PREVIEW_LENGTH) {
-                previewContent = previewContent.substring(0, PREVIEW_LENGTH);
+            String previewContent = this.handlePreviewContent(aiDocList);
+            if (StringUtils.isBlank(previewContent)) {
+                return EnrichResult.empty();
             }
 
             // 提示词构建
-            PromptTemplate promptTemplate = PromptTemplate.builder()
-                    .renderer(StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>').build())
-                    .template(DOCUMENT_ENRICHER_TEMPLATE)
-                    .build();
-            Prompt prompt = promptTemplate.create(Map.of(TITLE_PLACEHOLDER, title,
-                    PREVIEW_LENGTH_PLACEHOLDER, PREVIEW_LENGTH,
-                    PREVIEW_CONTENT_PLACEHOLDER, previewContent));
+            PromptTemplate promptTemplate = PromptTemplate.builder().renderer(
+                    StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>')
+                            .build()).template(DOCUMENT_ENRICHER_TEMPLATE).build();
+            Prompt prompt = promptTemplate.create(
+                    Map.of(TITLE_PLACEHOLDER, title, PREVIEW_LENGTH_PLACEHOLDER, PREVIEW_LENGTH,
+                            PREVIEW_CONTENT_PLACEHOLDER, previewContent));
 
             // LLM invoke
-            EnrichResult enrichResult = chatClientBuilder.build().prompt(prompt)
-                    .call().entity(EnrichResult.class);
+            EnrichResult enrichResult = chatClientBuilder.build().prompt(prompt).call()
+                    .entity(EnrichResult.class);
 
             return enrichResult == null ? EnrichResult.empty() : enrichResult;
 
@@ -77,6 +78,18 @@ public class KnowledgeDocumentEnricher {
             log.warn("文档级别摘要/标签生成失败，默认返回空结果, title={}", title, e);
             return EnrichResult.empty();
         }
+    }
+
+    private String handlePreviewContent(List<Document> aiDocList) {
+        StringBuilder previewContent = new StringBuilder();
+        for (Document doc : DefaultUtils.defaultList(aiDocList)) {
+            previewContent.append(doc.getText());
+            if (previewContent.length() > PREVIEW_LENGTH) {
+                previewContent = new StringBuilder(previewContent.substring(0, PREVIEW_LENGTH));
+                break;
+            }
+        }
+        return previewContent.toString();
     }
 
 }
