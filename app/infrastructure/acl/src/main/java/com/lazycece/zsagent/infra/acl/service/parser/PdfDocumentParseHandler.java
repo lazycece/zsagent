@@ -2,17 +2,14 @@ package com.lazycece.zsagent.infra.acl.service.parser;
 
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.service.acl.DocumentParseHandler;
-import com.lazycece.zsagent.domain.knowledge.valueobject.ParsedDocument;
-import com.lazycece.zsagent.domain.knowledge.valueobject.Section;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.reader.ExtractedTextFormatter;
+import org.springframework.ai.reader.pdf.PagePdfDocumentReader;
+import org.springframework.ai.reader.pdf.config.PdfDocumentReaderConfig;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.stereotype.Component;
 
 /**
  * PDF 解析器。
@@ -23,28 +20,23 @@ import java.util.List;
 public class PdfDocumentParseHandler implements DocumentParseHandler {
 
     @Override
-    public ParsedDocument parse(InputStream inputStream) throws IOException {
-        try (PDDocument pdfDoc = Loader.loadPDF(inputStream.readAllBytes())) {
-            StringBuilder fullText = new StringBuilder();
-            List<Section> sections = new ArrayList<>();
-            PDFTextStripper stripper = new PDFTextStripper();
-
-            int pageCount = pdfDoc.getNumberOfPages();
-            for (int page = 0; page < pageCount; page++) {
-                stripper.setStartPage(page + 1);
-                stripper.setEndPage(page + 1);
-                String pageText = stripper.getText(pdfDoc);
-                sections.add(new Section(0, "", pageText, page + 1, fullText.length()));
-                fullText.append(pageText).append("\n");
-            }
-
-            return new ParsedDocument(ParserSupport.extractTitle(fullText.toString()),
-                    fullText.toString(), sections);
-        }
-    }
-
-    @Override
     public DocumentFormat supportedFormat() {
         return DocumentFormat.PDF;
     }
+
+    @Override
+    public List<Document> parse(InputStream inputStream) {
+        ExtractedTextFormatter formatter = ExtractedTextFormatter.builder()
+                .withNumberOfTopTextLinesToDelete(0)
+                .build();
+        PdfDocumentReaderConfig config = PdfDocumentReaderConfig.builder()
+                .withPageTopMargin(0)
+                .withPageExtractedTextFormatter(formatter)
+                // 每1页作为一个独立文档处理
+                .withPagesPerDocument(1)
+                .build();
+        return new PagePdfDocumentReader(new InputStreamResource(inputStream), config).read();
+    }
+
+
 }
