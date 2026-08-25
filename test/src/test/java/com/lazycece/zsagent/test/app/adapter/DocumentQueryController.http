@@ -1,11 +1,11 @@
 ### getDocument
-GET {{httpUrl}}/api/v1/document/get-document?userId=user_123&documentId=your-document-id
+GET {{httpUrl}}/api/v1/document/get-document?userId=user_123&documentId=20260825022101230000139024
 
 ### listDocuments
 GET {{httpUrl}}/api/v1/document/list-documents?userId=user_123&page=1&size=20&status=published
 
 ### listVersions
-GET {{httpUrl}}/api/v1/document/list-versions?userId=user_123&documentId=your-document-id
+GET {{httpUrl}}/api/v1/document/list-versions?userId=user_123&documentId=20260825022101230000139024
 
 ### getEtlStatus
-GET {{httpUrl}}/api/v1/document/get-etl-status?userId=user_123&documentId=your-document-id
+GET {{httpUrl}}/api/v1/document/get-etl-status?userId=user_123&documentId=20260825022101230000139024
