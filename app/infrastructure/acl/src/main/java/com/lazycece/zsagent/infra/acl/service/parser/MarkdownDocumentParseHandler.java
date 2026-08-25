@@ -26,11 +26,11 @@ public class MarkdownDocumentParseHandler implements DocumentParseHandler {
         MarkdownDocumentReaderConfig config = MarkdownDocumentReaderConfig.builder()
                 // 遇到水平分割线 --- 时，将其视为一个新文档的开始（即分页/分段）
                 // 设置为 true 意味着每个分割线后的内容会被当作独立文档处理。
-                .withHorizontalRuleCreateDocument(false)
+                .withHorizontalRuleCreateDocument(true)
                 // 不包含代码块。解析时会忽略Markdown中的代码块不会将其内容纳入最终结果
-                .withIncludeCodeBlock(false)
+                .withIncludeCodeBlock(true)
                 // 不包含引用块。解析时会忽略 > 开头的引用内容
-                .withIncludeBlockquote(false).build();
+                .withIncludeBlockquote(true).build();
 
         return new MarkdownDocumentReader(new InputStreamResource(inputStream), config).read();
 
