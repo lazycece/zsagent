@@ -1,5 +1,6 @@
 package com.lazycece.zsagent.application.knowledge.handler.etl;
 
+import com.google.common.collect.Lists;
 import com.lazycece.rapidf.domain.anotation.ApplicationHandler;
 import com.lazycece.rapidf.utils.DefaultUtils;
 import com.lazycece.zsagent.application.knowledge.handler.etl.reader.KnowledgeDocumentReader;
@@ -10,6 +11,7 @@ import com.lazycece.zsagent.domain.agent.repository.KnowledgeChunkRepository;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
+import com.lazycece.zsagent.infra.acl.config.EmbeddingConfig;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +39,15 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
     private final ChunkKeywordMetadataEnricher keywordMetadataEnricher;
     private final KnowledgeChunkRepository knowledgeChunkRepository;
     private final VectorStore vectorStore;
+    private final EmbeddingConfig embeddingConfig;
 
     public DefaultDocumentEtlOrchestrator(DocumentDomainService documentDomainService,
             KnowledgeDocumentReader knowledgeDocumentReader,
             DocumentTokenTextSplitter tokenTextSplitter,
             ChunkSummaryMetadataEnricher summaryMetadataEnricher,
             ChunkKeywordMetadataEnricher keywordMetadataEnricher,
-            KnowledgeChunkRepository knowledgeChunkRepository,
-            VectorStore vectorStore) {
+            KnowledgeChunkRepository knowledgeChunkRepository, VectorStore vectorStore,
+            EmbeddingConfig embeddingConfig) {
         this.documentDomainService = documentDomainService;
         this.knowledgeDocumentReader = knowledgeDocumentReader;
         this.tokenTextSplitter = tokenTextSplitter;
@@ -52,12 +55,15 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
         this.keywordMetadataEnricher = keywordMetadataEnricher;
         this.knowledgeChunkRepository = knowledgeChunkRepository;
         this.vectorStore = vectorStore;
+        this.embeddingConfig = embeddingConfig;
     }
 
     @Override
     @Async("etlTaskExecutor")
     public void process(String documentId) {
         try {
+            // todo 先临时走异步，后续可考虑走MQ
+
             // 1、文档解析
             documentDomainService.updateEtlStatus(
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.PARSING, null));
@@ -76,7 +82,7 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
             // 4、索引写入，VectorStore 自动计算 embedding 并写入
             documentDomainService.updateEtlStatus(
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.INDEXING, null));
-            vectorStore.write(docs);
+            this.doVectorStore(docs);
 
             // Phase 5: 发布
             documentDomainService.publish(documentId);
@@ -88,6 +94,11 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.FAILED,
                             DefaultUtils.defaultValue(e.getMessage(), "未知错误")));
         }
+    }
+
+    private void doVectorStore(List<Document> docs) {
+        Lists.partition(DefaultUtils.defaultList(docs), embeddingConfig.getBathNum())
+                .forEach(vectorStore::add);
     }
 
     @Override

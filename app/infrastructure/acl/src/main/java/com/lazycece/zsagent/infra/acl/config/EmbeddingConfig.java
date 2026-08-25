@@ -1,5 +1,6 @@
 package com.lazycece.zsagent.infra.acl.config;
 
+import lombok.Getter;
 import org.springframework.ai.document.MetadataMode;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.ai.openai.OpenAiEmbeddingModel;
@@ -23,6 +24,9 @@ public class EmbeddingConfig {
     private String model;
     @Value("${spring.ai.dashscope.embedding.options.dimensions}")
     private Integer dimensions;
+    @Getter
+    @Value("${spring.ai.dashscope.embedding.batch-num}")
+    private Integer bathNum;
 
     @Bean
     @Primary
