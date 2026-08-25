@@ -17,13 +17,11 @@ import com.lazycece.zsagent.facade.knowledge.request.DocumentListQueryRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentRollbackRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentUpdateContentRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentUpdateMetadataRequest;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
-
 /**
- * 文档组装器。
- * 负责从请求体构建领域命令对象：格式检测、标题推导、枚举转换等组装逻辑统一收拢于此。
+ * 文档组装器。 负责从请求体构建领域命令对象：格式检测、标题推导、枚举转换等组装逻辑统一收拢于此。
  *
  * @author lazycece
  */
@@ -33,14 +31,12 @@ public final class DocumentAssembler {
     }
 
     /**
-     * 从创建请求构建创建文档命令。
-     * 标题为空时取文件名（去扩展名）作为默认标题。
+     * 从创建请求构建创建文档命令。 标题为空时取文件名（去扩展名）作为默认标题。
      */
     public static CreateDocumentCmd assembleCreateDocumentCmd(DocumentCreateRequest request) {
         CreateDocumentCmd command = new CreateDocumentCmd();
         command.setUserId(request.getUserId());
-        command.setTitle(StringUtils.isNotBlank(request.getTitle())
-                ? request.getTitle()
+        command.setTitle(StringUtils.isNotBlank(request.getTitle()) ? request.getTitle()
                 : extractFileNameWithoutExtension(request.getFilePath()));
         command.setFormat(DocumentUtils.detectFormat(request.getFilePath()));
         command.setFilePath(request.getFilePath());
@@ -54,7 +50,8 @@ public final class DocumentAssembler {
     /**
      * 从更新元数据请求构建更新元数据命令。
      */
-    public static UpdateDocumentMetadataCmd assembleUpdateMetadataCmd(DocumentUpdateMetadataRequest request) {
+    public static UpdateDocumentMetadataCmd assembleUpdateMetadataCmd(
+            DocumentUpdateMetadataRequest request) {
         UpdateDocumentMetadataCmd command = new UpdateDocumentMetadataCmd();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());
@@ -62,9 +59,8 @@ public final class DocumentAssembler {
         command.setSummary(request.getSummary());
         command.setDirectoryId(request.getDirectoryId());
         command.setTags(request.getTags());
-        command.setVisibility(StringUtils.isNotBlank(request.getVisibility())
-                ? EnumUtils.getEnum(Visibility.class, request.getVisibility())
-                : null);
+        command.setVisibility(StringUtils.isNotBlank(request.getVisibility()) ? EnumUtils.getEnum(
+                Visibility.class, request.getVisibility()) : null);
         command.setVisibleTo(request.getVisibleTo());
         return command;
     }
@@ -72,7 +68,8 @@ public final class DocumentAssembler {
     /**
      * 从更新内容请求构建更新内容命令。
      */
-    public static UpdateDocumentContentCmd assembleUpdateContentCmd(DocumentUpdateContentRequest request) {
+    public static UpdateDocumentContentCmd assembleUpdateContentCmd(
+            DocumentUpdateContentRequest request) {
         UpdateDocumentContentCmd command = new UpdateDocumentContentCmd();
         command.setUserId(request.getUserId());
         command.setDocumentId(request.getDocumentId());
@@ -84,7 +81,8 @@ public final class DocumentAssembler {
     /**
      * 从详情查询请求构建单文档查询条件。
      */
-    public static DocumentQuery assembleDocumentQuery(DocumentDetailQueryRequest request, List<String> userDepts) {
+    public static DocumentQuery assembleDocumentQuery(DocumentDetailQueryRequest request,
+            List<String> userDepts) {
         DocumentQuery query = new DocumentQuery();
         query.setUserId(request.getUserId());
         query.setUserDepts(userDepts);
@@ -95,14 +93,14 @@ public final class DocumentAssembler {
     /**
      * 从列表查询请求构建文档列表查询条件。
      */
-    public static DocumentListQuery assembleDocumentListQuery(DocumentListQueryRequest request, List<String> userDepts) {
+    public static DocumentListQuery assembleDocumentListQuery(DocumentListQueryRequest request,
+            List<String> userDepts) {
         DocumentListQuery query = new DocumentListQuery();
         query.setUserId(request.getUserId());
         query.setUserDepts(userDepts);
         query.setDirectoryId(request.getDirectoryId());
-        query.setStatus(StringUtils.isNotBlank(request.getStatus())
-                ? EnumUtils.getEnum(DocumentStatus.class, request.getStatus())
-                : null);
+        query.setStatus(StringUtils.isNotBlank(request.getStatus()) ? EnumUtils.getEnum(
+                DocumentStatus.class, request.getStatus()) : null);
         query.setKeyword(request.getKeyword());
         return query;
     }
@@ -122,8 +120,8 @@ public final class DocumentAssembler {
      * 从路径提取文件名（去除扩展名），用作默认标题。
      */
     private static String extractFileNameWithoutExtension(String filePath) {
-        String filename = FileUtils.extractFilename(filePath);
-        int dotIndex = filename.lastIndexOf('.');
-        return dotIndex > 0 ? filename.substring(0, dotIndex) : filename;
+        String originalFilename = FileUtils.extractOriginalFilename(filePath);
+        int dotIndex = originalFilename.lastIndexOf('.');
+        return dotIndex > 0 ? originalFilename.substring(0, dotIndex) : originalFilename;
     }
 }

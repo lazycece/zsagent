@@ -5,34 +5,24 @@ import com.lazycece.rapidf.restful.Assert;
 import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.rapidf.restful.response.RespStatus;
-import com.lazycece.rapidf.utils.UUIDUtils;
 import com.lazycece.zsagent.domain.common.utils.FileUtils;
 import com.lazycece.zsagent.domain.knowledge.repository.FileStorage;
 import com.lazycece.zsagent.facade.file.api.FileCommandFacade;
 import com.lazycece.zsagent.facade.file.request.FileUploadRequest;
 import com.lazycece.zsagent.facade.file.result.FileUploadResult;
-import org.springframework.context.annotation.Primary;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import org.springframework.context.annotation.Primary;
 
 /**
- * 文件命令门面实现。
- * 负责文件上传编排：参数校验、文件命名、日期目录路径构建、落盘存储。
+ * 文件命令门面实现。 负责文件上传编排：参数校验、文件命名、日期目录路径构建、落盘存储。
  *
  * @author lazycece
  */
 @Primary
 @ApplicationService
 public class FileCommandFacadeImpl implements FileCommandFacade {
-
-    /**
-     * 日期目录格式（upload/yyyy/MM/dd）
-     */
-    private static final DateTimeFormatter DATE_PATH_FORMAT = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
     private final FileStorage fileStorage;
 
@@ -46,8 +36,8 @@ public class FileCommandFacadeImpl implements FileCommandFacade {
         Assert.notNull(request.getFile(), RespStatus.PARAM_ERROR, "文件不能为空");
         Assert.isTrue(!request.getFile().isEmpty(), RespStatus.PARAM_ERROR, "文件内容不能为空");
 
-        LocalDateTime now = LocalDateTime.now();
-        String filePath = buildFilePath(now, FileUtils.extractFileSuffix(request.getFile().getOriginalFilename()));
+        String filePath = FileUtils.assembleFilePath(LocalDateTime.now(),
+                request.getFile().getOriginalFilename());
         try (InputStream inputStream = request.getFile().getInputStream()) {
             fileStorage.store(filePath, inputStream);
         } catch (IOException e) {
@@ -58,15 +48,5 @@ public class FileCommandFacadeImpl implements FileCommandFacade {
         result.setFilePath(filePath);
         return RespData.success(result);
     }
-
-    /**
-     * 构建存储路径：目录按日期分割（yyyy/MM/dd），文件名由 uuid + unix时间戳 + 原始文件后缀组成。
-     */
-    private String buildFilePath(LocalDateTime now, String fileSuffix) {
-        String datePath = now.format(DATE_PATH_FORMAT);
-        String fileName = UUIDUtils.uuid() + "_" + now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() + fileSuffix;
-        return "upload/" + datePath + "/" + fileName;
-    }
-
 
 }

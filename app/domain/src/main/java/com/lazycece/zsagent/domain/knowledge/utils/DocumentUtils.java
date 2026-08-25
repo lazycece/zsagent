@@ -13,15 +13,12 @@ public class DocumentUtils {
      * 根据文件扩展名识别格式。
      */
     public static DocumentFormat detectFormat(String filePath) {
-        String filename = FileUtils.extractFilename(filePath);
-        if (StringUtils.isBlank(filename)) {
+
+        String suffix = FileUtils.extractFileSuffix(filePath);
+        if (StringUtils.isBlank(suffix)) {
             return DocumentFormat.OTHER;
         }
-        int dotIndex = filename.lastIndexOf('.');
-        if (dotIndex < 0) {
-            return DocumentFormat.OTHER;
-        }
-        String ext = filename.substring(dotIndex + 1).toLowerCase();
+        String ext = suffix.toLowerCase();
         return switch (ext) {
             case "pdf" -> DocumentFormat.PDF;
             case "docx" -> DocumentFormat.DOCX;
