@@ -57,7 +57,7 @@ Content-Type: application/json
 
 {
   "userId": "user_123",
-  "documentId": "your-document-id"
+  "documentId": "20260825022101230000139024"
 }
 
 ### rollback
