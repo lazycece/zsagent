@@ -69,24 +69,33 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.PARSING, null));
             List<Document> docs = knowledgeDocumentReader.read(documentId);
 
+            log.info("ETL 处理: 文档解析完成, documentId={}, docs数={}", documentId, docs.size());
+
             // 2、文档chunk，复制源 metadata 到每个分块
             documentDomainService.updateEtlStatus(
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.CHUNKING, null));
             docs = tokenTextSplitter.transform(docs);
+
+            log.info("ETL 处理: 文档chunk完成, documentId={}, chunk数={}", documentId, docs.size());
 
             // 3、chunk增强，生成摘要和关键词标签
             documentDomainService.updateEtlStatus(
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.ENRICHING, null));
             docs = summaryMetadataEnricher.andThen(keywordMetadataEnricher).apply(docs);
 
+            log.info("ETL 处理: chunk enricher 完成, documentId={}, chunk数={}", documentId,
+                    docs.size());
+
             // 4、索引写入，VectorStore 自动计算 embedding 并写入
             documentDomainService.updateEtlStatus(
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.INDEXING, null));
             this.doVectorStore(docs);
 
+            log.info("ETL 处理: 向量存储完成, documentId={}, chunk数={}", documentId, docs.size());
+
             // Phase 5: 发布
             documentDomainService.publish(documentId);
-            log.info("ETL 处理完成: documentId={}, chunk数={}", documentId, docs.size());
+            log.info("ETL 处理: 流程处理完毕, documentId={}, chunk数={}", documentId, docs.size());
 
         } catch (Exception e) {
             log.error("ETL 处理失败: documentId={}", documentId, e);
