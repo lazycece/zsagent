@@ -14,18 +14,13 @@ import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RollbackDocumentCmd
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentContentCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateEtlStatusCmd;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
- * 文档领域服务实现。
- * 领域服务仅做编排：参数校验 → 获取聚合 → 委托聚合行为 → 持久化。
- * 业务规则封装在聚合根内部。
+ * 文档领域服务实现。 领域服务仅做编排：参数校验 → 获取聚合 → 委托聚合行为 → 持久化。 业务规则封装在聚合根内部。
  *
  * @author lazycece
  */
@@ -37,8 +32,8 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     private final TransactionTemplate transactionTemplate;
 
     public DocumentDomainServiceImpl(DocumentRepository documentRepository,
-                                     DocumentVersionRepository versionRepository,
-                                     TransactionTemplate transactionTemplate) {
+            DocumentVersionRepository versionRepository,
+            TransactionTemplate transactionTemplate) {
         this.documentRepository = documentRepository;
         this.versionRepository = versionRepository;
         this.transactionTemplate = transactionTemplate;
@@ -52,7 +47,8 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         // build
         Document document = Document.create(command);
-        DocumentVersion version = document.createNewVersion(command.getFilePath(), command.getFileSize(), "初始版本");
+        DocumentVersion version = document.createNewVersion(command.getFilePath(),
+                command.getFileSize(), "初始版本");
         // persistence
         transactionTemplate.executeWithoutResult(new Consumer<TransactionStatus>() {
             @Override
@@ -141,7 +137,8 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     public DocumentVersion rollback(RollbackDocumentCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         // load
-        DocumentVersion targetVersion = versionRepository.findByVersionId(command.getTargetVersionId());
+        DocumentVersion targetVersion = versionRepository.findByVersionId(
+                command.getTargetVersionId());
         Assert.notNull(targetVersion, RespStatus.PARAM_ERROR, "版本不存在");
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");

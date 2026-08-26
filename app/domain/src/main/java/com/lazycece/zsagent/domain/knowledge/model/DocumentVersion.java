@@ -4,10 +4,9 @@ import com.lazycece.cell.specification.CellHelper;
 import com.lazycece.rapidf.domain.anotation.DomainEntity;
 import com.lazycece.rapidf.domain.model.Entity;
 import com.lazycece.zsagent.domain.common.enums.CellEnum;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 /**
  * 文档版本实体
@@ -19,17 +18,29 @@ import java.time.LocalDateTime;
 @DomainEntity
 public class DocumentVersion extends Entity<String> {
 
-    /** 版本唯一标识 */
+    /**
+     * 版本唯一标识
+     */
     private String versionId;
-    /** 所属文档ID */
+    /**
+     * 所属文档ID
+     */
     private String documentId;
-    /** 版本号（1, 2, 3...） */
+    /**
+     * 版本号（1, 2, 3...）
+     */
     private Integer versionNumber;
-    /** 该版本文件存储路径 */
+    /**
+     * 该版本文件存储路径
+     */
     private String filePath;
-    /** 该版本文件大小（字节） */
+    /**
+     * 该版本文件大小（字节）
+     */
     private Long fileSize;
-    /** 变更说明 */
+    /**
+     * 变更说明
+     */
     private String changeLog;
 
     @Override
@@ -41,7 +52,7 @@ public class DocumentVersion extends Entity<String> {
      * 创建版本实体。
      */
     static DocumentVersion create(String documentId, Integer versionNumber, String filePath,
-                                  Long fileSize, String changeLog, String creator) {
+            Long fileSize, String changeLog, String creator) {
         DocumentVersion version = new DocumentVersion();
         version.versionId = CellHelper.getInstance().generateId(CellEnum.DOCUMENT_VERSION);
         version.documentId = documentId;

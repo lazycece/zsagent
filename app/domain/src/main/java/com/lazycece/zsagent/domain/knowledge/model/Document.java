@@ -14,13 +14,12 @@ import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDocumentCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.RollbackDocumentCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentContentCmd;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentMetadataCmd;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 文档聚合根
@@ -73,8 +72,7 @@ public class Document extends Aggregate<String> {
     // ======================== 工厂方法 ========================
 
     /**
-     * 创建文档聚合根。
-     * 初始版本由调用方通过 {@link #createNewVersion(String, Long, String)} 创建。
+     * 创建文档聚合根。 初始版本由调用方通过 {@link #createNewVersion(String, Long, String)} 创建。
      */
     public static Document create(CreateDocumentCmd command) {
         Document document = new Document();
@@ -117,7 +115,7 @@ public class Document extends Aggregate<String> {
     /**
      * 删除文档——移入回收站，记录删除时间用于 30 天自动清理。
      */
-    public void delete(String  userId) {
+    public void delete(String userId) {
         this.status = DocumentStatus.DELETED;
         this.deletedTime = LocalDateTime.now();
         super.setUpdater(userId);
@@ -135,8 +133,7 @@ public class Document extends Aggregate<String> {
     }
 
     /**
-     * 创建新版本——仅当文件内容变更时调用。
-     * 同时更新当前版本号与当前文件路径。
+     * 创建新版本——仅当文件内容变更时调用。 同时更新当前版本号与当前文件路径。
      *
      * @param filePath  新版本文件存储路径
      * @param fileSize  新版本文件大小
@@ -147,8 +144,8 @@ public class Document extends Aggregate<String> {
         this.currentVersion = this.currentVersion + 1;
         this.filePath = filePath;
         this.fileSize = fileSize;
-        DocumentVersion version = DocumentVersion.create(
-                this.documentId, this.currentVersion, filePath, fileSize, changeLog, this.getUpdater());
+        DocumentVersion version = DocumentVersion.create(this.documentId, this.currentVersion,
+                filePath, fileSize, changeLog, this.getUpdater());
         this.versions.add(version);
         return version;
     }
@@ -177,8 +174,7 @@ public class Document extends Aggregate<String> {
         super.setUpdater(cmd.getUserId());
         super.setUpdateTime(LocalDateTime.now());
         this.updateEtlStatus(EtlStatus.PENDING);
-        return this.createNewVersion(
-                targetVersion.getFilePath(), targetVersion.getFileSize(),
+        return this.createNewVersion(targetVersion.getFilePath(), targetVersion.getFileSize(),
                 "回滚到 V" + targetVersion.getVersionNumber());
     }
 

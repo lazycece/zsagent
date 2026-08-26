@@ -22,7 +22,8 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
     private final DirectoryRepository directoryRepository;
     private final DocumentRepository documentRepository;
 
-    public DirectoryDomainServiceImpl(DirectoryRepository directoryRepository, DocumentRepository documentRepository) {
+    public DirectoryDomainServiceImpl(DirectoryRepository directoryRepository,
+            DocumentRepository documentRepository) {
         this.directoryRepository = directoryRepository;
         this.documentRepository = documentRepository;
     }
@@ -35,7 +36,8 @@ public class DirectoryDomainServiceImpl implements DirectoryDomainService {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         Assert.notBlank(command.getUserId(), RespStatus.PARAM_ERROR, "userId 不能为空");
         Assert.notBlank(command.getName(), RespStatus.PARAM_ERROR, "name 不能为空");
-        Directory directory = Directory.create(command.getUserId(), command.getParentId(), command.getName());
+        Directory directory = Directory.create(command.getUserId(), command.getParentId(),
+                command.getName());
         directoryRepository.save(directory);
         return directory.getDirectoryId();
     }
