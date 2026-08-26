@@ -24,8 +24,7 @@ import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
 /**
- * Agent 命令门面实现。
- * 负责问答流程编排：记录用户消息 → 执行 RAG 流水线 → 流式返回 → 记录助手消息。
+ * Agent 命令门面实现。 负责问答流程编排：记录用户消息 → 执行 RAG 流水线 → 流式返回 → 记录助手消息。
  *
  * @author lazycece
  */
@@ -41,10 +40,8 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
     private final ConversationDomainService conversationDomainService;
     private final DocumentCachePostProcessor documentCachePostProcessor;
 
-    public AgentCommandFacadeImpl(
-            ChatClient.Builder chatClientBuilder,
-            RetrievalAugmentationAdvisor ragAdvisor,
-            MessageChatMemoryAdvisor memoryAdvisor,
+    public AgentCommandFacadeImpl(ChatClient.Builder chatClientBuilder,
+            RetrievalAugmentationAdvisor ragAdvisor, MessageChatMemoryAdvisor memoryAdvisor,
             ConversationDomainService conversationDomainService,
             DocumentCachePostProcessor documentCachePostProcessor) {
         this.chatClientBuilder = chatClientBuilder;
@@ -61,43 +58,46 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
         String question = request.getQuestion();
 
         // 阶段 A: 记录用户消息（domain 层）
-        conversationDomainService.recordUserMessage(
-                AgentAssembler.assembleUserMessageCmd(request));
+        conversationDomainService.recordUserMessage(AgentAssembler.assembleUserMessageCmd(request));
 
         // 阶段 B: 通过 ChatClient + RAG Advisor + Memory Advisor 执行流水线
         StringBuilder fullAnswer = new StringBuilder();
 
-        return chatClientBuilder.build().prompt()
+        return chatClientBuilder.build()
+                //
+                .prompt()
+                // advisors
                 .advisors(ragAdvisor, memoryAdvisor)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .advisors(a -> a.param("user_id", userId))
-                .advisors(a -> a.param("user_depts", getUserDepts()))
-                .user(question)
-                .stream()
+                .advisors(a -> a.param("user_depts", getUserDepts())).user(question).stream()
                 .content()
+                //
                 .doOnNext(fullAnswer::append)
+                //
                 .doOnComplete(() -> {
                     // 阶段 C: 流结束后记录完整的助手消息（含来源引用）
-                    List<Document> docs = documentCachePostProcessor.getLastRetrievedDocuments(conversationId);
-                    List<SourceReference> sources = documentCachePostProcessor.extractSources(docs);
+                    List<Document> docs = documentCachePostProcessor.getLastRetrievedDocuments(
+                            conversationId);
+                    List<SourceReference> sources = AgentAssembler.assembleSourceReferenceList(
+                            docs);
                     conversationDomainService.recordAssistantMessage(
-                            AgentAssembler.assembleAssistantMessageCmd(
-                                    userId, conversationId, fullAnswer.toString(), sources));
+                            AgentAssembler.assembleAssistantMessageCmd(userId, conversationId,
+                                    fullAnswer.toString(), sources));
                     documentCachePostProcessor.clearDocuments(conversationId);
                     log.info("问答完成: userId={}, conversationId={}, 答案长度={}, 来源数={}",
                             userId, conversationId, fullAnswer.length(), sources.size());
-                })
-                .doOnError(error -> {
-                    log.error("RAG 流水线异常: userId={}, conversationId={}", userId, conversationId, error);
-                })
-                .map(chunk -> ServerSentEvent.<String>builder().data(chunk).build())
-                .concatWith(Flux.just(ServerSentEvent.<String>builder().event("done").data("[DONE]").build()));
+                }).doOnError(error -> {
+                    log.error("RAG 流水线异常: userId={}, conversationId={}", userId,
+                            conversationId, error);
+                }).map(chunk -> ServerSentEvent.<String>builder().data(chunk).build()).concatWith(
+                        Flux.just(ServerSentEvent.<String>builder().event("done").data("[DONE]")
+                                .build()));
     }
 
     @Override
     public RespData<FeedbackResult> submitFeedback(FeedbackRequest request) {
-        conversationDomainService.recordFeedback(
-                AgentAssembler.assembleFeedbackCmd(request));
+        conversationDomainService.recordFeedback(AgentAssembler.assembleFeedbackCmd(request));
         return RespData.success(new FeedbackResult());
     }
 

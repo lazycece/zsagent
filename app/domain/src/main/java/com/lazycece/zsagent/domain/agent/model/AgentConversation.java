@@ -57,6 +57,7 @@ public class AgentConversation extends Aggregate<String> {
      */
     public static AgentConversation create(String userId, String conversationId) {
         AgentConversation conversation = new AgentConversation();
+        // 由端视角处理，不默认生成
         conversation.conversationId = conversationId;
         conversation.userId = userId;
         conversation.status = ConversationStatus.ACTIVE;
