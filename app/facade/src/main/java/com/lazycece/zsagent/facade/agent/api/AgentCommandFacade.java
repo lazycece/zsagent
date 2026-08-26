@@ -4,6 +4,7 @@ import com.lazycece.rapidf.restful.response.RespData;
 import com.lazycece.zsagent.facade.agent.request.AskQuestionRequest;
 import com.lazycece.zsagent.facade.agent.request.FeedbackRequest;
 import com.lazycece.zsagent.facade.agent.result.FeedbackResult;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
@@ -18,9 +19,9 @@ public interface AgentCommandFacade {
      * 发起提问，返回 SSE 流式答案（含结束标记）。
      *
      * @param request 提问请求
-     * @return SSE 流式答案
+     * @return SSE 流式答案，响应头携带 text/event-stream;charset=UTF-8
      */
-    Flux<ServerSentEvent<String>> askQuestion(AskQuestionRequest request);
+    ResponseEntity<Flux<ServerSentEvent<String>>> askQuestion(AskQuestionRequest request);
 
     /**
      * 提交答案反馈。

@@ -20,6 +20,8 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import reactor.core.publisher.Flux;
 
@@ -52,7 +54,8 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
     }
 
     @Override
-    public Flux<ServerSentEvent<String>> askQuestion(AskQuestionRequest request) {
+    public ResponseEntity<Flux<ServerSentEvent<String>>> askQuestion(
+            AskQuestionRequest request) {
         String userId = request.getUserId();
         String conversationId = request.getConversationId();
         String question = request.getQuestion();
@@ -63,7 +66,7 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
         // 阶段 B: 通过 ChatClient + RAG Advisor + Memory Advisor 执行流水线
         StringBuilder fullAnswer = new StringBuilder();
 
-        return chatClientBuilder.build()
+        Flux<ServerSentEvent<String>> stream = chatClientBuilder.build()
                 //
                 .prompt()
                 // advisors
@@ -93,6 +96,9 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
                 }).map(chunk -> ServerSentEvent.<String>builder().data(chunk).build()).concatWith(
                         Flux.just(ServerSentEvent.<String>builder().event("done").data("[DONE]")
                                 .build()));
+
+        return ResponseEntity.ok().contentType(
+                MediaType.parseMediaType("text/event-stream;charset=UTF-8")).body(stream);
     }
 
     @Override

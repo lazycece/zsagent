@@ -5,6 +5,8 @@ import com.lazycece.zsagent.facade.agent.api.AgentCommandFacade;
 import com.lazycece.zsagent.facade.agent.request.AskQuestionRequest;
 import com.lazycece.zsagent.facade.agent.request.FeedbackRequest;
 import com.lazycece.zsagent.facade.agent.result.FeedbackResult;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,8 +34,8 @@ public class AgentCommandController implements AgentCommandFacade {
      * 流式问答 — SSE。
      */
     @Override
-    @PostMapping(value = "/ask-question", produces ="text/event-stream;charset=utf-8")
-    public Flux<ServerSentEvent<String>> askQuestion(
+    @PostMapping(value = "/ask-question", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public ResponseEntity<Flux<ServerSentEvent<String>>> askQuestion(
             @Validated @RequestBody AskQuestionRequest request) {
         return agentCommandFacade.askQuestion(request);
     }
