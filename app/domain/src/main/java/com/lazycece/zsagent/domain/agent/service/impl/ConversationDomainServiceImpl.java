@@ -10,12 +10,8 @@ import com.lazycece.zsagent.domain.agent.valueobject.cmd.AssistantMessageCmd;
 import com.lazycece.zsagent.domain.agent.valueobject.cmd.FeedbackCmd;
 import com.lazycece.zsagent.domain.agent.valueobject.cmd.UserMessageCmd;
 
-import java.time.LocalDateTime;
-
 /**
- * 对话领域服务实现。
- * 领域服务仅做编排：参数校验 → 获取聚合 → 委托聚合行为 → 持久化。
- * 业务规则封装在聚合根内部。
+ * 对话领域服务实现。 领域服务仅做编排：参数校验 → 获取聚合 → 委托聚合行为 → 持久化。 业务规则封装在聚合根内部。
  *
  * @author lazycece
  */
@@ -29,8 +25,7 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
     }
 
     /**
-     * 记录用户提问消息。
-     * 首次对话时通过工厂方法创建聚合根，已有对话时仅更新操作者信息。
+     * 记录用户提问消息。 首次对话时通过工厂方法创建聚合根，已有对话时仅更新操作者信息。
      */
     @Override
     public void recordUserMessage(UserMessageCmd command) {
@@ -42,16 +37,15 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(content, RespStatus.PARAM_ERROR, "content 不能为 null");
 
-        AgentConversation conversation = conversationRepository.findByConversationId(userId, conversationId);
+        AgentConversation conversation = conversationRepository.findByConversationId(userId,
+                conversationId);
 
         if (conversation == null) {
             conversation = AgentConversation.create(userId, conversationId);
-            conversation.askQuestion(content);
+            conversation.askQuestion(userId, content);
             conversationRepository.save(conversation);
         } else {
-            conversation.setUpdater(userId);
-            conversation.setUpdateTime(LocalDateTime.now());
-            conversation.askQuestion(content);
+            conversation.askQuestion(userId, content);
             conversationRepository.update(conversation);
         }
     }
@@ -69,12 +63,12 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(content, RespStatus.PARAM_ERROR, "content 不能为 null");
 
-        AgentConversation conversation = conversationRepository.findByConversationId(userId, conversationId);
+        AgentConversation conversation = conversationRepository.findByConversationId(userId,
+                conversationId);
         Assert.notNull(conversation, RespStatus.PARAM_ERROR, "对话不存在");
 
-        conversation.setUpdater(userId);
-        conversation.setUpdateTime(LocalDateTime.now());
-        conversation.answer(content, command.getSources());
+        conversation.answer(userId, content, command.getSources());
+
         conversationRepository.update(conversation);
     }
 
@@ -92,12 +86,11 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
         Assert.notNull(messageId, RespStatus.PARAM_ERROR, "messageId 不能为 null");
         Assert.notNull(command.getType(), RespStatus.PARAM_ERROR, "feedbackType 不能为 null");
 
-        AgentConversation conversation = conversationRepository.findByConversationId(userId, conversationId);
+        AgentConversation conversation = conversationRepository.findByConversationId(userId,
+                conversationId);
         Assert.notNull(conversation, RespStatus.PARAM_ERROR, "对话不存在");
 
-        conversation.setUpdater(userId);
-        conversation.setUpdateTime(LocalDateTime.now());
-        conversation.submitFeedback(messageId, command.getType(), command.getReason());
+        conversation.submitFeedback(userId, messageId, command.getType(), command.getReason());
         conversationRepository.update(conversation);
     }
 }

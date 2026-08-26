@@ -2,19 +2,17 @@ package com.lazycece.zsagent.domain.agent.model;
 
 import com.lazycece.rapidf.domain.anotation.DomainAggregate;
 import com.lazycece.rapidf.domain.model.Aggregate;
-import com.lazycece.rapidf.utils.UUIDUtils;
+import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.zsagent.domain.agent.enums.ConversationStatus;
 import com.lazycece.zsagent.domain.agent.enums.FeedbackType;
 import com.lazycece.zsagent.domain.agent.enums.MessageRole;
-import com.lazycece.rapidf.restful.exception.factory.ExceptionFactory;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 对话聚合根
@@ -26,15 +24,25 @@ import java.util.List;
 @DomainAggregate
 public class AgentConversation extends Aggregate<String> {
 
-    /** 对话唯一标识 (UUID) */
+    /**
+     * 对话唯一标识 (UUID)
+     */
     private String conversationId;
-    /** 所属用户 */
+    /**
+     * 所属用户
+     */
     private String userId;
-    /** 对话标题（取自首条问题，截取前30字） */
+    /**
+     * 对话标题（取自首条问题，截取前30字）
+     */
     private String title;
-    /** 对话状态 */
+    /**
+     * 对话状态
+     */
     private ConversationStatus status;
-    /** 消息列表 */
+    /**
+     * 消息列表
+     */
     private List<AgentMessage> messages = new ArrayList<>();
 
     @Override
@@ -63,18 +71,20 @@ public class AgentConversation extends Aggregate<String> {
     // ======================== 行为方法 ========================
 
     /**
-     * 发起提问，创建一条 USER 角色消息并追加到消息列表。
-     * 若为首条消息，同时设置对话标题（截取前30字）。
+     * 发起提问，创建一条 USER 角色消息并追加到消息列表。 若为首条消息，同时设置对话标题（截取前30字）。
      *
      * @param content 问题内容
      * @return 创建的消息
      */
-    public AgentMessage askQuestion(String content) {
+    public AgentMessage askQuestion(String userId, String content) {
         if (StringUtils.isBlank(this.title)) {
             this.title = content.length() > 30 ? content.substring(0, 30) : content;
         }
-        AgentMessage message = buildMessage(MessageRole.USER, content, null);
+        AgentMessage message = AgentMessage.create(userId, this.conversationId, MessageRole.USER,
+                content, null);
         this.messages.add(message);
+        super.setUpdater(userId);
+        super.setCreateTime(LocalDateTime.now());
         return message;
     }
 
@@ -85,9 +95,12 @@ public class AgentConversation extends Aggregate<String> {
      * @param sources 来源引用列表
      * @return 创建的消息
      */
-    public AgentMessage answer(String content, List<SourceReference> sources) {
-        AgentMessage message = buildMessage(MessageRole.ASSISTANT, content, sources);
+    public AgentMessage answer(String userId, String content, List<SourceReference> sources) {
+        AgentMessage message = AgentMessage.create(userId, this.conversationId,
+                MessageRole.ASSISTANT, content, sources);
         this.messages.add(message);
+        super.setUpdater(userId);
+        super.setUpdateTime(LocalDateTime.now());
         return message;
     }
 
@@ -99,12 +112,13 @@ public class AgentConversation extends Aggregate<String> {
      * @param reason    反馈原因（仅 NOT_USEFUL 时可能填写）
      * @throws IllegalArgumentException 消息不存在时抛出
      */
-    public void submitFeedback(String messageId, FeedbackType type, String reason) {
-        AgentMessage target = this.messages.stream()
-                .filter(m -> m.getMessageId().equals(messageId))
+    public void submitFeedback(String userId, String messageId, FeedbackType type, String reason) {
+        AgentMessage target = this.messages.stream().filter(m -> m.getMessageId().equals(messageId))
                 .findFirst()
                 .orElseThrow(() -> ExceptionFactory.businessException("消息不存在: " + messageId));
-        target.submitFeedback(type, reason);
+        target.submitFeedback(userId, type, reason);
+        super.setUpdater(userId);
+        super.setUpdateTime(LocalDateTime.now());
     }
 
     /**
@@ -114,12 +128,4 @@ public class AgentConversation extends Aggregate<String> {
         this.status = ConversationStatus.ARCHIVED;
     }
 
-    // ======================== 内部方法 ========================
-
-    private AgentMessage buildMessage(MessageRole role, String content, List<SourceReference> sources) {
-        AgentMessage message = AgentMessage.create(
-                UUIDUtils.uuid(), this.conversationId, role, content, sources);
-        message.setCreateTime(LocalDateTime.now());
-        return message;
-    }
 }
