@@ -1,4 +1,4 @@
-package com.lazycece.zsagent.application.agent.rag.pre;
+package com.lazycece.zsagent.application.agent.handler.rag.pre;
 
 import org.springframework.ai.rag.Query;
 import org.springframework.ai.rag.preretrieval.query.transformation.QueryTransformer;

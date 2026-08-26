@@ -1,6 +1,10 @@
-package com.lazycece.zsagent.application.agent.rag.post;
+package com.lazycece.zsagent.application.agent.handler.rag.post;
 
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -9,11 +13,6 @@ import org.springframework.ai.rag.Query;
 import org.springframework.ai.rag.postretrieval.document.DocumentPostProcessor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * 文档缓存处理器（Stage 3c）。

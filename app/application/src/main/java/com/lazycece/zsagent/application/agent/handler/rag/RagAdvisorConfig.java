@@ -1,5 +1,6 @@
-package com.lazycece.zsagent.application.agent.rag;
+package com.lazycece.zsagent.application.agent.handler.rag;
 
+import java.util.List;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
@@ -10,8 +11,6 @@ import org.springframework.ai.rag.preretrieval.query.transformation.QueryTransfo
 import org.springframework.ai.rag.retrieval.search.DocumentRetriever;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 /**
  * RAG Advisor 装配配置。

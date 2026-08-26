@@ -1,5 +1,8 @@
-package com.lazycece.zsagent.application.agent.rag.post;
+package com.lazycece.zsagent.application.agent.handler.rag.post;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
@@ -7,10 +10,6 @@ import org.springframework.ai.rag.Query;
 import org.springframework.ai.rag.postretrieval.document.DocumentPostProcessor;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 文档内容压缩器（Stage 3b）。
