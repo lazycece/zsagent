@@ -1,11 +1,9 @@
 package com.lazycece.zsagent.infra.dal.mapper.udf;
 
 import com.lazycece.zsagent.infra.dal.po.AgentMessagePO;
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * agent_message 表用户自定义 Mapper
@@ -33,6 +31,5 @@ public interface AgentMessageUdfMapper {
     /**
      * 按 conversationId 逻辑删除所有消息。
      */
-    int deleteByConversationId(@Param("conversationId") String conversationId,
-                               @Param("updateTime") LocalDateTime updateTime);
+    int deleteByConversationId(@Param("conversationId") String conversationId);
 }

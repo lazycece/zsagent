@@ -11,13 +11,11 @@ import com.lazycece.zsagent.infra.dal.mapper.udf.AgentConversationUdfMapper;
 import com.lazycece.zsagent.infra.dal.mapper.udf.AgentMessageUdfMapper;
 import com.lazycece.zsagent.infra.dal.po.AgentConversationPO;
 import com.lazycece.zsagent.infra.dal.po.AgentMessagePO;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 对话仓储 MyBatis 实现。
@@ -27,7 +25,8 @@ import java.util.stream.Collectors;
 @DomainRepository
 public class AgentConversationRepositoryImpl implements AgentConversationRepository {
 
-    private static final Logger log = LoggerFactory.getLogger(AgentConversationRepositoryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(
+            AgentConversationRepositoryImpl.class);
 
     private final AgentConversationUdfMapper conversationMapper;
     private final AgentMessageUdfMapper messageMapper;
@@ -92,8 +91,7 @@ public class AgentConversationRepositoryImpl implements AgentConversationReposit
 
         if (conversation.getMessages() != null) {
             List<AgentMessage> messages = conversation.getMessages();
-            LocalDateTime now = LocalDateTime.now();
-            messageMapper.deleteByConversationId(conversation.getConversationId(), now);
+            messageMapper.deleteByConversationId(conversation.getConversationId());
             if (!messages.isEmpty()) {
                 List<AgentMessagePO> messagePOs = messages.stream()
                         .map(AgentInfraConverter::toMessagePO)

@@ -50,13 +50,9 @@
     </update>
 
     <update id="deleteByConversationId">
-        update `agent_message`
-        <set>
-            `deleted` = 1,
-            `update_time` = #{updateTime}
-        </set>
+        delete
+        from `agent_message`
         where `conversation_id` = #{conversationId}
-          and `deleted` = 0
     </update>
 
 </mapper>
