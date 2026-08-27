@@ -8,7 +8,7 @@ Accept: text/event-stream;charset=UTF-8
 
 {
   "userId": "user_123",
-  "conversationId": "conv_20260826000001",
+  "conversationId": "conv_20260826000003",
   "question": "知识库平台的功能有哪儿些？"
 }
 
