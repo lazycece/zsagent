@@ -18,6 +18,7 @@ public enum DocumentMetadataKey implements BaseEnum<String> {
     PERMISSION_DEPTS("permission_depts", "部门权限"),
     PERMISSION_USERS("permission_users", "用户权限"),
     CURRENT_VERSION("current_version", "文档版本"),
+    UPDATE_TIME("update_time","更新时间"),
     ;
     private final String code;
     private final String desc;

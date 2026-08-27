@@ -118,6 +118,8 @@ public class DefaultKnowledgeDocumentReader implements KnowledgeDocumentReader {
                 knowledgeDocument.getVisibleTo());
         metadata.put(DocumentMetadataKey.CURRENT_VERSION.getCode(),
                 knowledgeDocument.getCurrentVersion());
+        metadata.put(DocumentMetadataKey.UPDATE_TIME.getCode(),
+                knowledgeDocument.getUpdateTime());
 
         return metadata;
     }
