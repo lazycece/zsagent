@@ -1,5 +1,7 @@
-package com.lazycece.zsagent.application.knowledge.handler.retriever;
+package com.lazycece.zsagent.application.agent.handler.rag.retrieval;
 
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.document.Document;
@@ -9,9 +11,6 @@ import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * 带权限过滤的文档检索器。

@@ -71,9 +71,15 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
                 .prompt()
                 // advisors
                 .advisors(ragAdvisor, memoryAdvisor)
+                // conversation id, memory
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
                 .advisors(a -> a.param("user_id", userId))
-                .advisors(a -> a.param("user_depts", getUserDepts())).user(question).stream()
+                .advisors(a -> a.param("user_depts", getUserDepts()))
+                //
+                .user(question)
+                //
+                .stream()
+                //
                 .content()
                 //
                 .doOnNext(fullAnswer::append)
