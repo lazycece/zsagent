@@ -10,6 +10,7 @@ import com.lazycece.zsagent.facade.agent.api.AgentCommandFacade;
 import com.lazycece.zsagent.facade.agent.request.AskQuestionRequest;
 import com.lazycece.zsagent.facade.agent.request.FeedbackRequest;
 import com.lazycece.zsagent.facade.agent.result.FeedbackResult;
+import com.lazycece.zsagent.infra.acl.utils.FilterExpressionUtils;
 import java.util.Collections;
 import java.util.List;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -73,8 +75,9 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
                 .advisors(ragAdvisor, memoryAdvisor)
                 // conversation id, memory
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-                .advisors(a -> a.param("user_id", userId))
-                .advisors(a -> a.param("user_depts", getUserDepts()))
+                // filter
+                .advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION,
+                        FilterExpressionUtils.permissionFilter(userId, getUserDepts())))
                 //
                 .user(question)
                 //

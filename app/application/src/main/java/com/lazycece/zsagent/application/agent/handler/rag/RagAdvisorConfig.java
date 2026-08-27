@@ -2,14 +2,16 @@ package com.lazycece.zsagent.application.agent.handler.rag;
 
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentMetadataKey;
 import java.util.List;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.ChatClient.Builder;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter;
-import org.springframework.ai.rag.generation.augmentation.QueryAugmenter;
 import org.springframework.ai.rag.postretrieval.document.DocumentPostProcessor;
-import org.springframework.ai.rag.preretrieval.query.transformation.QueryTransformer;
-import org.springframework.ai.rag.retrieval.search.DocumentRetriever;
+import org.springframework.ai.rag.preretrieval.query.transformation.CompressionQueryTransformer;
+import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -48,31 +50,15 @@ public class RagAdvisorConfig {
             {user_query}
             """;
 
-    private final List<QueryTransformer> queryTransformer;
-    private final DocumentRetriever documentRetriever;
+    private final ChatClient.Builder chatClientBuilder;
     private final List<DocumentPostProcessor> documentPostProcessors;
+    private final VectorStore vectorStore;
 
-    public RagAdvisorConfig(
-            List<QueryTransformer> queryTransformer,
-            DocumentRetriever documentRetriever,
-            List<DocumentPostProcessor> documentPostProcessors) {
-        this.queryTransformer = queryTransformer;
-        this.documentRetriever = documentRetriever;
+    public RagAdvisorConfig(Builder chatClientBuilder,
+            List<DocumentPostProcessor> documentPostProcessors, VectorStore vectorStore) {
+        this.chatClientBuilder = chatClientBuilder;
         this.documentPostProcessors = documentPostProcessors;
-    }
-
-    /**
-     * 创建 QueryAugmenter（Spring AI 内置 ContextualQueryAugmenter）。 使用 {context}
-     * 占位符接收文档格式化结果，{user_query} 接收用户问题。
-     */
-    @Bean
-    public QueryAugmenter queryAugmenter() {
-        return ContextualQueryAugmenter.builder()
-                .promptTemplate(new PromptTemplate(PROMPT_TEMPLATE))
-                .emptyContextPromptTemplate(new PromptTemplate(EMPTY_CONTEXT_TEMPLATE))
-                .allowEmptyContext(true)
-                .documentFormatter(this::formatDocuments)
-                .build();
+        this.vectorStore = vectorStore;
     }
 
     /**
@@ -80,13 +66,29 @@ public class RagAdvisorConfig {
      * SimilarityThresholdFilter → ② DocumentCompressor → ③ DocumentCachePostProcessor
      */
     @Bean
-    public RetrievalAugmentationAdvisor retrievalAugmentationAdvisor(
-            QueryAugmenter queryAugmenter) {
+    public RetrievalAugmentationAdvisor retrievalAugmentationAdvisor() {
         return RetrievalAugmentationAdvisor.builder()
-                .queryTransformers(queryTransformer)
-                .documentRetriever(documentRetriever)
+                // pre - 检索前查询转换
+                .queryTransformers(CompressionQueryTransformer.builder()
+                        .chatClientBuilder(chatClientBuilder)
+                        .build())
+                // pre- 检索前查询扩展
+                //.queryExpander()
+                // retriever
+                .documentRetriever(VectorStoreDocumentRetriever.builder()
+                        .vectorStore(vectorStore)
+                        .similarityThreshold(0.65)
+                        .topK(10)
+                        .build())
+                // post - 检索后相关处理
                 .documentPostProcessors(documentPostProcessors)
-                .queryAugmenter(queryAugmenter)
+                // generation - 查询增强相关处理
+                .queryAugmenter(ContextualQueryAugmenter.builder()
+                        .promptTemplate(new PromptTemplate(PROMPT_TEMPLATE))
+                        .emptyContextPromptTemplate(new PromptTemplate(EMPTY_CONTEXT_TEMPLATE))
+                        .allowEmptyContext(true)
+                        .documentFormatter(this::formatDocuments)
+                        .build())
                 .build();
     }
 
