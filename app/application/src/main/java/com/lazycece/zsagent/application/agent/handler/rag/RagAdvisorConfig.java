@@ -39,7 +39,7 @@ public class RagAdvisorConfig {
             {context}
             
             ## 用户问题
-            {user_query}
+            {query}
             """;
 
     private static final String EMPTY_CONTEXT_TEMPLATE = """
@@ -47,7 +47,7 @@ public class RagAdvisorConfig {
             你是一个企业知识库助手。
             
             ## 用户问题
-            {user_query}
+            {query}
             """;
 
     private final ChatClient.Builder chatClientBuilder;

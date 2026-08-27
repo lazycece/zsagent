@@ -9,7 +9,7 @@ Accept: text/event-stream;charset=UTF-8
 {
   "userId": "user_123",
   "conversationId": "conv_20260826000001",
-  "question": "知识库平台 Agent 文档的修改时间是多久？"
+  "question": "知识库平台的功能有哪儿些？"
 }
 
 ### ask-question 参数缺失（触发 @Validated 校验）
