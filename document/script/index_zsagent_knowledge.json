@@ -1,0 +1,20 @@
+// PUT /zsagent_knowledge
+{
+  "mappings": {
+    "properties": {
+      "chunk_id":        { "type": "keyword" },
+      "document_id":     { "type": "keyword" },
+      "document_title":  { "type": "text", "analyzer": "ik_max_word" },
+      "content":         { "type": "text", "analyzer": "ik_max_word" },
+      "embedding":       { "type": "dense_vector", "dims": 1024, "similarity": "cosine" },
+      "chunk_index":     { "type": "integer" },
+      "page_number":     { "type": "integer" },
+      "metadata":        { "type": "flattened" },
+      "creator":         { "type": "keyword" },
+      "updater":         { "type": "keyword" },
+      "create_time":     { "type": "date" },
+      "update_time":     { "type": "date" },
+      "deleted":         { "type": "boolean" }
+    }
+  }
+}

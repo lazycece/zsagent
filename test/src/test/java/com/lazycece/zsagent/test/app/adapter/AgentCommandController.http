@@ -1,0 +1,46 @@
+### 前置说明
+# ask-question 为 SSE 流式接口，需保持连接读取事件流；回答结束时服务端会发送 event=done 的 [DONE] 标记。
+
+### ask-question
+POST {{httpUrl}}/api/v1/agent/ask-question
+Content-Type: application/json
+Accept: text/event-stream;charset=UTF-8
+
+{
+  "userId": "user_123",
+  "conversationId": "conv_20260826000003",
+  "question": "知识库平台的功能有哪儿些？"
+}
+
+### ask-question 参数缺失（触发 @Validated 校验）
+POST {{httpUrl}}/api/v1/agent/ask-question
+Content-Type: application/json
+Accept: text/event-stream;charset=UTF-8
+
+{
+  "userId": "user_123",
+  "conversationId": "conv_20260826000001"
+}
+
+### submit-feedback 有用
+POST {{httpUrl}}/api/v1/agent/submit-feedback
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "conversationId": "conv_20260826000001",
+  "messageId": "20260826002101130000229028",
+  "type": "USEFUL"
+}
+
+### submit-feedback 无用
+POST {{httpUrl}}/api/v1/agent/submit-feedback
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "conversationId": "conv_20260826000001",
+  "messageId": "20260826002101130000229024",
+  "type": "NOT_USEFUL",
+  "reason": "答案与问题不相关"
+}

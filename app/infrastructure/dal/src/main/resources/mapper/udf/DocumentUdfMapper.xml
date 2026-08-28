@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lazycece.zsagent.infra.dal.mapper.udf.DocumentUdfMapper">
+
+    <sql id="Base_Column_List">
+        `id`, `document_id`, `title`, `summary`, `format`, `file_size`, `file_path`,
+        `directory_id`, `tags`, `visibility`, `visible_to`, `status`, `etl_status`,
+        `etl_error_msg`, `current_version`, `deleted_time`,
+        `creator`, `updater`, `create_time`, `update_time`, `deleted`
+    </sql>
+
+    <sql id="Permission_Filter">
+        and (
+            `visibility` = 'public'
+            <if test="query.userId != null and query.userId != ''">
+                or (`visibility` = 'specific' and JSON_CONTAINS(`visible_to`, JSON_QUOTE(#{query.userId})))
+            </if>
+            <if test="query.userDepts != null and query.userDepts.size() > 0">
+                or (`visibility` = 'department' and
+                <foreach collection="query.userDepts" item="dept" open="(" separator=" or " close=")">
+                    JSON_CONTAINS(`visible_to`, JSON_QUOTE(#{dept}))
+                </foreach>
+                )
+            </if>
+        )
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.lazycece.zsagent.infra.dal.po.DocumentPO"
+               autoMapping="true">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lazycece.zsagent.infra.dal.po.DocumentPO"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into `agent_document`
+            (`document_id`, `title`, `summary`, `format`, `file_size`, `file_path`,
+             `directory_id`, `tags`, `visibility`, `visible_to`, `status`, `etl_status`,
+             `etl_error_msg`, `current_version`, `deleted_time`,
+             `creator`, `updater`, `create_time`, `update_time`, `deleted`)
+        values
+            (#{documentId}, #{title}, #{summary}, #{format}, #{fileSize}, #{filePath},
+             #{directoryId}, #{tags}, #{visibility}, #{visibleTo}, #{status}, #{etlStatus},
+             #{etlErrorMsg}, #{currentVersion}, #{deletedTime},
+             #{creator}, #{updater}, #{createTime}, #{updateTime}, #{deleted})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_document`
+        where `document_id` = #{documentId}
+          and `deleted` = 0
+    </select>
+
+    <select id="selectByDocumentId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_document`
+        where `document_id` = #{query.documentId}
+          and `deleted` = 0
+        <include refid="Permission_Filter"/>
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_document`
+        where `deleted` = 0
+        <include refid="Permission_Filter"/>
+        <if test="query.directoryId != null and query.directoryId != ''">
+            and `directory_id` = #{query.directoryId}
+        </if>
+        <if test="query.status != null and query.status != ''">
+            and `status` = #{query.status}
+        </if>
+        <if test="query.keyword != null and query.keyword != ''">
+            and (
+                `title` like concat('%', #{query.keyword}, '%')
+                or JSON_CONTAINS(`tags`, JSON_QUOTE(#{query.keyword}))
+            )
+        </if>
+        order by `update_time` desc
+        limit #{offset}, #{size}
+    </select>
+
+    <select id="countByUserId" resultType="long">
+        select count(1)
+        from `agent_document`
+        where `deleted` = 0
+        <include refid="Permission_Filter"/>
+        <if test="query.directoryId != null and query.directoryId != ''">
+            and `directory_id` = #{query.directoryId}
+        </if>
+        <if test="query.status != null and query.status != ''">
+            and `status` = #{query.status}
+        </if>
+        <if test="query.keyword != null and query.keyword != ''">
+            and (
+                `title` like concat('%', #{query.keyword}, '%')
+                or JSON_CONTAINS(`tags`, JSON_QUOTE(#{query.keyword}))
+            )
+        </if>
+    </select>
+
+    <update id="update" parameterType="com.lazycece.zsagent.infra.dal.po.DocumentPO">
+        update `agent_document`
+        <set>
+            `title` = #{title},
+            `summary` = #{summary},
+            `file_size` = #{fileSize},
+            `file_path` = #{filePath},
+            `directory_id` = #{directoryId},
+            `tags` = #{tags},
+            `visibility` = #{visibility},
+            `visible_to` = #{visibleTo},
+            `status` = #{status},
+            `etl_status` = #{etlStatus},
+            `etl_error_msg` = #{etlErrorMsg},
+            `current_version` = #{currentVersion},
+            `deleted_time` = #{deletedTime},
+            `updater` = #{updater},
+            `update_time` = #{updateTime}
+        </set>
+        where `document_id` = #{documentId}
+          and `deleted` = 0
+    </update>
+
+    <select id="countByDirectoryId" resultType="int">
+        select count(1)
+        from `agent_document`
+        where `directory_id` = #{directoryId}
+          and `deleted` = 0
+    </select>
+
+</mapper>

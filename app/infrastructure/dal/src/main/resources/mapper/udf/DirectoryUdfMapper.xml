@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lazycece.zsagent.infra.dal.mapper.udf.DirectoryUdfMapper">
+
+    <sql id="Base_Column_List">
+        `id`, `directory_id`, `parent_id`, `name`, `sort_order`,
+        `creator`, `updater`, `create_time`, `update_time`, `deleted`
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.lazycece.zsagent.infra.dal.po.DirectoryPO"
+               autoMapping="true">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lazycece.zsagent.infra.dal.po.DirectoryPO"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into `agent_directory`
+            (`directory_id`, `parent_id`, `name`, `sort_order`,
+             `creator`, `updater`, `create_time`, `update_time`, `deleted`)
+        values
+            (#{directoryId}, #{parentId}, #{name}, #{sortOrder},
+             #{creator}, #{updater}, #{createTime}, #{updateTime}, #{deleted})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_directory`
+        where `directory_id` = #{directoryId}
+          and `deleted` = 0
+    </select>
+
+    <select id="selectByParentId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_directory`
+        <where>
+            <choose>
+                <when test="parentId != null and parentId != ''">
+                    `parent_id` = #{parentId}
+                </when>
+                <otherwise>
+                    `parent_id` is null
+                </otherwise>
+            </choose>
+            and `deleted` = 0
+        </where>
+        order by `sort_order` asc, `create_time` asc
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_directory`
+        where `deleted` = 0
+        order by `sort_order` asc, `create_time` asc
+    </select>
+
+    <update id="update" parameterType="com.lazycece.zsagent.infra.dal.po.DirectoryPO">
+        update `agent_directory`
+        <set>
+            `parent_id` = #{parentId},
+            `name` = #{name},
+            `sort_order` = #{sortOrder},
+            `updater` = #{updater},
+            `update_time` = #{updateTime},
+            `deleted` = #{deleted}
+        </set>
+        where `directory_id` = #{directoryId}
+          and `deleted` = 0
+    </update>
+
+    <select id="countByParentId" resultType="int">
+        select count(1)
+        from `agent_directory`
+        where `parent_id` = #{parentId}
+          and `deleted` = 0
+    </select>
+
+</mapper>

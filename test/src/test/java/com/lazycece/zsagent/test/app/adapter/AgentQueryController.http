@@ -1,0 +1,17 @@
+### 前置说明
+# GET 请求参数通过 query string 传递，统一由 @Validated 校验。
+
+### get-conversation
+GET {{httpUrl}}/api/v1/agent/get-conversation?userId=user_123&conversationId=conv_20260826000001
+
+### get-conversation 参数缺失（触发 @Validated 校验）
+GET {{httpUrl}}/api/v1/agent/get-conversation?userId=user_123
+
+### list-conversations
+GET {{httpUrl}}/api/v1/agent/list-conversations?userId=user_123&page=1&size=20
+
+### list-conversations 缺省分页
+GET {{httpUrl}}/api/v1/agent/list-conversations?userId=user_123
+
+### list-conversations 参数非法（page=0 触发 @Validated 校验）
+GET {{httpUrl}}/api/v1/agent/list-conversations?userId=user_123&page=0&size=20

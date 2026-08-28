@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lazycece.zsagent.infra.dal.mapper.udf.AgentMessageUdfMapper">
+
+    <sql id="Base_Column_List">
+        `id`, `message_id`, `conversation_id`, `role`, `content`,
+        `sources`, `feedback`, `feedback_reason`,
+        `creator`, `updater`, `create_time`, `update_time`, `deleted`
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.lazycece.zsagent.infra.dal.po.AgentMessagePO"
+               autoMapping="true">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insertBatch" parameterType="list">
+        insert into `agent_message`
+            (`message_id`, `conversation_id`, `role`, `content`,
+             `sources`, `feedback`, `feedback_reason`,
+             `creator`, `updater`, `create_time`, `update_time`, `deleted`)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.messageId}, #{item.conversationId}, #{item.role}, #{item.content},
+             #{item.sources}, #{item.feedback}, #{item.feedbackReason},
+             #{item.creator}, #{item.updater}, #{item.createTime}, #{item.updateTime}, #{item.deleted})
+        </foreach>
+    </insert>
+
+    <select id="selectByConversationId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_message`
+        where `conversation_id` = #{conversationId}
+          and `deleted` = 0
+        order by `create_time` asc
+    </select>
+
+    <update id="update" parameterType="com.lazycece.zsagent.infra.dal.po.AgentMessagePO">
+        update `agent_message`
+        <set>
+            `content` = #{content},
+            `sources` = #{sources},
+            `feedback` = #{feedback},
+            `feedback_reason` = #{feedbackReason},
+            `updater` = #{updater},
+            `update_time` = #{updateTime}
+        </set>
+        where `message_id` = #{messageId}
+          and `deleted` = 0
+    </update>
+
+    <update id="deleteByConversationId">
+        delete
+        from `agent_message`
+        where `conversation_id` = #{conversationId}
+    </update>
+
+</mapper>

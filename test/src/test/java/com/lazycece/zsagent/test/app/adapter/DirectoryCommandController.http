@@ -1,0 +1,38 @@
+### create
+POST {{httpUrl}}/api/v1/directory/create
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "parentId": "20260822021101130000025025",
+  "name": "测试test"
+}
+
+### rename
+POST {{httpUrl}}/api/v1/directory/rename
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "directoryId": "20260822021101130000025028",
+  "newName": "testhahah"
+}
+
+### move
+POST {{httpUrl}}/api/v1/directory/move
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "directoryId": "20260822021101130000025028",
+  "newParentId": "20260822021101120000013024"
+}
+
+### delete
+POST {{httpUrl}}/api/v1/directory/delete
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "directoryId": "20260822021101130000025028"
+}

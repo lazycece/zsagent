@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lazycece.zsagent.infra.dal.mapper.udf.AgentConversationUdfMapper">
+
+    <sql id="Base_Column_List">
+        `id`, `conversation_id`, `user_id`, `title`, `status`,
+        `creator`, `updater`, `create_time`, `update_time`, `deleted`
+    </sql>
+
+    <resultMap id="BaseResultMap" type="com.lazycece.zsagent.infra.dal.po.AgentConversationPO"
+               autoMapping="true">
+        <id column="id" property="id"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.lazycece.zsagent.infra.dal.po.AgentConversationPO"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into `agent_conversation`
+            (`conversation_id`, `user_id`, `title`, `status`,
+             `creator`, `updater`, `create_time`, `update_time`, `deleted`)
+        values
+            (#{conversationId}, #{userId}, #{title}, #{status},
+             #{creator}, #{updater}, #{createTime}, #{updateTime}, #{deleted})
+    </insert>
+
+    <select id="selectByUserIdAndConversationId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_conversation`
+        where `user_id` = #{userId}
+          and `conversation_id` = #{conversationId}
+          and `deleted` = 0
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from `agent_conversation`
+        where `user_id` = #{userId}
+          and `deleted` = 0
+        order by `update_time` desc
+        limit #{offset}, #{size}
+    </select>
+
+    <select id="countByUserId" resultType="long">
+        select count(1)
+        from `agent_conversation`
+        where `user_id` = #{userId}
+          and `deleted` = 0
+    </select>
+
+    <update id="update" parameterType="com.lazycece.zsagent.infra.dal.po.AgentConversationPO">
+        update `agent_conversation`
+        <set>
+            `title` = #{title},
+            `status` = #{status},
+            `updater` = #{updater},
+            `update_time` = #{updateTime}
+        </set>
+        where `conversation_id` = #{conversationId}
+          and `deleted` = 0
+    </update>
+
+</mapper>

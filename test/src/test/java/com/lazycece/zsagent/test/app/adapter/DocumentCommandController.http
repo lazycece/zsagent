@@ -1,0 +1,71 @@
+### 前置说明
+# 文档接口接收文件相对路径（filePath），文件本体需先通过 FileCommandController 上传获取。
+# 示例：先执行 FileCommandController.http 中的 upload 请求，将返回的 filePath 填入下方 {{filePath}}。
+
+### create
+POST {{httpUrl}}/api/v1/document/create
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "title": "",
+  "directoryId": "20260822021101120000013024",
+  "tags": ["知识库", "agent"],
+  "visibility": "public",
+  "visibleTo": [],
+  "filePath": "upload/2026/08/25/2da3cb77023c43bb90f2d54d61659b7f_1787670493978_知识库平台 Agent.md"
+}
+
+### update-metadata
+POST {{httpUrl}}/api/v1/document/update-metadata
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "your-document-id",
+  "title": "产品手册 V2",
+  "summary": "更新后的摘要",
+  "directoryId": "your-directory-id",
+  "tags": ["产品", "手册", "V2"],
+  "visibility": "public",
+  "visibleTo": []
+}
+
+### update-content
+POST {{httpUrl}}/api/v1/document/update-content
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "your-document-id",
+  "changeLog": "更新价格信息",
+  "filePath": "upload/2026/08/22/96348d2c9b7d4341989adc5ca8fb7f95_1787386266592.md"
+}
+
+### delete
+POST {{httpUrl}}/api/v1/document/delete
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "your-document-id"
+}
+
+### restore
+POST {{httpUrl}}/api/v1/document/restore
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "20260825022101230000139024"
+}
+
+### rollback
+POST {{httpUrl}}/api/v1/document/rollback
+Content-Type: application/json
+
+{
+  "userId": "user_123",
+  "documentId": "your-document-id",
+  "targetVersionId": "your-version-id"
+}
