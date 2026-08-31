@@ -28,26 +28,7 @@
 - 代码位于仓库 [zsagent-frontend](https://github.com/lazycece/zsagent-frontend)
 
 ## 工程架构
-基于 [**DDLA**](https://github.com/lazycece/ddla)实现：
-
-```
-.
-|-- app
-|   |-- adapter          # 适配器层（web/consumer/job/mobile）
-|   |-- application      # 应用层
-|   |-- domain           # 领域层
-|   |-- facade           # 门面层
-|   `-- infrastructure
-|       |-- acl          # 防腐层（仓储实现、文件解析、缓存、配置）
-|       |-- dal          # 数据访问层（po/mapper/dto）
-|       `-- integration  # 系统集成（如 user 下游服务）
-|-- bootstrap            # 应用启动器与配置
-|-- conf                 # 环境配置（environment/*.properties）、代码规范
-|-- frontend             # 前端（vben web-antd）
-|-- test                 # 测试代码
-`-- docs                 # 文档
-```
-
+基于 [**DDLA**](https://github.com/lazycece/ddla)实现
 
 ## License
 
