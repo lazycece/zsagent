@@ -10,6 +10,7 @@ import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.repository.FileStorage;
 import com.lazycece.zsagent.domain.knowledge.service.DocumentDomainService;
 import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.CreateDocumentCmd;
+import com.lazycece.zsagent.domain.knowledge.valueobject.cmd.UpdateDocumentContentCmd;
 import com.lazycece.zsagent.facade.knowledge.api.DocumentCommandFacade;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentCreateRequest;
 import com.lazycece.zsagent.facade.knowledge.request.DocumentDeleteRequest;
@@ -54,14 +55,8 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
 
         // assemble
         CreateDocumentCmd cmd = DocumentAssembler.assembleCreateDocumentCmd(request);
-        long fileSize;
-        try (InputStream inputStream = fileStorage.load(request.getFilePath())) {
-            fileSize = inputStream.readAllBytes().length;
-        } catch (IOException e) {
-            throw ExceptionFactory.businessException(
-                    "文档读取失败: filePath=" + request.getFilePath(), e);
-        }
-        cmd.setFileSize(fileSize);
+
+        cmd.setFileSize(this.getFileSize(request.getFilePath()));
 
         // create
         String documentId = documentService.createDocument(cmd);
@@ -72,6 +67,14 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
         result.setDocumentId(documentId);
         result.setEtlStatus(EtlStatus.PENDING.getCode());
         return RespData.success(result);
+    }
+
+    private long getFileSize(String filePath) {
+        try (InputStream inputStream = fileStorage.load(filePath)) {
+            return inputStream.readAllBytes().length;
+        } catch (IOException e) {
+            throw ExceptionFactory.businessException("文档读取失败: filePath=" + filePath, e);
+        }
     }
 
     @Override
@@ -85,7 +88,10 @@ public class DocumentCommandFacadeImpl implements DocumentCommandFacade {
     @Override
     public RespData<DocumentUpdateContentResult> updateContent(
             DocumentUpdateContentRequest request) {
-        documentService.updateContent(DocumentAssembler.assembleUpdateContentCmd(request));
+        UpdateDocumentContentCmd cmd = DocumentAssembler.assembleUpdateContentCmd(request);
+        cmd.setFileSize(this.getFileSize(request.getFilePath()));
+
+        documentService.updateContent(cmd);
 
         etlOrchestrator.reprocess(request.getDocumentId());
         return RespData.success(new DocumentUpdateContentResult());
