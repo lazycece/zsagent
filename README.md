@@ -10,6 +10,9 @@
 | 智能问答 | RAG 增强问答、SSE 流式输出、多轮对话（Redis 会话记忆）、引用溯源、答案反馈（有用/无用）                                 |
 | 知识管理 | 上传、目录管理、文档管理、多格式解析入库（PDF/Word/Markdown/HTML/TXT/DOCX）、分块与摘要、标签、版本管理与回滚、回收站、ETL 状态跟踪 |
 
+![agent_chat.png](/docs/picture/agent_chat.png)
+![agent_chat.png](/docs/picture/document_manage.png)
+
 ## 技术栈
 
 ### 后端
