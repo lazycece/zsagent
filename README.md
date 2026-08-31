@@ -1,6 +1,6 @@
 # ZSAGENT（知枢）
 
-基于 RAG 的智能知识库平台 Agent， 项目思路详见 [知识库平台AGENT](/docs/brd/知识库平台 Agent.md)
+基于 RAG 的智能知识库平台 Agent， 项目思路详见 [知识库平台AGENT](/docs/brd/知识库平台%20Agent.md)
 
 ## 核心能力
 当前已实现的核心能力如下：(功能持续丰富中...)
