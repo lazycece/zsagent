@@ -38,3 +38,5 @@ storage
 *.iml
 
 conf/environment/application-dev.properties
+
+frontend
