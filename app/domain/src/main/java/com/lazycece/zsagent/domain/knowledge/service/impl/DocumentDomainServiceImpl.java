@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.domain.knowledge.service.impl;
 
 import com.lazycece.rapidf.domain.anotation.DomainService;
@@ -31,7 +46,8 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     private final DocumentVersionRepository versionRepository;
     private final TransactionTemplate transactionTemplate;
 
-    public DocumentDomainServiceImpl(DocumentRepository documentRepository,
+    public DocumentDomainServiceImpl(
+            DocumentRepository documentRepository,
             DocumentVersionRepository versionRepository,
             TransactionTemplate transactionTemplate) {
         this.documentRepository = documentRepository;
@@ -47,16 +63,17 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         // build
         Document document = Document.create(command);
-        DocumentVersion version = document.createNewVersion(command.getFilePath(),
-                command.getFileSize(), "初始版本");
+        DocumentVersion version =
+                document.createNewVersion(command.getFilePath(), command.getFileSize(), "初始版本");
         // persistence
-        transactionTemplate.executeWithoutResult(new Consumer<TransactionStatus>() {
-            @Override
-            public void accept(TransactionStatus transactionStatus) {
-                documentRepository.save(document);
-                versionRepository.save(List.of(version));
-            }
-        });
+        transactionTemplate.executeWithoutResult(
+                new Consumer<TransactionStatus>() {
+                    @Override
+                    public void accept(TransactionStatus transactionStatus) {
+                        documentRepository.save(document);
+                        versionRepository.save(List.of(version));
+                    }
+                });
 
         return document.getDocumentId();
     }
@@ -90,13 +107,14 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
         DocumentVersion version = document.updateContent(command);
 
         // persistence
-        transactionTemplate.executeWithoutResult(new Consumer<TransactionStatus>() {
-            @Override
-            public void accept(TransactionStatus transactionStatus) {
-                documentRepository.update(document);
-                versionRepository.save(List.of(version));
-            }
-        });
+        transactionTemplate.executeWithoutResult(
+                new Consumer<TransactionStatus>() {
+                    @Override
+                    public void accept(TransactionStatus transactionStatus) {
+                        documentRepository.update(document);
+                        versionRepository.save(List.of(version));
+                    }
+                });
         return version;
     }
 
@@ -137,21 +155,22 @@ public class DocumentDomainServiceImpl implements DocumentDomainService {
     public DocumentVersion rollback(RollbackDocumentCmd command) {
         Assert.notNull(command, RespStatus.PARAM_ERROR, "command 不能为 null");
         // load
-        DocumentVersion targetVersion = versionRepository.findByVersionId(
-                command.getTargetVersionId());
+        DocumentVersion targetVersion =
+                versionRepository.findByVersionId(command.getTargetVersionId());
         Assert.notNull(targetVersion, RespStatus.PARAM_ERROR, "版本不存在");
         Document document = documentRepository.findById(command.getDocumentId());
         Assert.notNull(document, RespStatus.PARAM_ERROR, "文档不存在");
         // rollback
         DocumentVersion newVersion = document.rollback(command, targetVersion);
         // persistence
-        transactionTemplate.executeWithoutResult(new Consumer<TransactionStatus>() {
-            @Override
-            public void accept(TransactionStatus transactionStatus) {
-                documentRepository.update(document);
-                versionRepository.save(List.of(newVersion));
-            }
-        });
+        transactionTemplate.executeWithoutResult(
+                new Consumer<TransactionStatus>() {
+                    @Override
+                    public void accept(TransactionStatus transactionStatus) {
+                        documentRepository.update(document);
+                        versionRepository.save(List.of(newVersion));
+                    }
+                });
         return newVersion;
     }
 

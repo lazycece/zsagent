@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.agent;
 
 import com.lazycece.rapidf.domain.anotation.ApplicationService;
@@ -42,8 +57,10 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
     private final ConversationDomainService conversationDomainService;
     private final DocumentCachePostProcessor documentCachePostProcessor;
 
-    public AgentCommandFacadeImpl(ChatClient.Builder chatClientBuilder,
-            RetrievalAugmentationAdvisor ragAdvisor, MessageChatMemoryAdvisor memoryAdvisor,
+    public AgentCommandFacadeImpl(
+            ChatClient.Builder chatClientBuilder,
+            RetrievalAugmentationAdvisor ragAdvisor,
+            MessageChatMemoryAdvisor memoryAdvisor,
             ConversationDomainService conversationDomainService,
             DocumentCachePostProcessor documentCachePostProcessor) {
         this.chatClientBuilder = chatClientBuilder;
@@ -54,8 +71,7 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
     }
 
     @Override
-    public ResponseEntity<Flux<ServerSentEvent<String>>> askQuestion(
-            AskQuestionRequest request) {
+    public ResponseEntity<Flux<ServerSentEvent<String>>> askQuestion(AskQuestionRequest request) {
         String userId = request.getUserId();
         String conversationId = request.getConversationId();
         String question = request.getQuestion();
@@ -66,46 +82,70 @@ public class AgentCommandFacadeImpl implements AgentCommandFacade {
         // 阶段 B: 通过 ChatClient + RAG Advisor + Memory Advisor 执行流水线
         StringBuilder fullAnswer = new StringBuilder();
 
-        Flux<ServerSentEvent<String>> stream = chatClientBuilder.build()
-                //
-                .prompt()
-                // advisors
-                .advisors(ragAdvisor, memoryAdvisor)
-                // conversation id, memory
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
-                // filter
-//                .advisors(a -> a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION,
-//                        FilterExpressionUtils.permissionFilter(userId, getUserDepts())))
-                //
-                .user(question)
-                //
-                .stream()
-                //
-                .content()
-                //
-                .doOnNext(fullAnswer::append)
-                //
-                .doOnComplete(() -> {
-                    // 阶段 C: 流结束后记录完整的助手消息（含来源引用）
-                    List<Document> docs = documentCachePostProcessor.getLastRetrievedDocuments(
-                            conversationId);
-                    List<SourceReference> sources = AgentAssembler.assembleSourceReferenceList(
-                            docs);
-                    conversationDomainService.recordAssistantMessage(
-                            AgentAssembler.assembleAssistantMessageCmd(userId, conversationId,
-                                    fullAnswer.toString(), sources));
-                    documentCachePostProcessor.clearDocuments(conversationId);
-                    log.info("问答完成: userId={}, conversationId={}, 答案长度={}, 来源数={}",
-                            userId, conversationId, fullAnswer.length(), sources.size());
-                }).doOnError(error -> {
-                    log.error("RAG 流水线异常: userId={}, conversationId={}", userId,
-                            conversationId, error);
-                }).map(chunk -> ServerSentEvent.<String>builder().data(chunk).build()).concatWith(
-                        Flux.just(ServerSentEvent.<String>builder().event("done").data("[DONE]")
-                                .build()));
+        Flux<ServerSentEvent<String>> stream =
+                chatClientBuilder
+                        .build()
+                        //
+                        .prompt()
+                        // advisors
+                        .advisors(ragAdvisor, memoryAdvisor)
+                        // conversation id, memory
+                        .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, conversationId))
+                        // filter
+                        //                .advisors(a ->
+                        // a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION,
+                        //                        FilterExpressionUtils.permissionFilter(userId,
+                        // getUserDepts())))
+                        //
+                        .user(question)
+                        //
+                        .stream()
+                        //
+                        .content()
+                        //
+                        .doOnNext(fullAnswer::append)
+                        //
+                        .doOnComplete(
+                                () -> {
+                                    // 阶段 C: 流结束后记录完整的助手消息（含来源引用）
+                                    List<Document> docs =
+                                            documentCachePostProcessor.getLastRetrievedDocuments(
+                                                    conversationId);
+                                    List<SourceReference> sources =
+                                            AgentAssembler.assembleSourceReferenceList(docs);
+                                    conversationDomainService.recordAssistantMessage(
+                                            AgentAssembler.assembleAssistantMessageCmd(
+                                                    userId,
+                                                    conversationId,
+                                                    fullAnswer.toString(),
+                                                    sources));
+                                    documentCachePostProcessor.clearDocuments(conversationId);
+                                    log.info(
+                                            "问答完成: userId={}, conversationId={}, 答案长度={}, 来源数={}",
+                                            userId,
+                                            conversationId,
+                                            fullAnswer.length(),
+                                            sources.size());
+                                })
+                        .doOnError(
+                                error -> {
+                                    log.error(
+                                            "RAG 流水线异常: userId={}, conversationId={}",
+                                            userId,
+                                            conversationId,
+                                            error);
+                                })
+                        .map(chunk -> ServerSentEvent.<String>builder().data(chunk).build())
+                        .concatWith(
+                                Flux.just(
+                                        ServerSentEvent.<String>builder()
+                                                .event("done")
+                                                .data("[DONE]")
+                                                .build()));
 
-        return ResponseEntity.ok().contentType(
-                MediaType.parseMediaType("text/event-stream;charset=UTF-8")).body(stream);
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType("text/event-stream;charset=UTF-8"))
+                .body(stream);
     }
 
     @Override

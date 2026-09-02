@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.infra.acl.repository;
 
 import com.lazycece.rapidf.domain.anotation.DomainRepository;
@@ -25,15 +40,14 @@ import org.springframework.transaction.annotation.Transactional;
 @DomainRepository
 public class AgentConversationRepositoryImpl implements AgentConversationRepository {
 
-    private static final Logger log = LoggerFactory.getLogger(
-            AgentConversationRepositoryImpl.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(AgentConversationRepositoryImpl.class);
 
     private final AgentConversationUdfMapper conversationMapper;
     private final AgentMessageUdfMapper messageMapper;
 
     public AgentConversationRepositoryImpl(
-            AgentConversationUdfMapper conversationMapper,
-            AgentMessageUdfMapper messageMapper) {
+            AgentConversationUdfMapper conversationMapper, AgentMessageUdfMapper messageMapper) {
         this.conversationMapper = conversationMapper;
         this.messageMapper = messageMapper;
     }
@@ -46,26 +60,28 @@ public class AgentConversationRepositoryImpl implements AgentConversationReposit
 
         List<AgentMessage> messages = DefaultUtils.defaultList(conversation.getMessages());
         if (!messages.isEmpty()) {
-            List<AgentMessagePO> messagePOs = messages.stream()
-                    .map(AgentInfraConverter::toMessagePO)
-                    .collect(Collectors.toList());
+            List<AgentMessagePO> messagePOs =
+                    messages.stream()
+                            .map(AgentInfraConverter::toMessagePO)
+                            .collect(Collectors.toList());
             messageMapper.insertBatch(messagePOs);
         }
 
-        log.debug("新建对话: conversationId={}, 消息数={}",
-                conversation.getConversationId(), messages.size());
+        log.debug(
+                "新建对话: conversationId={}, 消息数={}",
+                conversation.getConversationId(),
+                messages.size());
         return conversation.getConversationId();
     }
 
     @Override
     public AgentConversation findByConversationId(String userId, String conversationId) {
-        AgentConversationPO convPO = conversationMapper
-                .selectByUserIdAndConversationId(userId, conversationId);
+        AgentConversationPO convPO =
+                conversationMapper.selectByUserIdAndConversationId(userId, conversationId);
         if (convPO == null) {
             return null;
         }
-        List<AgentMessagePO> messagePOs = messageMapper
-                .selectByConversationId(conversationId);
+        List<AgentMessagePO> messagePOs = messageMapper.selectByConversationId(conversationId);
         return AgentInfraConverter.toConversation(convPO, messagePOs);
     }
 
@@ -75,8 +91,8 @@ public class AgentConversationRepositoryImpl implements AgentConversationReposit
         pagination.setCount(total);
 
         int offset = (pagination.getPage() - 1) * pagination.getSize();
-        List<AgentConversationPO> convPOs = conversationMapper
-                .selectByUserId(userId, offset, pagination.getSize());
+        List<AgentConversationPO> convPOs =
+                conversationMapper.selectByUserId(userId, offset, pagination.getSize());
 
         return convPOs.stream()
                 .map(po -> AgentInfraConverter.toConversation(po, null))
@@ -93,13 +109,16 @@ public class AgentConversationRepositoryImpl implements AgentConversationReposit
             List<AgentMessage> messages = conversation.getMessages();
             messageMapper.deleteByConversationId(conversation.getConversationId());
             if (!messages.isEmpty()) {
-                List<AgentMessagePO> messagePOs = messages.stream()
-                        .map(AgentInfraConverter::toMessagePO)
-                        .collect(Collectors.toList());
+                List<AgentMessagePO> messagePOs =
+                        messages.stream()
+                                .map(AgentInfraConverter::toMessagePO)
+                                .collect(Collectors.toList());
                 messageMapper.insertBatch(messagePOs);
             }
-            log.debug("更新对话: conversationId={}, 消息数={}",
-                    conversation.getConversationId(), messages.size());
+            log.debug(
+                    "更新对话: conversationId={}, 消息数={}",
+                    conversation.getConversationId(),
+                    messages.size());
         } else {
             log.debug("更新对话: conversationId={}", conversation.getConversationId());
         }

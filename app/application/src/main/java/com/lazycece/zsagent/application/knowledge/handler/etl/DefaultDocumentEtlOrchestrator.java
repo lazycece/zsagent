@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.knowledge.handler.etl;
 
 import com.google.common.collect.Lists;
@@ -41,12 +56,14 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
     private final VectorStore vectorStore;
     private final EmbeddingConfig embeddingConfig;
 
-    public DefaultDocumentEtlOrchestrator(DocumentDomainService documentDomainService,
+    public DefaultDocumentEtlOrchestrator(
+            DocumentDomainService documentDomainService,
             KnowledgeDocumentReader knowledgeDocumentReader,
             DocumentTokenTextSplitter tokenTextSplitter,
             ChunkSummaryMetadataEnricher summaryMetadataEnricher,
             ChunkKeywordMetadataEnricher keywordMetadataEnricher,
-            KnowledgeChunkRepository knowledgeChunkRepository, VectorStore vectorStore,
+            KnowledgeChunkRepository knowledgeChunkRepository,
+            VectorStore vectorStore,
             EmbeddingConfig embeddingConfig) {
         this.documentDomainService = documentDomainService;
         this.knowledgeDocumentReader = knowledgeDocumentReader;
@@ -83,8 +100,8 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
                     UpdateEtlStatusCmd.build(documentId, EtlStatus.ENRICHING, null));
             docs = summaryMetadataEnricher.andThen(keywordMetadataEnricher).apply(docs);
 
-            log.info("ETL 处理: chunk enricher 完成, documentId={}, chunk数={}", documentId,
-                    docs.size());
+            log.info(
+                    "ETL 处理: chunk enricher 完成, documentId={}, chunk数={}", documentId, docs.size());
 
             // 4、索引写入，VectorStore 自动计算 embedding 并写入
             documentDomainService.updateEtlStatus(
@@ -100,7 +117,9 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
         } catch (Exception e) {
             log.error("ETL 处理失败: documentId={}", documentId, e);
             documentDomainService.updateEtlStatus(
-                    UpdateEtlStatusCmd.build(documentId, EtlStatus.FAILED,
+                    UpdateEtlStatusCmd.build(
+                            documentId,
+                            EtlStatus.FAILED,
                             DefaultUtils.defaultValue(e.getMessage(), "未知错误")));
         }
     }
@@ -128,5 +147,4 @@ public class DefaultDocumentEtlOrchestrator implements DocumentEtlOrchestrator {
     public void markRestored(String documentId) {
         process(documentId);
     }
-
 }

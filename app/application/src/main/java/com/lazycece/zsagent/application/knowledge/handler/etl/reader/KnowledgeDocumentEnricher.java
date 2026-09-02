@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.knowledge.handler.etl.reader;
 
 import com.lazycece.rapidf.domain.anotation.ApplicationHandler;
@@ -29,17 +44,18 @@ public class KnowledgeDocumentEnricher {
     private static final String PREVIEW_LENGTH_PLACEHOLDER = "preview_length";
     private static final String PREVIEW_CONTENT_PLACEHOLDER = "preview_content";
 
-    private static final String DOCUMENT_ENRICHER_TEMPLATE = """
+    private static final String DOCUMENT_ENRICHER_TEMPLATE =
+            """
             你是一个知识管理助手。根据以下文档内容完成两个任务:
             1. 生成一段简洁的摘要（不超过 200 字）
             2. 提取 3~5 个关键词标签
-            
+
             ## 文档标题
             <title>
-            
+
             ## 文档内容（前 <preview_length> 字）
             <preview_content>
-            
+
             ## 输出格式（严格按 JSON 输出，不要输出其他内容
             {"summary": "文档摘要", "tags": ["标签1", "标签2", "标签3"]}""";
 
@@ -61,16 +77,28 @@ public class KnowledgeDocumentEnricher {
             }
 
             // 提示词构建
-            PromptTemplate promptTemplate = PromptTemplate.builder().renderer(
-                    StTemplateRenderer.builder().startDelimiterToken('<').endDelimiterToken('>')
-                            .build()).template(DOCUMENT_ENRICHER_TEMPLATE).build();
-            Prompt prompt = promptTemplate.create(
-                    Map.of(TITLE_PLACEHOLDER, title, PREVIEW_LENGTH_PLACEHOLDER, PREVIEW_LENGTH,
-                            PREVIEW_CONTENT_PLACEHOLDER, previewContent));
+            PromptTemplate promptTemplate =
+                    PromptTemplate.builder()
+                            .renderer(
+                                    StTemplateRenderer.builder()
+                                            .startDelimiterToken('<')
+                                            .endDelimiterToken('>')
+                                            .build())
+                            .template(DOCUMENT_ENRICHER_TEMPLATE)
+                            .build();
+            Prompt prompt =
+                    promptTemplate.create(
+                            Map.of(
+                                    TITLE_PLACEHOLDER,
+                                    title,
+                                    PREVIEW_LENGTH_PLACEHOLDER,
+                                    PREVIEW_LENGTH,
+                                    PREVIEW_CONTENT_PLACEHOLDER,
+                                    previewContent));
 
             // LLM invoke
-            EnrichResult enrichResult = chatClientBuilder.build().prompt(prompt).call()
-                    .entity(EnrichResult.class);
+            EnrichResult enrichResult =
+                    chatClientBuilder.build().prompt(prompt).call().entity(EnrichResult.class);
 
             return enrichResult == null ? EnrichResult.empty() : enrichResult;
 
@@ -91,5 +119,4 @@ public class KnowledgeDocumentEnricher {
         }
         return previewContent.toString();
     }
-
 }

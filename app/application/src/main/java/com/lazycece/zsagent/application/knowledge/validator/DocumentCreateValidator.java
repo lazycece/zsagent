@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.knowledge.validator;
 
 import com.lazycece.rapidf.restful.Assert;
@@ -13,8 +28,7 @@ import com.lazycece.zsagent.facade.knowledge.request.DocumentCreateRequest;
  */
 public final class DocumentCreateValidator {
 
-    private DocumentCreateValidator() {
-    }
+    private DocumentCreateValidator() {}
 
     /**
      * 校验创建请求。
@@ -26,8 +40,8 @@ public final class DocumentCreateValidator {
         Visibility visibility = EnumUtils.getEnum(Visibility.class, request.getVisibility());
         Assert.notNull(visibility, RespStatus.PARAM_ERROR, "非法的可见范围: {}", request.getVisibility());
         if (visibility == Visibility.DEPARTMENT || visibility == Visibility.SPECIFIC) {
-            Assert.notEmpty(request.getVisibleTo(), RespStatus.PARAM_ERROR,
-                    "指定部门/人员可见时必须提供 visibleTo");
+            Assert.notEmpty(
+                    request.getVisibleTo(), RespStatus.PARAM_ERROR, "指定部门/人员可见时必须提供 visibleTo");
         }
     }
 }

@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.domain.agent.model;
 
 import com.lazycece.rapidf.domain.anotation.DomainAggregate;
@@ -81,8 +96,8 @@ public class AgentConversation extends Aggregate<String> {
         if (StringUtils.isBlank(this.title)) {
             this.title = content.length() > 30 ? content.substring(0, 30) : content;
         }
-        AgentMessage message = AgentMessage.create(userId, this.conversationId, MessageRole.USER,
-                content, null);
+        AgentMessage message =
+                AgentMessage.create(userId, this.conversationId, MessageRole.USER, content, null);
         this.messages.add(message);
         super.setUpdater(userId);
         super.setCreateTime(LocalDateTime.now());
@@ -97,8 +112,9 @@ public class AgentConversation extends Aggregate<String> {
      * @return 创建的消息
      */
     public AgentMessage answer(String userId, String content, List<SourceReference> sources) {
-        AgentMessage message = AgentMessage.create(userId, this.conversationId,
-                MessageRole.ASSISTANT, content, sources);
+        AgentMessage message =
+                AgentMessage.create(
+                        userId, this.conversationId, MessageRole.ASSISTANT, content, sources);
         this.messages.add(message);
         super.setUpdater(userId);
         super.setUpdateTime(LocalDateTime.now());
@@ -114,9 +130,12 @@ public class AgentConversation extends Aggregate<String> {
      * @throws IllegalArgumentException 消息不存在时抛出
      */
     public void submitFeedback(String userId, String messageId, FeedbackType type, String reason) {
-        AgentMessage target = this.messages.stream().filter(m -> m.getMessageId().equals(messageId))
-                .findFirst()
-                .orElseThrow(() -> ExceptionFactory.businessException("消息不存在: " + messageId));
+        AgentMessage target =
+                this.messages.stream()
+                        .filter(m -> m.getMessageId().equals(messageId))
+                        .findFirst()
+                        .orElseThrow(
+                                () -> ExceptionFactory.businessException("消息不存在: " + messageId));
         target.submitFeedback(userId, type, reason);
         super.setUpdater(userId);
         super.setUpdateTime(LocalDateTime.now());
@@ -128,5 +147,4 @@ public class AgentConversation extends Aggregate<String> {
     public void archive() {
         this.status = ConversationStatus.ARCHIVED;
     }
-
 }

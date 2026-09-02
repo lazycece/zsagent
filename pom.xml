@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -41,14 +42,15 @@
         <maven.javadoc.plugin.version>2.10.4</maven.javadoc.plugin.version>
         <flatten.maven.plugin.version>1.2.7</flatten.maven.plugin.version>
         <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
-        <spotless-maven-plugin.version>2.43.0</spotless-maven-plugin.version>
+        <spotless-maven-plugin.version>3.10.0</spotless-maven-plugin.version>
+        <google-java-format.version>1.15.0</google-java-format.version>
 
         <!-- Basic core dependencies -->
         <rapidf-dependencies.version>3.0.2</rapidf-dependencies.version>
         <spring-boot-dependencies.version>4.1.0</spring-boot-dependencies.version>
         <spring-ai-bom.version>2.0.0</spring-ai-bom.version>
         <!--官方版本目前有bug，先关掉：https://github.com/alibaba/spring-ai-alibaba/issues/4679-->
-<!--        <spring-ai-alibaba-extensions-bom.version>2.0.0-M1.1</spring-ai-alibaba-extensions-bom.version>-->
+        <!--        <spring-ai-alibaba-extensions-bom.version>2.0.0-M1.1</spring-ai-alibaba-extensions-bom.version>-->
         <lombok.version>1.18.24</lombok.version>
 
         <!-- Company inside dependencies -->
@@ -78,13 +80,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>com.alibaba.cloud.ai</groupId>-->
-<!--                <artifactId>spring-ai-alibaba-extensions-bom</artifactId>-->
-<!--                <version>${spring-ai-alibaba-extensions-bom.version}</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>com.alibaba.cloud.ai</groupId>-->
+            <!--                <artifactId>spring-ai-alibaba-extensions-bom</artifactId>-->
+            <!--                <version>${spring-ai-alibaba-extensions-bom.version}</version>-->
+            <!--                <type>pom</type>-->
+            <!--                <scope>import</scope>-->
+            <!--            </dependency>-->
             <dependency>
                 <groupId>com.lazycece.rapidf</groupId>
                 <artifactId>rapidf-dependencies</artifactId>
@@ -212,7 +214,9 @@
                 <executions>
                     <execution>
                         <phase>validate</phase>
-                        <goals><goal>check</goal></goals>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -220,23 +224,56 @@
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
                 <version>${spotless-maven-plugin.version}</version>
-                <configuration>
-                    <java>
-                        <palantirJavaFormat/>
-                        <importOrder>
-                            <order>com.lazycece,,javax,java,\#</order>
-                        </importOrder>
-                        <removeUnusedImports/>
-                    </java>
-                </configuration>
                 <executions>
                     <execution>
                         <id>spotless-check</id>
-                        <phase>validate</phase>
-                        <goals><goal>check</goal></goals>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <formats>
+                        <!-- you can define as many formats as you want, each is independent -->
+                        <format>
+                            <!-- define the files to apply to -->
+                            <includes>
+                                <include>.gitignore</include>
+                            </includes>
+                            <!-- define the steps to apply to those files -->
+                            <trimTrailingWhitespace/>
+                            <endWithNewline/>
+                            <indent>
+                                <tabs>true</tabs>
+                                <spacesPerTab>4</spacesPerTab>
+                            </indent>
+                        </format>
+                    </formats>
+                    <!-- define a language-specific format -->
+                    <java>
+                        <importOrder>
+                            <order>java,javax,org,com,com.lazycece,,#</order>
+                        </importOrder>
+                        <removeUnusedImports/>
+                        <forbidWildcardImports/>
+                        <formatAnnotations/>
+                        <!-- apply a specific flavor of google-java-format and reflow long strings -->
+                        <googleJavaFormat>
+                            <version>${google-java-format.version}</version>
+                            <style>AOSP</style> <!--100列，4缩进-->
+                            <reflowLongStrings>true</reflowLongStrings>
+                            <formatJavadoc>false</formatJavadoc>
+                        </googleJavaFormat>
+                        <licenseHeader>
+                            <file>
+                                ${maven.multiModuleProjectDirectory}/conf/license/license-header.txt
+                            </file>
+                        </licenseHeader>
+                    </java>
+                </configuration>
             </plugin>
+
         </plugins>
     </build>
 

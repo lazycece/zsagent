@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.knowledge.assembler;
 
 import com.lazycece.rapidf.utils.EnumUtils;
@@ -27,8 +42,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public final class DocumentAssembler {
 
-    private DocumentAssembler() {
-    }
+    private DocumentAssembler() {}
 
     /**
      * 从创建请求构建创建文档命令。 标题为空时取文件名（去扩展名）作为默认标题。
@@ -36,8 +50,10 @@ public final class DocumentAssembler {
     public static CreateDocumentCmd assembleCreateDocumentCmd(DocumentCreateRequest request) {
         CreateDocumentCmd command = new CreateDocumentCmd();
         command.setUserId(request.getUserId());
-        command.setTitle(StringUtils.isNotBlank(request.getTitle()) ? request.getTitle()
-                : extractFileNameWithoutExtension(request.getFilePath()));
+        command.setTitle(
+                StringUtils.isNotBlank(request.getTitle())
+                        ? request.getTitle()
+                        : extractFileNameWithoutExtension(request.getFilePath()));
         command.setFormat(DocumentUtils.detectFormat(request.getFilePath()));
         command.setFilePath(request.getFilePath());
         command.setDirectoryId(request.getDirectoryId());
@@ -59,8 +75,10 @@ public final class DocumentAssembler {
         command.setSummary(request.getSummary());
         command.setDirectoryId(request.getDirectoryId());
         command.setTags(request.getTags());
-        command.setVisibility(StringUtils.isNotBlank(request.getVisibility()) ? EnumUtils.getEnum(
-                Visibility.class, request.getVisibility()) : null);
+        command.setVisibility(
+                StringUtils.isNotBlank(request.getVisibility())
+                        ? EnumUtils.getEnum(Visibility.class, request.getVisibility())
+                        : null);
         command.setVisibleTo(request.getVisibleTo());
         return command;
     }
@@ -81,8 +99,8 @@ public final class DocumentAssembler {
     /**
      * 从详情查询请求构建单文档查询条件。
      */
-    public static DocumentQuery assembleDocumentQuery(DocumentDetailQueryRequest request,
-            List<String> userDepts) {
+    public static DocumentQuery assembleDocumentQuery(
+            DocumentDetailQueryRequest request, List<String> userDepts) {
         DocumentQuery query = new DocumentQuery();
         query.setUserId(request.getUserId());
         query.setUserDepts(userDepts);
@@ -93,14 +111,16 @@ public final class DocumentAssembler {
     /**
      * 从列表查询请求构建文档列表查询条件。
      */
-    public static DocumentListQuery assembleDocumentListQuery(DocumentListQueryRequest request,
-            List<String> userDepts) {
+    public static DocumentListQuery assembleDocumentListQuery(
+            DocumentListQueryRequest request, List<String> userDepts) {
         DocumentListQuery query = new DocumentListQuery();
         query.setUserId(request.getUserId());
         query.setUserDepts(userDepts);
         query.setDirectoryId(request.getDirectoryId());
-        query.setStatus(StringUtils.isNotBlank(request.getStatus()) ? EnumUtils.getEnum(
-                DocumentStatus.class, request.getStatus()) : null);
+        query.setStatus(
+                StringUtils.isNotBlank(request.getStatus())
+                        ? EnumUtils.getEnum(DocumentStatus.class, request.getStatus())
+                        : null);
         query.setKeyword(request.getKeyword());
         return query;
     }

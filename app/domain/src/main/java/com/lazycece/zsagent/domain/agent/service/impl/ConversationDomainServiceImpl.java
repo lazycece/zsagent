@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.domain.agent.service.impl;
 
 import com.lazycece.rapidf.domain.anotation.DomainService;
@@ -37,8 +52,8 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(content, RespStatus.PARAM_ERROR, "content 不能为 null");
 
-        AgentConversation conversation = conversationRepository.findByConversationId(userId,
-                conversationId);
+        AgentConversation conversation =
+                conversationRepository.findByConversationId(userId, conversationId);
 
         if (conversation == null) {
             conversation = AgentConversation.create(userId, conversationId);
@@ -63,8 +78,8 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
         Assert.notNull(conversationId, RespStatus.PARAM_ERROR, "conversationId 不能为 null");
         Assert.notNull(content, RespStatus.PARAM_ERROR, "content 不能为 null");
 
-        AgentConversation conversation = conversationRepository.findByConversationId(userId,
-                conversationId);
+        AgentConversation conversation =
+                conversationRepository.findByConversationId(userId, conversationId);
         Assert.notNull(conversation, RespStatus.PARAM_ERROR, "对话不存在");
 
         conversation.answer(userId, content, command.getSources());
@@ -86,8 +101,8 @@ public class ConversationDomainServiceImpl implements ConversationDomainService 
         Assert.notNull(messageId, RespStatus.PARAM_ERROR, "messageId 不能为 null");
         Assert.notNull(command.getType(), RespStatus.PARAM_ERROR, "feedbackType 不能为 null");
 
-        AgentConversation conversation = conversationRepository.findByConversationId(userId,
-                conversationId);
+        AgentConversation conversation =
+                conversationRepository.findByConversationId(userId, conversationId);
         Assert.notNull(conversation, RespStatus.PARAM_ERROR, "对话不存在");
 
         conversation.submitFeedback(userId, messageId, command.getType(), command.getReason());

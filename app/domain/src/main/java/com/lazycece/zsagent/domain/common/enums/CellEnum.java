@@ -1,5 +1,5 @@
 /*
- *    Copyright 2023 lazycece<lazycece@gmail.com>
+ *    Copyright (C) 2023 lazycece<lazycece@gmail.com>. All rights reserved.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
 package com.lazycece.zsagent.domain.common.enums;
 
 import com.lazycece.cell.specification.model.CellType;
@@ -26,7 +25,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum CellEnum implements CellType {
-
     AGENT_CONVERSATION("agent_conversation", "001"),
     AGENT_MESSAGE("agent_message", "002"),
     DIRECTORY("directory", "021"),

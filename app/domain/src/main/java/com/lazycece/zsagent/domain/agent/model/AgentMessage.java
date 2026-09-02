@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.domain.agent.model;
 
 import com.lazycece.cell.specification.CellHelper;
@@ -60,8 +75,12 @@ public class AgentMessage extends Entity<String> {
     /**
      * 创建消息实体。
      */
-    static AgentMessage create(String userId, String conversationId, MessageRole role,
-            String content, List<SourceReference> sources) {
+    static AgentMessage create(
+            String userId,
+            String conversationId,
+            MessageRole role,
+            String content,
+            List<SourceReference> sources) {
         AgentMessage message = new AgentMessage();
         message.messageId = CellHelper.getInstance().generateId(CellEnum.AGENT_MESSAGE);
         message.conversationId = conversationId;

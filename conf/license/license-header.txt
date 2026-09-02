@@ -1,5 +1,5 @@
 /*
- *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *    Copyright (C) $YEAR lazycece<lazycece@gmail.com>. All rights reserved.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -13,22 +13,3 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-package com.lazycece.zsagent.facade.agent.result;
-
-import com.lazycece.zsagent.facade.agent.dto.ConversationDTO;
-import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
-
-/**
- * 对话查询结果
- *
- * @author lazycece
- */
-@Getter
-@Setter
-public class ConversationResult implements Serializable {
-
-    /** 对话详情 */
-    private ConversationDTO conversation;
-}

@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.agent.handler.rag.post;
 
 import java.util.List;
@@ -22,15 +37,15 @@ public class DocumentCachePostProcessor implements DocumentPostProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentCachePostProcessor.class);
 
-    private final ConcurrentHashMap<String, List<Document>> documentCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, List<Document>> documentCache =
+            new ConcurrentHashMap<>();
 
     @Override
     public List<Document> process(Query query, List<Document> documents) {
         String conversationId = (String) query.context().get(ChatMemory.CONVERSATION_ID);
         if (conversationId != null) {
             this.documentCache.put(conversationId, documents);
-            log.debug("缓存检索文档: conversationId={}, 文档数={}", conversationId,
-                    documents.size());
+            log.debug("缓存检索文档: conversationId={}, 文档数={}", conversationId, documents.size());
         }
         return documents;
     }
@@ -49,5 +64,4 @@ public class DocumentCachePostProcessor implements DocumentPostProcessor {
     public void clearDocuments(String conversationId) {
         documentCache.remove(conversationId);
     }
-
 }
