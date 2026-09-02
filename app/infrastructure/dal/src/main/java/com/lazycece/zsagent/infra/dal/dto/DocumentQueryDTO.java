@@ -1,9 +1,23 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.infra.dal.dto;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * 文档查询参数 DTO（数据库访问层）
@@ -38,8 +52,13 @@ public class DocumentQueryDTO {
      * @param keyword     标题/标签模糊搜索（可空）
      * @return 查询 DTO
      */
-    public static DocumentQueryDTO build(String userId, List<String> userDepts, String documentId,
-                                         String directoryId, String status, String keyword) {
+    public static DocumentQueryDTO build(
+            String userId,
+            List<String> userDepts,
+            String documentId,
+            String directoryId,
+            String status,
+            String keyword) {
         DocumentQueryDTO dto = new DocumentQueryDTO();
         dto.setUserId(userId);
         dto.setUserDepts(userDepts);

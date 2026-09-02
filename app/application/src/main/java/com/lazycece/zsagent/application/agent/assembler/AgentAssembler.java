@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.agent.assembler;
 
 import com.lazycece.rapidf.utils.DefaultUtils;
@@ -9,7 +24,6 @@ import com.lazycece.zsagent.domain.agent.valueobject.cmd.UserMessageCmd;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentMetadataKey;
 import com.lazycece.zsagent.facade.agent.request.AskQuestionRequest;
 import com.lazycece.zsagent.facade.agent.request.FeedbackRequest;
-
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,8 +50,8 @@ public final class AgentAssembler {
     /**
      * 构建助手回答命令。
      */
-    public static AssistantMessageCmd assembleAssistantMessageCmd(String userId,
-            String conversationId, String content, List<SourceReference> sources) {
+    public static AssistantMessageCmd assembleAssistantMessageCmd(
+            String userId, String conversationId, String content, List<SourceReference> sources) {
         AssistantMessageCmd command = new AssistantMessageCmd();
         command.setUserId(userId);
         command.setConversationId(conversationId);
@@ -65,15 +79,16 @@ public final class AgentAssembler {
      */
     public static List<SourceReference> assembleSourceReferenceList(List<Document> documents) {
         return DefaultUtils.defaultList(documents).stream()
-                .map(AgentAssembler::assembleSourceReference).collect(Collectors.toList());
+                .map(AgentAssembler::assembleSourceReference)
+                .collect(Collectors.toList());
     }
 
     private static SourceReference assembleSourceReference(Document doc) {
         Map<String, Object> metadata = doc.getMetadata();
-        String documentId = (String) metadata.getOrDefault(
-                DocumentMetadataKey.DOCUMENT_ID.getCode(), "");
-        String documentTitle = (String) metadata.getOrDefault(DocumentMetadataKey.TITLE.getCode(),
-                "未知文档");
+        String documentId =
+                (String) metadata.getOrDefault(DocumentMetadataKey.DOCUMENT_ID.getCode(), "");
+        String documentTitle =
+                (String) metadata.getOrDefault(DocumentMetadataKey.TITLE.getCode(), "未知文档");
         String chunkId = doc.getId();
         String text = doc.getText();
         String contentSnippet =

@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.infra.acl.converter;
 
 import com.lazycece.rapidf.utils.DefaultUtils;
@@ -11,9 +26,6 @@ import com.lazycece.zsagent.domain.agent.model.AgentMessage;
 import com.lazycece.zsagent.domain.agent.valueobject.SourceReference;
 import com.lazycece.zsagent.infra.dal.po.AgentConversationPO;
 import com.lazycece.zsagent.infra.dal.po.AgentMessagePO;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,8 +36,7 @@ import java.util.stream.Collectors;
  */
 public final class AgentInfraConverter {
 
-    private AgentInfraConverter() {
-    }
+    private AgentInfraConverter() {}
 
     // ======================== Conversation: 领域 → PO ========================
 
@@ -48,7 +59,8 @@ public final class AgentInfraConverter {
 
     // ======================== Conversation: PO → 领域 ========================
 
-    public static AgentConversation toConversation(AgentConversationPO po, List<AgentMessagePO> messagePOs) {
+    public static AgentConversation toConversation(
+            AgentConversationPO po, List<AgentMessagePO> messagePOs) {
         if (po == null) {
             return null;
         }
@@ -62,9 +74,10 @@ public final class AgentInfraConverter {
         conversation.setCreateTime(po.getCreateTime());
         conversation.setUpdateTime(po.getUpdateTime());
         conversation.setDeleted(DefaultUtils.defaultValue(po.getDeleted(), false));
-        conversation.setMessages(DefaultUtils.defaultList(messagePOs).stream()
-                .map(AgentInfraConverter::toMessage)
-                .collect(Collectors.toList()));
+        conversation.setMessages(
+                DefaultUtils.defaultList(messagePOs).stream()
+                        .map(AgentInfraConverter::toMessage)
+                        .collect(Collectors.toList()));
         return conversation;
     }
 

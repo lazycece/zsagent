@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.agent.handler.rag.post;
 
 import java.util.List;
@@ -25,11 +40,12 @@ public class SimilarityThresholdFilter implements DocumentPostProcessor {
 
     @Override
     public List<Document> process(Query query, List<Document> documents) {
-        List<Document> filtered = documents.stream()
-                .filter(doc -> doc.getScore() != null && doc.getScore() >= THRESHOLD)
-                .collect(Collectors.toList());
-        log.debug("相似度过滤: {} -> {} 条文档 (threshold={})", documents.size(), filtered.size(),
-                THRESHOLD);
+        List<Document> filtered =
+                documents.stream()
+                        .filter(doc -> doc.getScore() != null && doc.getScore() >= THRESHOLD)
+                        .collect(Collectors.toList());
+        log.debug(
+                "相似度过滤: {} -> {} 条文档 (threshold={})", documents.size(), filtered.size(), THRESHOLD);
         return filtered;
     }
 }

@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.infra.acl.converter;
 
 import com.lazycece.rapidf.utils.DefaultUtils;
@@ -7,16 +22,12 @@ import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.Visibility;
+import com.lazycece.zsagent.domain.knowledge.model.Directory;
 import com.lazycece.zsagent.domain.knowledge.model.Document;
 import com.lazycece.zsagent.domain.knowledge.model.DocumentVersion;
-import com.lazycece.zsagent.domain.knowledge.model.Directory;
+import com.lazycece.zsagent.infra.dal.po.DirectoryPO;
 import com.lazycece.zsagent.infra.dal.po.DocumentPO;
 import com.lazycece.zsagent.infra.dal.po.DocumentVersionPO;
-import com.lazycece.zsagent.infra.dal.po.DirectoryPO;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 基础设施层 ↔ 领域层 对象转换器（知识管理模块）。
@@ -25,8 +36,7 @@ import java.util.List;
  */
 public final class DocumentInfraConverter {
 
-    private DocumentInfraConverter() {
-    }
+    private DocumentInfraConverter() {}
 
     // ======================== Document: 领域 → PO ========================
 
@@ -43,7 +53,8 @@ public final class DocumentInfraConverter {
         po.setFilePath(document.getFilePath());
         po.setDirectoryId(document.getDirectoryId());
         po.setTags(JsonUtils.toJSONString(document.getTags()));
-        po.setVisibility(document.getVisibility() != null ? document.getVisibility().getCode() : null);
+        po.setVisibility(
+                document.getVisibility() != null ? document.getVisibility().getCode() : null);
         po.setVisibleTo(JsonUtils.toJSONString(document.getVisibleTo()));
         po.setStatus(document.getStatus() != null ? document.getStatus().getCode() : null);
         po.setEtlStatus(document.getEtlStatus() != null ? document.getEtlStatus().getCode() : null);

@@ -1,3 +1,18 @@
+/*
+ *    Copyright (C) 2026 lazycece<lazycece@gmail.com>. All rights reserved.
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ */
 package com.lazycece.zsagent.application.agent.converter;
 
 import com.lazycece.rapidf.utils.DefaultUtils;
@@ -9,7 +24,6 @@ import com.lazycece.zsagent.facade.agent.dto.MessageDTO;
 import com.lazycece.zsagent.facade.agent.dto.SourceReferenceDTO;
 import com.lazycece.zsagent.facade.agent.result.ConversationListResult;
 import com.lazycece.zsagent.facade.agent.result.ConversationResult;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,8 +53,10 @@ public final class AgentConverter {
     public static ConversationListResult toConversationListResult(
             List<AgentConversation> conversations, long total, int page, int size) {
         ConversationListResult result = new ConversationListResult();
-        result.setList(DefaultUtils.defaultList(conversations).stream()
-                .map(AgentConverter::toConversationDTO).collect(Collectors.toList()));
+        result.setList(
+                DefaultUtils.defaultList(conversations).stream()
+                        .map(AgentConverter::toConversationDTO)
+                        .collect(Collectors.toList()));
         result.setTotal(total);
         result.setPage(page);
         result.setSize(size);
@@ -61,8 +77,10 @@ public final class AgentConverter {
         dto.setUpdatedAt(conversation.getUpdateTime());
         // 消息列表：详情接口加载，列表接口这里也做兜底转换
         if (conversation.getMessages() != null) {
-            dto.setMessages(conversation.getMessages().stream().map(AgentConverter::toMessageDTO)
-                    .collect(Collectors.toList()));
+            dto.setMessages(
+                    conversation.getMessages().stream()
+                            .map(AgentConverter::toMessageDTO)
+                            .collect(Collectors.toList()));
         } else {
             dto.setMessages(Collections.emptyList());
         }
@@ -87,8 +105,10 @@ public final class AgentConverter {
         }
         // sources：领域值对象 → DTO
         if (message.getSources() != null) {
-            dto.setSources(message.getSources().stream().map(AgentConverter::toSourceReferenceDTO)
-                    .collect(Collectors.toList()));
+            dto.setSources(
+                    message.getSources().stream()
+                            .map(AgentConverter::toSourceReferenceDTO)
+                            .collect(Collectors.toList()));
         }
         return dto;
     }
