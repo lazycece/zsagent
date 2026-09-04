@@ -110,4 +110,7 @@ cell:
 zsagent:
   storage:
     local-file-base-dir: ${app.zsagent.storage.dir:./storage/files/}
+  web:
+    # 知识库前端访问基础地址，用于拼装文档溯源链接（get_document_metadata 工具返回完整可点击 URL）
+    doc-base-url: ${app.zsagent.web.doc-base-url:}
 
