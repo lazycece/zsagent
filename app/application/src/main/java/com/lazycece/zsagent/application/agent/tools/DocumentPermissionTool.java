@@ -17,6 +17,7 @@ package com.lazycece.zsagent.application.agent.tools;
 
 import com.lazycece.rapidf.restful.Assert;
 import com.lazycece.rapidf.restful.response.RespStatus;
+import com.lazycece.zsagent.domain.agent.constants.AgentToolsConstants;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentAccessLevel;
 import com.lazycece.zsagent.domain.knowledge.model.Document;
 import com.lazycece.zsagent.domain.knowledge.repository.DocumentRepository;
@@ -28,8 +29,8 @@ import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
 
 /**
- * 文档权限检查 function-calling 工具。 判定指定用户对目标知识文档的访问级别（read/write/none），供问答引用兜底与
- * 文档读写类工具前置守卫复用。 工具名：check_user_permission。
+ * 文档权限检查 function-calling 工具。 判定指定用户对目标知识文档的访问级别（read/write/none），供问答引用兜底与 文档读写类工具前置守卫复用。
+ * 工具名：check_user_permission。
  *
  * <p>信任边界：当工具调用上下文（{@link ToolContext}）携带当前会话用户时，模型传入的 userId 必须与之一致，
  * 否则拒绝并返回 none，禁止跨用户探测他人权限。
@@ -39,7 +40,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class DocumentPermissionTool {
 
-    /** 工具调用上下文中当前会话用户的键 */
+    /**
+     * 工具调用上下文中当前会话用户的键
+     */
     public static final String CONTEXT_KEY_CURRENT_USER_ID = "currentUserId";
 
     private final DocumentRepository documentRepository;
@@ -51,13 +54,13 @@ public class DocumentPermissionTool {
     /**
      * 检查用户对文档的访问级别。
      *
-     * @param userId     操作者用户ID
-     * @param documentId 目标知识文档ID
+     * @param userId      操作者用户ID
+     * @param documentId  目标知识文档ID
      * @param toolContext 工具调用上下文，携带当前会话用户
      * @return 访问级别结果
      */
     @Tool(
-            name = "check_user_permission",
+            name = AgentToolsConstants.CHECK_USER_PERMISSION,
             description = "检查指定用户对某篇知识文档的访问级别，用于在引用文档内容或执行文档读写操作前进行权限判断，返回 read/write/none 三态")
     public AccessResult checkUserPermission(
             @ToolParam(description = "操作者用户ID，需为当前会话用户") String userId,
