@@ -36,7 +36,7 @@
 
         <!-- Maven plugin -->
         <maven.compiler.plugin.version>3.6.2</maven.compiler.plugin.version>
-        <maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>3.5.5</maven.surefire.plugin.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <maven.deploy.plugin.version>2.8.2</maven.deploy.plugin.version>
         <maven.javadoc.plugin.version>2.10.4</maven.javadoc.plugin.version>
@@ -156,6 +156,8 @@
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                     <encoding>${project.build.sourceEncoding}</encoding>
+                    <!-- 保留方法参数名，供 Spring AI 工具 JSON Schema 及 Spring MVC 反射绑定使用 -->
+                    <parameters>true</parameters>
                 </configuration>
             </plugin>
 

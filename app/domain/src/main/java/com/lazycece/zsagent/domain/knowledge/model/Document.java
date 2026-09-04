@@ -21,6 +21,7 @@ import com.lazycece.rapidf.domain.anotation.DomainAggregate;
 import com.lazycece.rapidf.domain.model.Aggregate;
 import com.lazycece.rapidf.utils.DefaultUtils;
 import com.lazycece.zsagent.domain.common.enums.CellEnum;
+import com.lazycece.zsagent.domain.knowledge.enums.DocumentAccessLevel;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentFormat;
 import com.lazycece.zsagent.domain.knowledge.enums.DocumentStatus;
 import com.lazycece.zsagent.domain.knowledge.enums.EtlStatus;
@@ -145,6 +146,35 @@ public class Document extends Aggregate<String> {
         this.deletedTime = null;
         super.setUpdater(userId);
         super.setUpdateTime(LocalDateTime.now());
+    }
+
+    /**
+     * 判定用户对该文档的访问级别。 规则：创建者拥有 WRITE（隐含可读）；否则按可见范围判定 READ；其余为 NONE。
+     *
+     * @param userId     用户ID
+     * @param userDepts 用户所属部门列表，可为空
+     * @return 访问级别
+     */
+    public DocumentAccessLevel resolveAccess(String userId, List<String> userDepts) {
+        if (StringUtils.isBlank(userId)) {
+            return DocumentAccessLevel.NONE;
+        }
+        if (StringUtils.isNotBlank(this.getCreator()) && this.getCreator().equals(userId)) {
+            return DocumentAccessLevel.WRITE;
+        }
+        List<String> targets = DefaultUtils.defaultList(this.visibleTo);
+        if (this.visibility == Visibility.PUBLIC) {
+            return DocumentAccessLevel.READ;
+        }
+        if (this.visibility == Visibility.SPECIFIC) {
+            return targets.contains(userId) ? DocumentAccessLevel.READ : DocumentAccessLevel.NONE;
+        }
+        if (this.visibility == Visibility.DEPARTMENT) {
+            List<String> depts = DefaultUtils.defaultList(userDepts);
+            boolean matched = depts.stream().anyMatch(targets::contains);
+            return matched ? DocumentAccessLevel.READ : DocumentAccessLevel.NONE;
+        }
+        return DocumentAccessLevel.NONE;
     }
 
     /**
